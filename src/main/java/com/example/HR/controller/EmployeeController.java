@@ -26,10 +26,10 @@ public class EmployeeController {
 
     private final EmployeeServiceImpl employeeServiceImpl;
 
-    @Autowired
-    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-        this.employeeServiceImpl = employeeServiceImpl;
-    }
+//    @Autowired
+//    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
+//        this.employeeServiceImpl = employeeServiceImpl;
+//    }
 
     @PostMapping
     @Operation(
