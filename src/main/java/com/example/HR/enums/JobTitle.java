@@ -1,6 +1,6 @@
 package com.example.HR.enums;
 
-public enum JobPosition {
+public enum JobTitle {
     CEO,
     UX_DESIGNER,
     PRODUCTS_DESIGNER,

@@ -1,43 +1,55 @@
 package com.example.HR.dto;
 
+import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
-import com.example.HR.enums.JobPosition;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.example.HR.enums.JobTitle;
+import com.example.HR.enums.Status;
+import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.xml.transform.Source;
 import java.time.LocalDate;
 
 @Data
-public class EmployeeDTO implements Source {
-    @NotBlank(message = "Full name cannot be blank")
+@AllArgsConstructor
+public class EmployeeDTO{
+    @NotBlank(message = "Full name is required")
     private String fullname;
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email should be valid")
-    private String email;
+    @NotBlank(message = "Employee ID is required")
+    private String employeeId;
 
-    @NotBlank(message = "Phone number cannot be blank")
-    private String phoneNumber;
-
-    @NotNull(message = "Job position must be selected")
-    private JobPosition jobPosition;
-
-    @NotNull(message = "Join date cannot be null")
+    @NotNull(message = "Join date is required")
+    @PastOrPresent(message = "Join date cannot be in the future")
     private LocalDate joinDate;
 
-    @NotNull(message = "Employment type must be selected")
-    private EmploymentType employmentType;
+    @NotBlank(message = "Username is required")
+    private String userName;
 
-    @Override
-    public void setSystemId(String systemId) {
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
 
-    }
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
 
-    @Override
-    public String getSystemId() {
-        return "";
-    }
+    @NotBlank(message = "Confirm password is required")
+    private String confirmPassword;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Invalid phone number")
+    private String phoneNumber;
+
+    @NotBlank(message = "Company is required")
+    private String company;
+
+    @NotNull(message = "Department is required")
+    private Departament departament;
+
+    @NotNull(message = "Job title is required")
+    private JobTitle jobTitle;
+
+    private String about;
 }

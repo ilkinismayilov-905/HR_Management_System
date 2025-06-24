@@ -2,7 +2,11 @@ package com.example.HR.service.implement;
 
 import com.example.HR.converter.Convert;
 import com.example.HR.dto.EmployeeDTO;
-import com.example.HR.entity.Employee;
+import com.example.HR.entity.employee.Employee;
+import com.example.HR.enums.EmploymentType;
+import com.example.HR.enums.JobTitle;
+import com.example.HR.enums.Status;
+import com.example.HR.exception.EmptyListException;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.ValidException;
 import com.example.HR.repository.EmployeeRepository;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Service;
 import jakarta.validation.Validator;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +93,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeList;
     }
 
+
+
     public void validCheck(EmployeeDTO employeeDTO){
         Set<ConstraintViolation<EmployeeDTO>> violations = validator.validate(employeeDTO);
 
@@ -102,4 +109,62 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
+    @Override
+    public List<EmployeeDTO> getByStatus(Status status) {
+
+        List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
+
+        if (employeeStatus == null || employeeStatus.isEmpty()) {
+            log.warn("No employees found with status: {}", status);
+            throw new EmptyListException("Employee list is empty for status: " + status);
+        }
+
+        return Convert.entityListToDtoList(employeeStatus);
+    }
+
+    @Override
+    public List<EmployeeDTO> getByJobPosition(JobTitle jobTitle) {
+        List<Employee> employeeJob = employeeRepository.getEmployeeByJobPosition(jobTitle);
+
+        if(employeeJob == null || employeeJob.isEmpty()){
+            log.warn("No employees found with job: {}", jobTitle);
+            throw new EmptyListException("Employee list is empty for job: " + jobTitle);
+        }
+
+        return Convert.entityListToDtoList(employeeJob);
+    }
+
+    @Override
+    public List<EmployeeDTO> getByEmploymentType(EmploymentType employmentType) {
+        List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
+
+        if(employee == null || employee.isEmpty()){
+            log.warn("No employees found with type: {}", employmentType);
+            throw new EmptyListException("Employee list is empty for type: " + employmentType);
+        }
+
+        return Convert.entityListToDtoList(employee);
+    }
+
+    @Override
+    public List<EmployeeDTO> getByFulName(String fullName) {
+       List<Employee> employeeList = employeeRepository.getEmployeeByFullname(fullName);
+
+       if(employeeList == null || employeeList.isEmpty()){
+           log.warn("No employees found with fullname: {}", fullName);
+           throw new EmptyListException("Employee list is empty for fullname: " + fullName);
+       }
+       return Convert.entityListToDtoList(employeeList);
+    }
+
+    @Override
+    public List<EmployeeDTO> getByDate(LocalDate localDate) {
+        List<Employee> employeeList = employeeRepository.getEmployeeByDate(localDate);
+
+        if(employeeList == null || employeeList.isEmpty()){
+            log.warn("No employees found with date: {}", localDate);
+            throw new EmptyListException("Employee list is empty for date: " + localDate);
+        }
+        return Convert.entityListToDtoList(employeeList);
+    }
 }
