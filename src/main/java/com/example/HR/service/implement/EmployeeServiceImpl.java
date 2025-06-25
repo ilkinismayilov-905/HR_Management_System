@@ -88,7 +88,8 @@ public class EmployeeServiceImpl implements EmployeeService {
             employeeList.add(employee);
         }
         if(employeeList.isEmpty()){
-            log.info("There is no Employee");
+            log.warn("There is no Employee");
+            throw new EmptyListException("Employee list is empty");
         }
         return employeeList;
     }
@@ -124,7 +125,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDTO> getByJobPosition(JobTitle jobTitle) {
-        List<Employee> employeeJob = employeeRepository.getEmployeeByJobPosition(jobTitle);
+        List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
 
         if(employeeJob == null || employeeJob.isEmpty()){
             log.warn("No employees found with job: {}", jobTitle);
@@ -159,7 +160,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<EmployeeDTO> getByDate(LocalDate localDate) {
-        List<Employee> employeeList = employeeRepository.getEmployeeByDate(localDate);
+        List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
 
         if(employeeList == null || employeeList.isEmpty()){
             log.warn("No employees found with date: {}", localDate);

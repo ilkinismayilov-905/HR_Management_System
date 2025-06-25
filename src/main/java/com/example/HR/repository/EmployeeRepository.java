@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     public List<Employee> getEmployeeByStatus(Status status);
-    public List<Employee> getEmployeeByJobPosition(JobTitle jobTitle);
+    public List<Employee> getEmployeeByJobTitle(JobTitle jobTitle);
     public List<Employee> getEmployeeByFullname(String fullName);
     public List<Employee> getEmployeeByEmploymentType(EmploymentType employmentType);
-    public List<Employee> getEmployeeByDate(LocalDate localDate);
+    public List<Employee> getEmployeeByJoinDate(LocalDate localDate);
 }

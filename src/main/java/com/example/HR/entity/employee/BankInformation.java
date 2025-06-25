@@ -34,7 +34,7 @@ public class BankInformation {
     private String panNo;
 
     @NotBlank(message = "Branch is required")
-    @Column(name = "account_no",nullable = false)
+    @Column(name = "branch",nullable = false)
     private Long branch;
 
     @NotBlank(message = "UPI ID is required")

@@ -55,19 +55,18 @@ public class Employee {
     private String EmployeeId;
 
     @OneToOne
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private User userName;
 
     @OneToOne
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private User password;
 
-    @OneToOne
-    @Column(nullable = false)
+    @Transient
     private User confirmPassword;
 
     @OneToOne
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private User email;
 
     @Enumerated(EnumType.STRING)

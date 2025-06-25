@@ -15,10 +15,16 @@ public class Convert {
 
         Employee entity = new Employee();
         entity.setFullname(dto.getFullname());
-        entity.setEmail(dto.getEmail());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setJobTitle(dto.getJobTitle());
+        entity.setEmployeeId(dto.getEmployeeId());
         entity.setJoinDate(dto.getJoinDate());
+        entity.setUserName(dto.getUserName());
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(dto.getPassword());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setCompany(dto.getCompany());
+        entity.setDepartament(dto.getDepartament());
+        entity.setJobTitle(dto.getJobTitle());
+        entity.setAbout(dto.getAbout());
         entity.setEmploymentType(dto.getEmploymentType());
 
         return entity;
@@ -35,18 +41,27 @@ public class Convert {
     }
 
 
-    public static EmployeeDTO entityToDto(Employee entity) {
-        if (entity == null) {
+    public static EmployeeDTO entityToDto(Employee employee) {
+        if (employee == null) {
             return null;
         }
 
         EmployeeDTO dto = new EmployeeDTO();
-        dto.setFullname(entity.getFullname());
-        dto.setEmail(entity.getEmail());
-        dto.setPhoneNumber(entity.getPhoneNumber());
-        dto.setJobTitle(entity.getJobTitle());
-        dto.setJoinDate(entity.getJoinDate());
-        dto.setEmploymentType(entity.getEmploymentType());
+        dto.setFullname(employee.getFullname());
+        dto.setEmployeeId(employee.getEmployeeId());
+        dto.setJoinDate(employee.getJoinDate());
+        dto.setUserName(employee.getUserName());
+        dto.setEmail(employee.getEmail());
+        dto.setPassword(employee.getPassword());
+        dto.setPhoneNumber(employee.getPhoneNumber());
+        dto.setCompany(employee.getCompany());
+        dto.setDepartament(employee.getDepartament());
+        dto.setJobTitle(employee.getJobTitle());
+        dto.setAbout(employee.getAbout());
+        dto.setEmploymentType(employee.getEmploymentType());
+
+        // confirmPassword frontenddə input olaraq gəlir, bazaya yazılmır
+//        dto.setConfirmPassword(""); // və ya null
 
         return dto;
     }
