@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Validated
 @RequestMapping("/employee")
 public class EmployeeController {
@@ -36,6 +36,10 @@ public class EmployeeController {
 //        this.employeeServiceImpl = employeeServiceImpl;
 //    }
 
+    @Autowired
+    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
+        this.employeeServiceImpl = employeeServiceImpl;
+    }
 
     @Operation(
             summary = "Create a new employee",
@@ -48,7 +52,7 @@ public class EmployeeController {
     })
     @PostMapping("/add")
     public ResponseEntity<Void> createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) throws IOException {
-        log.info("Creating new employee: {}", employeeDTO.getFullname());
+//        log.info("Creating new employee: {}", employeeDTO.getFullname());
         employeeServiceImpl.save(employeeDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -66,7 +70,7 @@ public class EmployeeController {
     @GetMapping("/getAll")
     public ResponseEntity<List<EmployeeDTO>> viewAllEmployees() throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getAll();
-        log.info("All Employee list returned");
+//        log.info("All Employee list returned");
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -84,7 +88,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByStatus(status);
 
-        log.info("Employee list returned by status: {}", status);
+//        log.info("Employee list returned by status: {}", status);
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -101,7 +105,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByFulName(fullname);
 
-        log.info("Employee list returned by fullname: {}" ,fullname);
+//        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);
     }
 
@@ -117,7 +121,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByJobPosition(jobTitle);
 
-        log.info("Employee list returned by jobTitle: {}", jobTitle);
+//        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -135,7 +139,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByDate(localDate);
 
-        log.info("Employee list returned by joinDate: {}", localDate);
+//        log.info("Employee list returned by joinDate: {}", localDate);
 
         return ResponseEntity.ok(employeeDTOList);
     }

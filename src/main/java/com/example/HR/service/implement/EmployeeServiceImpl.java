@@ -6,7 +6,7 @@ import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
-import com.example.HR.exception.EmptyListException;
+import com.example.HR.exception.EmployeeNotFoundException;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.ValidException;
 import com.example.HR.repository.EmployeeRepository;
@@ -21,10 +21,10 @@ import jakarta.validation.Validator;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,21 +32,20 @@ import java.util.Set;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final Validator validator;
+//    private final Validator validator;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, Validator validator) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
-        this.validator = validator;
     }
 
     @Override
     public void deleteById(Long id) {
         if (employeeRepository.existsById(id)) {
-            log.info("Deleted");
+//            log.info("Deleted");
             employeeRepository.deleteById(id);
             }else {
-            log.warn("There is no Employee with this ID");
+//            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
         }
 
@@ -55,9 +54,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDTO save(EmployeeDTO employeeDTO) throws IOException {
 
-        validCheck(employeeDTO);
+//        validCheck(employeeDTO);
 
-        log.info("Employee saved");
+//        log.info("Employee saved: {}" ,employeeDTO.getFullname());
         Employee newEmployee = Convert.dtoToEntity(employeeDTO);
         employeeRepository.save(newEmployee);
 
@@ -70,45 +69,39 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
 
         if (optionalEmployee.isPresent()) {
-            log.info("Employee was found with id: " + id);
-            Employee employee = optionalEmployee.get();
-            EmployeeDTO dto = Convert.entityToDto(employee);
-            return Optional.of(dto);
+//            log.info("Employee was found with id: {}" + id);
+            return optionalEmployee
+                    .map(Convert::entityToDto);
         }else {
-            log.warn("There is no Employee with this ID");
+//            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
         }
     }
 
     @Override
     public List<EmployeeDTO> getAll() throws MalformedURLException {
-        List employeeList = new ArrayList();
-        for(Employee employee:employeeRepository.findAll()){
-            Convert.entityToDto(employee);
-            employeeList.add(employee);
-        }
-        if(employeeList.isEmpty()){
-            log.warn("There is no Employee");
-            throw new EmptyListException("Employee list is empty");
-        }
-        return employeeList;
+        List<Employee> employeeList = employeeRepository.findAll();
+
+        return employeeList.stream()
+                .map(Convert::entityToDto)
+                .collect(Collectors.toList());
     }
 
 
 
-    public void validCheck(EmployeeDTO employeeDTO){
-        Set<ConstraintViolation<EmployeeDTO>> violations = validator.validate(employeeDTO);
-
-        if (!violations.isEmpty()) {
-            StringBuilder errorMsg = new StringBuilder();
-            for (ConstraintViolation<EmployeeDTO> violation : violations) {
-                errorMsg.append(violation.getPropertyPath()).append(": ")
-                        .append(violation.getMessage()).append("; ");
-            }
-            log.warn("Fields should be valid");
-            throw new ValidException("Validation failed: " + errorMsg.toString());
-        }
-    }
+//    public void validCheck(EmployeeDTO employeeDTO){
+//        Set<ConstraintViolation<EmployeeDTO>> violations = validator.validate(employeeDTO);
+//
+//        if (!violations.isEmpty()) {
+//            StringBuilder errorMsg = new StringBuilder();
+//            for (ConstraintViolation<EmployeeDTO> violation : violations) {
+//                errorMsg.append(violation.getPropertyPath()).append(": ")
+//                        .append(violation.getMessage()).append("; ");
+//            }
+////            log.warn("Fields should be valid");
+//            throw new ValidException("Validation failed: " + errorMsg.toString());
+//        }
+//    }
 
     @Override
     public List<EmployeeDTO> getByStatus(Status status) {
@@ -116,8 +109,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
 
         if (employeeStatus == null || employeeStatus.isEmpty()) {
-            log.warn("No employees found with status: {}", status);
-            throw new EmptyListException("Employee list is empty for status: " + status);
+//            log.warn("No employees found with status: {}", status);
+            throw new EmployeeNotFoundException("Employee list is empty for status: " + status);
         }
 
         return Convert.entityListToDtoList(employeeStatus);
@@ -128,8 +121,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
 
         if(employeeJob == null || employeeJob.isEmpty()){
-            log.warn("No employees found with job: {}", jobTitle);
-            throw new EmptyListException("Employee list is empty for job: " + jobTitle);
+//            log.warn("No employees found with job: {}", jobTitle);
+            throw new EmployeeNotFoundException("Employee list is empty for job: " + jobTitle);
         }
 
         return Convert.entityListToDtoList(employeeJob);
@@ -140,22 +133,28 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
 
         if(employee == null || employee.isEmpty()){
-            log.warn("No employees found with type: {}", employmentType);
-            throw new EmptyListException("Employee list is empty for type: " + employmentType);
+//            log.warn("No employees found for type: {}", employmentType);
+            throw new EmployeeNotFoundException("No employees found for type: " + employmentType);
         }
 
         return Convert.entityListToDtoList(employee);
     }
 
     @Override
-    public List<EmployeeDTO> getByFulName(String fullName) {
-       List<Employee> employeeList = employeeRepository.getEmployeeByFullname(fullName);
+    public List<EmployeeDTO> getByFulName(String fullname) {
+
+        if (fullname == null || fullname.trim().isEmpty()) {
+            throw new IllegalArgumentException("Fullname must not be blank");
+        }
+       List<Employee> employeeList = employeeRepository.getEmployeeByFullname(fullname.trim());
 
        if(employeeList == null || employeeList.isEmpty()){
-           log.warn("No employees found with fullname: {}", fullName);
-           throw new EmptyListException("Employee list is empty for fullname: " + fullName);
+//           log.warn("No employees found for fullname: {}", fullname);
+           throw new EmployeeNotFoundException("No employees found for fullname: " + fullname);
        }
-       return Convert.entityListToDtoList(employeeList);
+       return employeeList.stream()
+               .map(Convert::entityToDto)
+               .collect(Collectors.toList());
     }
 
     @Override
@@ -163,8 +162,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
 
         if(employeeList == null || employeeList.isEmpty()){
-            log.warn("No employees found with date: {}", localDate);
-            throw new EmptyListException("Employee list is empty for date: " + localDate);
+//            log.warn("No employees found with date: {}", localDate);
+            throw new EmployeeNotFoundException("No employees found for date: " + localDate);
         }
         return Convert.entityListToDtoList(employeeList);
     }

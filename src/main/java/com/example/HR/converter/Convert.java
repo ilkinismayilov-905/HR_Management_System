@@ -2,6 +2,7 @@ package com.example.HR.converter;
 
 import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.entity.employee.Employee;
+import com.example.HR.enums.Status;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,21 +14,37 @@ public class Convert {
             return null;
         }
 
-        Employee entity = new Employee();
-        entity.setFullname(dto.getFullname());
-        entity.setEmployeeId(dto.getEmployeeId());
-        entity.setJoinDate(dto.getJoinDate());
-        entity.setUserName(dto.getUserName());
-        entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
-        entity.setPhoneNumber(dto.getPhoneNumber());
-        entity.setCompany(dto.getCompany());
-        entity.setDepartament(dto.getDepartament());
-        entity.setJobTitle(dto.getJobTitle());
-        entity.setAbout(dto.getAbout());
-        entity.setEmploymentType(dto.getEmploymentType());
+        Employee employee = new Employee();
 
-        return entity;
+        employee.setFullname(dto.getFullname());
+        employee.setEmployeeId(dto.getEmployeeId());
+        employee.setJoinDate(dto.getJoinDate());
+        employee.setPhoneNumber(dto.getPhoneNumber());
+        employee.setCompany(dto.getCompany());
+        employee.setDepartament(dto.getDepartament());
+        employee.setJobTitle(dto.getJobTitle());
+        employee.setAbout(dto.getAbout());
+        employee.setEmploymentType(dto.getEmploymentType());
+        employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE); // default olaraq ACTIVE
+
+        // User əlaqələri
+        if (dto.getUserName() != null) {
+            employee.setUserName(dto.getUserName()); // eyni obyekt göndərilibsə
+        }
+
+        if (dto.getEmail() != null) {
+            employee.setEmail(dto.getEmail());
+        }
+
+        if (dto.getPassword() != null) {
+            employee.setPassword(dto.getPassword());
+        }
+
+        if (dto.getConfirmPassword() != null) {
+            employee.setConfirmPassword(dto.getConfirmPassword()); // @Transient sahə
+        }
+
+        return employee;
     }
 
     public static List<Employee> dtoListToEntityList(List<EmployeeDTO> dtoList) {
@@ -47,21 +64,23 @@ public class Convert {
         }
 
         EmployeeDTO dto = new EmployeeDTO();
+
         dto.setFullname(employee.getFullname());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
-        dto.setUserName(employee.getUserName());
-        dto.setEmail(employee.getEmail());
-        dto.setPassword(employee.getPassword());
         dto.setPhoneNumber(employee.getPhoneNumber());
         dto.setCompany(employee.getCompany());
         dto.setDepartament(employee.getDepartament());
         dto.setJobTitle(employee.getJobTitle());
         dto.setAbout(employee.getAbout());
         dto.setEmploymentType(employee.getEmploymentType());
+        dto.setStatus(employee.getStatus());
 
-        // confirmPassword frontenddə input olaraq gəlir, bazaya yazılmır
-//        dto.setConfirmPassword(""); // və ya null
+        // User əlaqələri
+        dto.setUserName(employee.getUserName());
+        dto.setEmail(employee.getEmail());
+        dto.setPassword(employee.getPassword());
+        dto.setConfirmPassword(employee.getConfirmPassword()); // @Transient olsa belə DTO üçün qaytarmaq olar
 
         return dto;
     }

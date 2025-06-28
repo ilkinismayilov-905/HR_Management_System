@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 import javax.xml.transform.Source;
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+//@Data
+//@AllArgsConstructor
+//@NoArgsConstructor
 public class EmployeeDTO{
 
     @Schema(description = "Full name of the employee", example = "John Doe")
@@ -75,4 +75,135 @@ public class EmployeeDTO{
     @Schema(description = "Employee status", example = "ACTIVE")
     private Status status;
 
+    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, User userName, User email, User password, User confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
+        this.fullname = fullname;
+        this.employeeId = employeeId;
+        this.joinDate = joinDate;
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.phoneNumber = phoneNumber;
+        this.company = company;
+        this.departament = departament;
+        this.jobTitle = jobTitle;
+        this.about = about;
+        this.employmentType = employmentType;
+        this.status = status;
+    }
+
+    public EmployeeDTO() {
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public LocalDate getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(LocalDate joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public User getUserName() {
+        return userName;
+    }
+
+    public void setUserName(User userName) {
+        this.userName = userName;
+    }
+
+    public User getEmail() {
+        return email;
+    }
+
+    public void setEmail(User email) {
+        this.email = email;
+    }
+
+    public User getPassword() {
+        return password;
+    }
+
+    public void setPassword(User password) {
+        this.password = password;
+    }
+
+    public User getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(User confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public Departament getDepartament() {
+        return departament;
+    }
+
+    public void setDepartament(Departament departament) {
+        this.departament = departament;
+    }
+
+    public JobTitle getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(JobTitle jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public EmploymentType getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(EmploymentType employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
