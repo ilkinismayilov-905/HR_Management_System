@@ -1,6 +1,7 @@
 package com.example.HR.controller;
 
 import com.example.HR.dto.EmployeeDTO;
+import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.service.implement.EmployeeServiceImpl;
@@ -51,7 +52,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<Void> createEmployee(@RequestBody EmployeeDTO employeeDTO) throws IOException {
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
 //        log.info("Creating new employee: {}", employeeDTO.getFullname());
         employeeServiceImpl.save(employeeDTO);
 

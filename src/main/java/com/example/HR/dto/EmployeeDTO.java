@@ -34,7 +34,7 @@ public class EmployeeDTO{
 
     @Schema(description = "Username linked with the user account")
     @NotNull(message = "Username is required")
-    private String userName;
+    private String username;
 
     @Schema(description = "Email account object")
     @NotNull(message = "Email is required")
@@ -75,11 +75,11 @@ public class EmployeeDTO{
     @Schema(description = "Employee status", example = "ACTIVE")
     private Status status;
 
-    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, String userName, String email, String password, String confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
+    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, String username, String email, String password, String confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
         this.fullname = fullname;
         this.employeeId = employeeId;
         this.joinDate = joinDate;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
@@ -119,12 +119,12 @@ public class EmployeeDTO{
         this.joinDate = joinDate;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {

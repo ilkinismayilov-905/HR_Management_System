@@ -8,6 +8,7 @@ import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.*;
 import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.UserRepository;
 import com.example.HR.service.implement.EmployeeServiceImpl;
 
 import jakarta.validation.ConstraintViolation;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,6 +43,9 @@ public class EmployeeServiceTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private EmployeeServiceImpl employeeServiceImpl;
@@ -60,18 +65,25 @@ public class EmployeeServiceTest {
         EmployeeDTO employeeDTO = new EmployeeDTO();
         employeeDTO.setFullname("John Doe");
         employeeDTO.setEmployeeId("EMP123456");
-        employeeDTO.setEmail(user);
+        employeeDTO.setEmail("ilkin2006@gmail.com");
         employeeDTO.setEmployeeId("EMP1");
         employeeDTO.setAbout("About");
-        employeeDTO.setConfirmPassword(user);
+        employeeDTO.setConfirmPassword("123456");
         employeeDTO.setCompany("Company");
-        employeeDTO.setPassword(user);
+        employeeDTO.setPassword("123456");
         employeeDTO.setDepartament(Departament.IT);
-        employeeDTO.setUserName(user);
+        employeeDTO.setUsername("ilkin6666");
 
         try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
             Employee employee = new Employee();
             convertMock.when(() -> Convert.dtoToEntity(any(EmployeeDTO.class))).thenReturn(employee);
+
+            when(userRepository.findByUsername("ilkin6666")).thenReturn(Optional.of(user));
+
+            when(userRepository.findByEmail("ilkin2006@gmail.com")).thenReturn(Optional.of(user));
+
+            when(userRepository.findByPassword("123456")).thenReturn(Optional.of(user));
+
 
             when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 

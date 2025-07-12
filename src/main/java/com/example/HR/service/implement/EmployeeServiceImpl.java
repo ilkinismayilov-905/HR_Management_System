@@ -9,23 +9,20 @@ import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.exception.EmployeeNotFoundException;
 import com.example.HR.exception.NoIDException;
-import com.example.HR.exception.ValidException;
+import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.EmployeeRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.EmployeeService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.validation.Validator;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,9 +58,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        validCheck(employeeDTO);
 
 //        log.info("Employee saved: {}" ,employeeDTO.getFullname());
-        User username = userRepository.findByUsername(employeeDTO.getUserName());
-        Employee newEmployee = Convert.dtoToEntity(employeeDTO);
-        employeeRepository.save(newEmployee);
+        User username = userRepository.findByUsername(employeeDTO.getUsername())
+                .orElseThrow(() -> new NotFoundException("User not found: " + employeeDTO.getUsername()));
+        User email = userRepository.findByEmail(employeeDTO.getEmail())
+                .orElseThrow(() -> new NotFoundException("Email not found: " + employeeDTO.getEmail()));
+        User password = userRepository.findByPassword(employeeDTO.getPassword())
+                .orElseThrow(() -> new NotFoundException("Password not found: " + employeeDTO.getPassword()));
+//        Employee newEmployee = Convert.dtoToEntity(employeeDTO);
+        Employee employee = new Employee();
+        employee.setFullname(employeeDTO.getFullname());
+        employee.setEmployeeId(employeeDTO.getEmployeeId());
+        employee.setJoinDate(employeeDTO.getJoinDate());
+        employee.setCompany(employeeDTO.getCompany());
+        employee.setPhoneNumber(employeeDTO.getPhoneNumber());
+        employee.setStatus(employeeDTO.getStatus());
+        employee.setAbout(employeeDTO.getAbout());
+        employee.setDepartament(employeeDTO.getDepartament());
+        employee.setEmploymentType(employeeDTO.getEmploymentType());
+        employee.setJobTitle(employeeDTO.getJobTitle());
+
+        // 3. User obyektlərini set edirik
+        employee.setUsername(username);
+        employee.setEmail(email);
+        employee.setPassword(password);
 
         return new EmployeeDTO();
 

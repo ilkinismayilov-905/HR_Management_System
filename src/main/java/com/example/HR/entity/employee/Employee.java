@@ -55,18 +55,18 @@ public class Employee {
     private String EmployeeId;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_name_id", nullable = false)
-    private User userName;
+    @JoinColumn(name = "user_name_id", nullable = false,unique = true)
+    private User username;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "password_id", nullable = false)
+    @JoinColumn(name = "password_id", nullable = false,unique = true)
     private User password;
 
     @Transient
     private User confirmPassword;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "email_id", nullable = false)
+    @JoinColumn(name = "email_id", nullable = false,unique = true)
     private User email;
 
     @Enumerated(EnumType.STRING)
@@ -74,13 +74,13 @@ public class Employee {
     private Departament departament;
 
     public Employee(String fullname, String employeeId, LocalDate joinDate,
-                    User userName, User email, User password, User confirmPassword,
+                    User username, User email, User password, User confirmPassword,
                     String phoneNumber, String company, Departament departament,
                     JobTitle jobTitle, String about) {
         this.fullname = fullname;
         EmployeeId = employeeId;
         this.joinDate = joinDate;
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.confirmPassword = confirmPassword;
@@ -174,12 +174,12 @@ public class Employee {
         EmployeeId = employeeId;
     }
 
-    public User getUserName() {
-        return userName;
+    public User getUsername() {
+        return username;
     }
 
-    public void setUserName(User userName) {
-        this.userName = userName;
+    public void setUsername(User username) {
+        this.username = username;
     }
 
     public User getPassword() {

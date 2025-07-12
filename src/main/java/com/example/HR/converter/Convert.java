@@ -1,8 +1,10 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.EmployeeDTO;
+import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.Status;
+import com.example.HR.exception.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,22 +29,15 @@ public class Convert {
         employee.setEmploymentType(dto.getEmploymentType());
         employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE); // default olaraq ACTIVE
 
-        // User əlaqələri
-        if (dto.getUserName() != null) {
-            employee.setUserName(dto.getUserName()); // eyni obyekt göndərilibsə
-        }
-
-        if (dto.getEmail() != null) {
-            employee.setEmail(dto.getEmail());
-        }
-
-        if (dto.getPassword() != null) {
-            employee.setPassword(dto.getPassword());
-        }
-
-        if (dto.getConfirmPassword() != null) {
-            employee.setConfirmPassword(dto.getConfirmPassword()); // @Transient sahə
-        }
+//       User user = userRepository.findByUsername(dto.getUsername())
+//        .orElseThrow(() -> new NotFoundException("User not found: " + dto.getUsername()));
+//
+//    User emailUser = userRepository.findByEmail(dto.getEmail())
+//        .orElseThrow(() -> new NotFoundException("User not found by email: " + dto.getEmail()));
+//
+//    employee.setUserName(user);
+//    employee.setEmail(emailUser);
+//    employee.setPassword(user);
 
         return employee;
     }
@@ -63,6 +58,7 @@ public class Convert {
             return null;
         }
 
+
         EmployeeDTO dto = new EmployeeDTO();
 
         dto.setFullname(employee.getFullname());
@@ -76,11 +72,18 @@ public class Convert {
         dto.setEmploymentType(employee.getEmploymentType());
         dto.setStatus(employee.getStatus());
 
-        // User əlaqələri
-        dto.setUserName(employee.getUserName());
-        dto.setEmail(employee.getEmail());
-        dto.setPassword(employee.getPassword());
-        dto.setConfirmPassword(employee.getConfirmPassword()); // @Transient olsa belə DTO üçün qaytarmaq olar
+        // User əlaqələri — sadəcə String olaraq
+        if (employee.getUsername() != null)
+            dto.setUsername(employee.getUsername().getUsername());
+
+        if (employee.getEmail() != null)
+            dto.setEmail(employee.getEmail().getEmail());
+
+        if (employee.getPassword() != null)
+            dto.setPassword(employee.getPassword().getPassword());
+
+        if (employee.getConfirmPassword() != null)
+            dto.setConfirmPassword(employee.getConfirmPassword().getPassword());
 
         return dto;
     }
