@@ -25,7 +25,7 @@ import java.util.List;
 @CrossOrigin
 @Slf4j
 //@RequiredArgsConstructor
-@Validated
+//@Validated
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -51,7 +51,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<Void> createEmployee(@Valid @RequestBody EmployeeDTO employeeDTO) throws IOException {
+    public ResponseEntity<Void> createEmployee(@RequestBody EmployeeDTO employeeDTO) throws IOException {
 //        log.info("Creating new employee: {}", employeeDTO.getFullname());
         employeeServiceImpl.save(employeeDTO);
 

@@ -34,19 +34,19 @@ public class EmployeeDTO{
 
     @Schema(description = "Username linked with the user account")
     @NotNull(message = "Username is required")
-    private User userName;
+    private String userName;
 
     @Schema(description = "Email account object")
     @NotNull(message = "Email is required")
-    private User email;
+    private String email;
 
     @Schema(description = "Password object")
     @NotNull(message = "Password is required")
-    private User password;
+    private String password;
 
     @Schema(description = "Confirm password object")
     @NotNull(message = "Confirm password is required")
-    private User confirmPassword;
+    private String confirmPassword;
 
     @Schema(description = "Phone number of the employee", example = "+994501234567")
     @NotBlank(message = "Phone number is required")
@@ -75,7 +75,7 @@ public class EmployeeDTO{
     @Schema(description = "Employee status", example = "ACTIVE")
     private Status status;
 
-    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, User userName, User email, User password, User confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
+    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, String userName, String email, String password, String confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
         this.fullname = fullname;
         this.employeeId = employeeId;
         this.joinDate = joinDate;
@@ -119,35 +119,35 @@ public class EmployeeDTO{
         this.joinDate = joinDate;
     }
 
-    public User getUserName() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUserName(User userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public User getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(User email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public User getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(User password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public User getConfirmPassword() {
+    public String getConfirmPassword() {
         return confirmPassword;
     }
 
-    public void setConfirmPassword(User confirmPassword) {
+    public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
 

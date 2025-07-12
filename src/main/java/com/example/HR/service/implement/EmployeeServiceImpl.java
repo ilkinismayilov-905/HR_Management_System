@@ -2,6 +2,7 @@ package com.example.HR.service.implement;
 
 import com.example.HR.converter.Convert;
 import com.example.HR.dto.EmployeeDTO;
+import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
@@ -10,6 +11,7 @@ import com.example.HR.exception.EmployeeNotFoundException;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.ValidException;
 import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.UserRepository;
 import com.example.HR.service.EmployeeService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
@@ -32,11 +34,13 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 //    private final Validator validator;
 
     @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository) {
         this.employeeRepository = employeeRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        validCheck(employeeDTO);
 
 //        log.info("Employee saved: {}" ,employeeDTO.getFullname());
+        User username = userRepository.findByUsername(employeeDTO.getUserName());
         Employee newEmployee = Convert.dtoToEntity(employeeDTO);
         employeeRepository.save(newEmployee);
 

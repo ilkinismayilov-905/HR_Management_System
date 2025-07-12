@@ -33,28 +33,31 @@ public class AddEmpoyeeTest {
 
         User userName = new User();
         userName.setId(1L);
-        userName.setUsername("john_doe"); // istəyə görə doldur
+        userName.setUsername("john_doe");
+        userName.setEmail("john.doe@example.com");
+        userName.setConfirmPassword("securePassword");
+        userName.setPassword("securePassword");// istəyə görə doldur
 
-        User email = new User();
-        email.setId(2L);
-        email.setEmail("john.doe@example.com"); // istəyə görə doldur
-
-        User password = new User();
-        password.setId(3L);
-        password.setPassword("securePassword"); // istəyə görə doldur
-
-        User confirmPassword = new User();
-        confirmPassword.setId(3L);
-        confirmPassword.setPassword("securePassword");
+//        User email = new User();
+//        email.setId(2L);
+//        email.setEmail("john.doe@example.com"); // istəyə görə doldur
+//
+//        User password = new User();
+//        password.setId(3L);
+//        password.setPassword("securePassword"); // istəyə görə doldur
+//
+//        User confirmPassword = new User();
+//        confirmPassword.setId(3L);
+//        confirmPassword.setPassword("securePassword");
 
         employeeDto.put("fullname","Ilkin");
         employeeDto.put("employeeId", "EMP123456");
         employeeDto.put("joinDate", "2023-01-15");
 
         employeeDto.put("userName", userName);
-        employeeDto.put("email", email);
-        employeeDto.put("password", password);
-        employeeDto.put("confirmPassword", confirmPassword);
+        employeeDto.put("email", userName);
+        employeeDto.put("password", userName);
+        employeeDto.put("confirmPassword", userName);
 
         employeeDto.put("phoneNumber", "+994501234567");
         employeeDto.put("company", "TechCorp LLC");
