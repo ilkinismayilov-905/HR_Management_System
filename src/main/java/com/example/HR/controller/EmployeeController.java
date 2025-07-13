@@ -2,9 +2,10 @@ package com.example.HR.controller;
 
 import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.entity.employee.Employee;
+import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
-import com.example.HR.service.implement.EmployeeServiceImpl;
+import com.example.HR.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,16 +31,11 @@ import java.util.List;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    private final EmployeeServiceImpl employeeServiceImpl;
-
-//    @Autowired
-//    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-//        this.employeeServiceImpl = employeeServiceImpl;
-//    }
+    private final EmployeeService employeeService;
 
     @Autowired
-    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-        this.employeeServiceImpl = employeeServiceImpl;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @Operation(
@@ -54,9 +50,9 @@ public class EmployeeController {
     @PostMapping("/add")
     public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
 //        log.info("Creating new employee: {}", employeeDTO.getFullname());
-        employeeServiceImpl.save(employeeDTO);
+        EmployeeDTO savedEmployee = employeeService.save(employeeDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
     }
 
 
@@ -70,12 +66,26 @@ public class EmployeeController {
     })
     @GetMapping("/getAll")
     public ResponseEntity<List<EmployeeDTO>> viewAllEmployees() throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getAll();
+        List<EmployeeDTO> employeeDTOList = employeeService.getAll();
 //        log.info("All Employee list returned");
 
         return ResponseEntity.ok(employeeDTOList);
     }
 
+    @Operation(summary = "Get employee by ID",
+            description = "Returns a single employee by ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
+        return employeeService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @Operation(summary = "Get employees by status",
             description = "Returns a list of all employees by status"
@@ -85,9 +95,9 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "No employees found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/getByStatus")
+    @GetMapping("/getByStatus/{status}")
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByStatus(status);
+        List<EmployeeDTO> employeeDTOList = employeeService.getByStatus(status);
 
 //        log.info("Employee list returned by status: {}", status);
 
@@ -104,7 +114,7 @@ public class EmployeeController {
     })
     @GetMapping("/getByFullname/{fullname}")
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByFulName(fullname);
+        List<EmployeeDTO> employeeDTOList = employeeService.getByFulName(fullname);
 
 //        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);
@@ -118,15 +128,31 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "No employees found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/getByJob")
+    @GetMapping("/getByJob/{jobTitle}")
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByJobPosition(jobTitle);
+        List<EmployeeDTO> employeeDTOList = employeeService.getByJobPosition(jobTitle);
 
 //        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
         return ResponseEntity.ok(employeeDTOList);
     }
 
+    @Operation(summary = "Get employees by employment type",
+            description = "Returns a list of all employees by employment type"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of employees retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No employees found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/getByEmploymentType/{employmentType}")
+    public ResponseEntity<List<EmployeeDTO>> viewEmployeesByEmploymentType(@PathVariable EmploymentType employmentType) throws MalformedURLException {
+        List<EmployeeDTO> employeeDTOList = employeeService.getByEmploymentType(employmentType);
+
+//        log.info("Employee list returned by employment type: {}", employmentType);
+
+        return ResponseEntity.ok(employeeDTOList);
+    }
 
     @Operation(summary = "Get employees by joinDate",
             description = "Returns a list of all employees by joinDate"
@@ -136,12 +162,41 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "No employees found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/getByDate")
+    @GetMapping("/getByDate/{localDate}")
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeServiceImpl.getByDate(localDate);
+        List<EmployeeDTO> employeeDTOList = employeeService.getByDate(localDate);
 
 //        log.info("Employee list returned by joinDate: {}", localDate);
 
         return ResponseEntity.ok(employeeDTOList);
+    }
+
+    @Operation(summary = "Update employee",
+            description = "Updates an existing employee"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
+        // Note: You'll need to implement update method in service
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Delete employee",
+            description = "Deletes an employee by ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Employee deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Employee not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

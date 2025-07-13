@@ -4,7 +4,6 @@ import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.Status;
-import com.example.HR.exception.NotFoundException;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +17,7 @@ public class Convert {
 
         Employee employee = new Employee();
 
+        // Set basic employee properties
         employee.setFullname(dto.getFullname());
         employee.setEmployeeId(dto.getEmployeeId());
         employee.setJoinDate(dto.getJoinDate());
@@ -27,17 +27,11 @@ public class Convert {
         employee.setJobTitle(dto.getJobTitle());
         employee.setAbout(dto.getAbout());
         employee.setEmploymentType(dto.getEmploymentType());
-        employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE); // default olaraq ACTIVE
+        employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE); // default as ACTIVE
 
-//       User user = userRepository.findByUsername(dto.getUsername())
-//        .orElseThrow(() -> new NotFoundException("User not found: " + dto.getUsername()));
-//
-//    User emailUser = userRepository.findByEmail(dto.getEmail())
-//        .orElseThrow(() -> new NotFoundException("User not found by email: " + dto.getEmail()));
-//
-//    employee.setUserName(user);
-//    employee.setEmail(emailUser);
-//    employee.setPassword(user);
+        // Note: User relationships should be set in the service layer
+        // as we need access to repositories to find existing users
+        // This method only handles the basic employee properties
 
         return employee;
     }
@@ -58,9 +52,9 @@ public class Convert {
             return null;
         }
 
-
         EmployeeDTO dto = new EmployeeDTO();
 
+        // Set basic employee properties
         dto.setFullname(employee.getFullname());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
@@ -72,18 +66,22 @@ public class Convert {
         dto.setEmploymentType(employee.getEmploymentType());
         dto.setStatus(employee.getStatus());
 
-        // User əlaqələri — sadəcə String olaraq
-        if (employee.getUsername() != null)
+        // User relationships — convert to String
+        if (employee.getUsername() != null) {
             dto.setUsername(employee.getUsername().getUsername());
+        }
 
-        if (employee.getEmail() != null)
+        if (employee.getEmail() != null) {
             dto.setEmail(employee.getEmail().getEmail());
+        }
 
-        if (employee.getPassword() != null)
+        if (employee.getPassword() != null) {
             dto.setPassword(employee.getPassword().getPassword());
+        }
 
-        if (employee.getConfirmPassword() != null)
-            dto.setConfirmPassword(employee.getConfirmPassword().getPassword());
+        if (employee.getConfirmPassword() != null) {
+            dto.setConfirmPassword(employee.getConfirmPassword().getConfirmPassword());
+        }
 
         return dto;
     }
