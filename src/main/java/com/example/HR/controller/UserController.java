@@ -1,120 +1,124 @@
 package com.example.HR.controller;
 
 import com.example.HR.dto.EmployeeDTO;
-import com.example.HR.entity.employee.Employee;
+import com.example.HR.dto.UserDTO;
+import com.example.HR.entity.User;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
-import com.example.HR.service.EmployeeService;
+import com.example.HR.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
-//@Validated
-@RequestMapping("/employee")
-public class EmployeeController {
+@RequestMapping("/user")
+public class UserController {
 
-    private final EmployeeService employeeService;
+    private final UserService userService;
 
-//    @Autowired
-//    public EmployeeController(EmployeeService employeeService) {
-//        this.employeeService = employeeService;
-//    }
 
+    //ADD NEW USER
     @Operation(
-            summary = "Create a new employee",
-            description = "Creates a new employee with the provided information"
+            summary = "Create a new user",
+            description = "Creates a new user with the provided information"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Employee created successfully"),
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
+    public ResponseEntity<UserDTO> createEmployee(@RequestBody @Valid UserDTO UserDTO) throws IOException {
 //        log.info("Creating new employee: {}", employeeDTO.getFullname());
-        EmployeeDTO savedEmployee = employeeService.save(employeeDTO);
+        UserDTO savedUser = userService.save(UserDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO);
     }
 
+    //GET ALL USERS
 
-    @Operation(summary = "Get all employees",
-            description = "Returns a list of all employees"
+    @Operation(summary = "Get all users",
+            description = "Returns a list of all users"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of employees retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No employees found"),
+            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No users found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getAll")
-    public ResponseEntity<List<EmployeeDTO>> viewAllEmployees() throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeService.getAll();
+    public ResponseEntity<List<UserDTO>> viewAllEmployees() throws MalformedURLException {
+        List<UserDTO> userDTOList = userService.getAll();
 //        log.info("All Employee list returned");
 
-        return ResponseEntity.ok(employeeDTOList);
+        return ResponseEntity.ok(userDTOList);
     }
 
-    @Operation(summary = "Get employee by ID",
-            description = "Returns a single employee by ID"
+    //GET USER BY ID
+
+    @Operation(summary = "Get user by ID",
+            description = "Returns a single user by ID"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Employee retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "Employee not found"),
+            @ApiResponse(responseCode = "200", description = "User retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {
-        return employeeService.getById(id)
+    public ResponseEntity<UserDTO> getEmployeeById(@PathVariable Long id) {
+        return userService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get employees by status",
-            description = "Returns a list of all employees by status"
+    //GET USER  BY EMAIL
+
+    @Operation(summary = "Get user by email",
+            description = "Returns a list of all user by email"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of employees retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No employees found"),
+            @ApiResponse(responseCode = "200", description = "List of user retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No user found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/getByStatus/{status}")
-    public ResponseEntity<List<EmployeeDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeService.getByStatus(status);
+    @GetMapping("/getByEmail/{email}")
+    public ResponseEntity<Optional<UserDTO>> viewEmployeesByEmail(@PathVariable String email) throws MalformedURLException {
+        Optional<UserDTO> userDTOList = userService.getByEmail(email);
 
 //        log.info("Employee list returned by status: {}", status);
 
-        return ResponseEntity.ok(employeeDTOList);
+        return ResponseEntity.ok(userDTOList);
     }
 
-    @Operation(summary = "Get employees by fullname",
-            description = "Returns a list of all employees by fullname"
+    //GET USER BY ROLE
+
+    @Operation(summary = "Get user by username",
+            description = "Returns a list of all user by username"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of employees retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No employees found"),
+            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No user found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/getByFullname/{fullname}")
-    public ResponseEntity<List<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeService.getByFulName(fullname);
+    @GetMapping("/getByRole/{role}")
+    public ResponseEntity<User> viewEmployeesByUsername(@PathVariable String username) throws MalformedURLException {
+        Optional<UserDTO> user = userService.getByUsername(username);
+        User convertedUser =
 
 //        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);

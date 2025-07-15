@@ -16,7 +16,7 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String username;
 
     @NotBlank
@@ -75,7 +75,7 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    public String  getEmail() {
+    public String getEmail() {
         return email;
     }
 

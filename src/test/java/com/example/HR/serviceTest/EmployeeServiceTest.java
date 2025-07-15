@@ -1,6 +1,7 @@
 package com.example.HR.serviceTest;
 
 import com.example.HR.converter.Convert;
+import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
@@ -11,7 +12,6 @@ import com.example.HR.repository.EmployeeRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.implement.EmployeeServiceImpl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -30,6 +30,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
+
+    @Mock
+    private EmployeeConverter employeeConverter;
 
     @Mock
     private EmployeeRepository employeeRepository;
@@ -81,10 +84,10 @@ public class EmployeeServiceTest {
 
         try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
             // Mock Convert.dtoToEntity
-            convertMock.when(() -> Convert.dtoToEntity(any(EmployeeDTO.class))).thenReturn(employee);
+            convertMock.when(() -> employeeConverter.dtoToEntity(any(EmployeeDTO.class))).thenReturn(employee);
 
             // Mock Convert.entityToDto
-            convertMock.when(() -> Convert.entityToDto(any(Employee.class))).thenReturn(employeeDTO);
+            convertMock.when(() -> employeeConverter.entityToDto(any(Employee.class))).thenReturn(employeeDTO);
 
             // Mock user repository calls
             when(userRepository.findByUsername("ilkin6666")).thenReturn(Optional.of(user));
@@ -104,8 +107,8 @@ public class EmployeeServiceTest {
             assertEquals("EMP123456", result.getEmployeeId());
 
             // Verify interactions
-            convertMock.verify(() -> Convert.dtoToEntity(employeeDTO), times(1));
-            convertMock.verify(() -> Convert.entityToDto(employee), times(1));
+            convertMock.verify(() -> employeeConverter.dtoToEntity(employeeDTO), times(1));
+            convertMock.verify(() -> employeeConverter.entityToDto(employee), times(1));
             verify(userRepository, times(1)).findByUsername("ilkin6666");
             verify(employeeRepository, times(1)).save(employee);
         }
@@ -168,7 +171,7 @@ public class EmployeeServiceTest {
         when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
 
         try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
-            convertMock.when(() -> Convert.entityToDto(employee)).thenReturn(employeeDTO);
+            convertMock.when(() -> employeeConverter.entityToDto(employee)).thenReturn(employeeDTO);
 
             Optional<EmployeeDTO> result = employeeServiceImpl.getById(employeeId);
 
@@ -199,8 +202,8 @@ public class EmployeeServiceTest {
         when(employeeRepository.findAll()).thenReturn(employees);
 
         try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
-            convertMock.when(() -> Convert.entityToDto(employee1)).thenReturn(dto1);
-            convertMock.when(() -> Convert.entityToDto(employee2)).thenReturn(dto2);
+            convertMock.when(() -> employeeConverter.entityToDto(employee1)).thenReturn(dto1);
+            convertMock.when(() -> employeeConverter.entityToDto(employee2)).thenReturn(dto2);
 
             List<EmployeeDTO> result = employeeServiceImpl.getAll();
 

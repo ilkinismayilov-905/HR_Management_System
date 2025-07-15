@@ -1,6 +1,6 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.Convert;
+import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
@@ -33,6 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final EmployeeConverter employeeConverter = new EmployeeConverter();
 //    private final Validator validator;
 
     @Autowired
@@ -81,7 +82,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         // Create Employee object using converter
-        Employee employee = Convert.dtoToEntity(employeeDTO);
+        Employee employee = employeeConverter.dtoToEntity(employeeDTO);
 
         // Set the existing User object for all three relationships
         employee.setUsername(existingUser);
@@ -92,7 +93,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee savedEmployee = employeeRepository.save(employee);
 
         // Return the saved employee as DTO
-        return Convert.entityToDto(savedEmployee);
+        return employeeConverter.entityToDto(savedEmployee);
 
     }
 
@@ -103,7 +104,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (optionalEmployee.isPresent()) {
 //            log.info("Employee was found with id: {}" + id);
             return optionalEmployee
-                    .map(Convert::entityToDto);
+                    .map(employeeConverter::entityToDto);
         }else {
 //            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
@@ -114,26 +115,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDTO> getAll() throws MalformedURLException {
         List<Employee> employeeList = employeeRepository.findAll();
 
-        return employeeList.stream()
-                .map(Convert::entityToDto)
-                .collect(Collectors.toList());
+        return employeeConverter.entityListToDtoList(employeeList);
     }
 
-
-
-//    public void validCheck(EmployeeDTO employeeDTO){
-//        Set<ConstraintViolation<EmployeeDTO>> violations = validator.validate(employeeDTO);
-//
-//        if (!violations.isEmpty()) {
-//            StringBuilder errorMsg = new StringBuilder();
-//            for (ConstraintViolation<EmployeeDTO> violation : violations) {
-//                errorMsg.append(violation.getPropertyPath()).append(": ")
-//                        .append(violation.getMessage()).append("; ");
-//            }
-    ////            log.warn("Fields should be valid");
-//            throw new ValidException("Validation failed: " + errorMsg.toString());
-//        }
-//    }
 
     @Override
     public List<EmployeeDTO> getByStatus(Status status) {
@@ -145,7 +129,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee list is empty for status: " + status);
         }
 
-        return Convert.entityListToDtoList(employeeStatus);
+        return employeeConverter.entityListToDtoList(employeeStatus);
     }
 
     @Override
@@ -157,7 +141,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee list is empty for job: " + jobTitle);
         }
 
-        return Convert.entityListToDtoList(employeeJob);
+        return employeeConverter.entityListToDtoList(employeeJob);
     }
 
     @Override
@@ -169,7 +153,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("No employees found for type: " + employmentType);
         }
 
-        return Convert.entityListToDtoList(employee);
+        return employeeConverter.entityListToDtoList(employee);
     }
 
     @Override
@@ -185,7 +169,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("No employees found for fullname: " + fullname);
         }
         return employeeList.stream()
-                .map(Convert::entityToDto)
+                .map(employeeConverter::entityToDto)
                 .collect(Collectors.toList());
     }
 
@@ -197,6 +181,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 //            log.warn("No employees found with date: {}", localDate);
             throw new EmployeeNotFoundException("No employees found for date: " + localDate);
         }
-        return Convert.entityListToDtoList(employeeList);
+        return employeeConverter.entityListToDtoList(employeeList);
     }
 }
