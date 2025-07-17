@@ -4,6 +4,7 @@ import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.converter.UserConverter;
 import com.example.HR.dto.UserDTO;
 import com.example.HR.entity.User;
+import com.example.HR.enums.UserRoles;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.UserRepository;
@@ -24,11 +25,12 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserConverter converter = new UserConverter();
+    private final UserConverter converter;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserConverter converter) {
         this.userRepository = userRepository;
+        this.converter = converter;
     }
 
     @Override
@@ -49,43 +51,43 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDTO> getByUsername(String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found by username: " + username));
 
-        if(user.isEmpty()){
-            throw new NotFoundException("User not found by username: " + username);
-        }
 
-        return Optional.ofNullable(converter.entityToDto(user.get()));
+        return Optional.ofNullable(converter.entityToDto(user));
     }
 
     @Override
     public Optional<UserDTO> getByPassword(String password) {
-        Optional<User> user = userRepository.findByPassword(password);
+        User user = userRepository.findByPassword(password)
+                .orElseThrow(() -> new NotFoundException("User not found by password: " + password));
 
-        if (user.isEmpty()){
-            throw new NotFoundException("User not found by password: " + password);
-        }
 
-        return Optional.ofNullable(converter.entityToDto(user.get()));
+        return Optional.ofNullable(converter.entityToDto(user));
     }
 
     @Override
     public Optional<UserDTO> getByEmail(String email) {
-        Optional<User> user = userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
 
-        if (user.isEmpty()){
-            throw new NotFoundException("User not found by email: " + email);
-        }
+        return Optional.ofNullable(converter.entityToDto(user));
+    }
 
-        return Optional.ofNullable(converter.entityToDto(user.get()));
+    @Override
+    public List<UserDTO> getByRoles(UserRoles role) {
+        List<User> user = userRepository.findByRoles(role);
+
+       return converter.entityListToDtoList(user);
     }
 
     @Override
     public void deleteById(Long id) {
-       if(userRepository.existsById(id)){
-           userRepository.deleteById(id);
-       }
-       throw new NoIDException("There is no user by id: " + id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoIDException("There is no user by id: " + id));
+
+        userRepository.delete(user);
 
     }
 
@@ -99,7 +101,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDTO update(Long id, UserDTO updatedDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found by id: " + id));
+
+        // Update only non-null fields from updatedDto
+//        if (updatedDto.getUsername() != null) user.setUsername(updatedDto.getUsername());
+//        if (updatedDto.getPassword() != null) user.setPassword(updatedDto.getPassword());
+//        if (updatedDto.getEmail() != null) user.setEmail(updatedDto.getEmail());
+//        if (updatedDto.getConfirmPassword() != null) user.setConfirmPassword(updatedDto.getConfirmPassword());
+//        if (updatedDto.getRoles() != null) user.setRoles(updatedDto.getRoles());
+
+        converter.update(updatedDto,user);
+
+        User savedUser = userRepository.save(user);
+        return converter.entityToDto(savedUser);
+    }
+
+    @Override
     public List<UserDTO> getAll() throws MalformedURLException {
         return converter.entityListToDtoList(userRepository.findAll());
     }
+
 }

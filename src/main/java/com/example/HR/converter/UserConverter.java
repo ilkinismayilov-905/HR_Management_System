@@ -37,4 +37,18 @@ public class UserConverter extends Convert<UserDTO, User> {
 
         return dto;
     }
+
+    /**
+     * Updates the given User entity with non-null values from the UserDTO.
+     */
+    public void update(UserDTO dto, User entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+        if (dto.getUsername() != null) entity.setUsername(dto.getUsername());
+        if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
+        if (dto.getEmail() != null) entity.setEmail(dto.getEmail());
+        if (dto.getConfirmPassword() != null) entity.setConfirmPassword(dto.getConfirmPassword());
+        if (dto.getRoles() != null) entity.setRoles(dto.getRoles());
+    }
 }

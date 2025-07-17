@@ -112,6 +112,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public EmployeeDTO update(Long id, EmployeeDTO updatedDto) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found by id: " + id));
+
+        // Use EmployeeConverter to update entity from DTO
+        employeeConverter.updateEntityFromDto(updatedDto, employee);
+
+        Employee savedEmployee = employeeRepository.save(employee);
+        return employeeConverter.entityToDto(savedEmployee);
+    }
+
+    @Override
     public List<EmployeeDTO> getAll() throws MalformedURLException {
         List<Employee> employeeList = employeeRepository.findAll();
 

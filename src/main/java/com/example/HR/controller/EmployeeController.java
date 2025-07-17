@@ -26,17 +26,17 @@ import java.util.List;
 @RestController
 @CrossOrigin
 @Slf4j
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 //@Validated
 @RequestMapping("/employee")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-//    @Autowired
-//    public EmployeeController(EmployeeService employeeService) {
-//        this.employeeService = employeeService;
-//    }
+    @Autowired
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @Operation(
             summary = "Create a new employee",
@@ -171,6 +171,8 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeDTOList);
     }
 
+    //UPDATE EMPLOYEE
+
     @Operation(summary = "Update employee",
             description = "Updates an existing employee"
     )
@@ -182,7 +184,7 @@ public class EmployeeController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable Long id, @RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
-        // Note: You'll need to implement update method in service
+        employeeService.update(id,employeeDTO);
         return ResponseEntity.ok().build();
     }
 

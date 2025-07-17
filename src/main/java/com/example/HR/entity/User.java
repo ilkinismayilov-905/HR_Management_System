@@ -4,6 +4,7 @@ import com.example.HR.enums.UserRoles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 @Entity(name = "users")
 //@AllArgsConstructor
@@ -24,7 +25,7 @@ public class User {
     private String password;
     private String confirmPassword;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     @Email
     private String email;
 

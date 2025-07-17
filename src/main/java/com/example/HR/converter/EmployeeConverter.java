@@ -56,4 +56,38 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         }
         return dto;
     }
+
+    /**
+     * Updates the given Employee entity with non-null values from the EmployeeDTO.
+     * User relationships are updated only if the User object is not null.
+     * This does not create new User objects.
+     */
+    public void updateEntityFromDto(EmployeeDTO dto, Employee entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+        if (dto.getFullname() != null) entity.setFullname(dto.getFullname());
+        if (dto.getEmployeeId() != null) entity.setEmployeeId(dto.getEmployeeId());
+        if (dto.getJoinDate() != null) entity.setJoinDate(dto.getJoinDate());
+        if (dto.getPhoneNumber() != null) entity.setPhoneNumber(dto.getPhoneNumber());
+        if (dto.getCompany() != null) entity.setCompany(dto.getCompany());
+        if (dto.getDepartament() != null) entity.setDepartament(dto.getDepartament());
+        if (dto.getJobTitle() != null) entity.setJobTitle(dto.getJobTitle());
+        if (dto.getAbout() != null) entity.setAbout(dto.getAbout());
+        if (dto.getEmploymentType() != null) entity.setEmploymentType(dto.getEmploymentType());
+        if (dto.getStatus() != null) entity.setStatus(dto.getStatus());
+        // User relationships — update fields if User object exists
+        if (dto.getUsername() != null && entity.getUsername() != null) {
+            entity.getUsername().setUsername(dto.getUsername());
+        }
+        if (dto.getEmail() != null && entity.getEmail() != null) {
+            entity.getEmail().setEmail(dto.getEmail());
+        }
+        if (dto.getPassword() != null && entity.getPassword() != null) {
+            entity.getPassword().setPassword(dto.getPassword());
+        }
+        if (dto.getConfirmPassword() != null && entity.getConfirmPassword() != null) {
+            entity.getConfirmPassword().setConfirmPassword(dto.getConfirmPassword());
+        }
+    }
 } 
