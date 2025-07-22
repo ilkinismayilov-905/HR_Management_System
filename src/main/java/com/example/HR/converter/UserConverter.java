@@ -4,7 +4,13 @@ import com.example.HR.dto.UserDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.Status;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
+
+@NoArgsConstructor
+@Component
 public class UserConverter extends Convert<UserDTO, User> {
     @Override
     public User dtoToEntity(UserDTO dto) {
@@ -12,6 +18,7 @@ public class UserConverter extends Convert<UserDTO, User> {
             return null;
         }
         User user = new User();
+        user.setId(dto.getId());
         user.setUsername(dto.getUsername());
         user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail());
@@ -29,6 +36,7 @@ public class UserConverter extends Convert<UserDTO, User> {
         }
 
         UserDTO dto = new UserDTO();
+        dto.setId(entity.getId());
         dto.setUsername(entity.getUsername());
         dto.setPassword(entity.getPassword());
         dto.setEmail(entity.getEmail());
@@ -45,6 +53,7 @@ public class UserConverter extends Convert<UserDTO, User> {
         if (dto == null || entity == null) {
             return;
         }
+        if (dto.getId() != null) entity.setId(dto.getId());
         if (dto.getUsername() != null) entity.setUsername(dto.getUsername());
         if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
         if (dto.getEmail() != null) entity.setEmail(dto.getEmail());

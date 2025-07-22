@@ -11,6 +11,7 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
             return null;
         }
         Employee employee = new Employee();
+        employee.setId(dto.getId());
         employee.setFullname(dto.getFullname());
         employee.setEmployeeId(dto.getEmployeeId());
         employee.setJoinDate(dto.getJoinDate());
@@ -31,6 +32,7 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
             return null;
         }
         EmployeeDTO dto = new EmployeeDTO();
+        dto.setId(employee.getId());
         dto.setFullname(employee.getFullname());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
@@ -66,6 +68,7 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         if (dto == null || entity == null) {
             return;
         }
+        if(dto.getId() != null) entity.setId(dto.getId());
         if (dto.getFullname() != null) entity.setFullname(dto.getFullname());
         if (dto.getEmployeeId() != null) entity.setEmployeeId(dto.getEmployeeId());
         if (dto.getJoinDate() != null) entity.setJoinDate(dto.getJoinDate());

@@ -68,11 +68,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
+    public List<UserDTO> getByEmail(String email) {
+        List<User> user = userRepository.findByEmail(email);
 
-        return Optional.ofNullable(converter.entityToDto(user));
+        if(user.isEmpty()){
+            throw new NotFoundException("There is no user by email: " + email);
+        }
+
+        return converter.entityListToDtoList(user);
     }
 
     @Override
@@ -93,11 +96,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserDTO> getById(Long id) {
-        if(userRepository.existsById(id)){
-            Optional<User> user = userRepository.findById(id);
-            return Optional.ofNullable(converter.entityToDto(user.get()));
-        }
-        throw new NoIDException("There is no user by id: " + id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoIDException("There is no user found by id: " + id));
+
+        return Optional.ofNullable(converter.entityToDto(user));
+
     }
 
     @Override

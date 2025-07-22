@@ -14,10 +14,12 @@ import lombok.NoArgsConstructor;
 import javax.xml.transform.Source;
 import java.time.LocalDate;
 
-//@Data
-//@AllArgsConstructor
-//@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeDTO{
+
+    private Long id;
 
     @Schema(description = "Full name of the employee", example = "John Doe")
     @NotBlank(message = "Full name is required")
@@ -75,135 +77,160 @@ public class EmployeeDTO{
     @Schema(description = "Employee status", example = "ACTIVE")
     private Status status;
 
-    public EmployeeDTO(String fullname, String employeeId, LocalDate joinDate, String username, String email, String password, String confirmPassword, String phoneNumber, String company, Departament departament, JobTitle jobTitle, String about, EmploymentType employmentType, Status status) {
-        this.fullname = fullname;
-        this.employeeId = employeeId;
-        this.joinDate = joinDate;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-        this.phoneNumber = phoneNumber;
-        this.company = company;
-        this.departament = departament;
-        this.jobTitle = jobTitle;
-        this.about = about;
-        this.employmentType = employmentType;
-        this.status = status;
-    }
-
-    public EmployeeDTO() {
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(LocalDate joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public Departament getDepartament() {
-        return departament;
-    }
-
-    public void setDepartament(Departament departament) {
-        this.departament = departament;
-    }
-
-    public JobTitle getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(JobTitle jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public String getAbout() {
-        return about;
-    }
-
-    public void setAbout(String about) {
-        this.about = about;
-    }
-
-    public EmploymentType getEmploymentType() {
-        return employmentType;
-    }
-
-    public void setEmploymentType(EmploymentType employmentType) {
-        this.employmentType = employmentType;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+    private String photo;
+//
+//    public EmployeeDTO(String fullname,
+//                       String employeeId,
+//                       LocalDate joinDate,
+//                       String username,
+//                       String email,
+//                       String password,
+//                       String confirmPassword,
+//                       String phoneNumber,
+//                       String company,
+//                       Departament departament,
+//                       JobTitle jobTitle,
+//                       String about,
+//                       EmploymentType employmentType,
+//                       Status status,
+//                       String photo) {
+//        this.fullname = fullname;
+//        this.employeeId = employeeId;
+//        this.joinDate = joinDate;
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//        this.confirmPassword = confirmPassword;
+//        this.phoneNumber = phoneNumber;
+//        this.company = company;
+//        this.departament = departament;
+//        this.jobTitle = jobTitle;
+//        this.about = about;
+//        this.employmentType = employmentType;
+//        this.status = status;
+//        this.photo = photo;
+//    }
+//
+//    public EmployeeDTO() {
+//    }
+//
+//    public String getFullname() {
+//        return fullname;
+//    }
+//
+//    public void setFullname(String fullname) {
+//        this.fullname = fullname;
+//    }
+//
+//    public String getEmployeeId() {
+//        return employeeId;
+//    }
+//
+//    public void setEmployeeId(String employeeId) {
+//        this.employeeId = employeeId;
+//    }
+//
+//    public LocalDate getJoinDate() {
+//        return joinDate;
+//    }
+//
+//    public void setJoinDate(LocalDate joinDate) {
+//        this.joinDate = joinDate;
+//    }
+//
+//    public String getUsername() {
+//        return username;
+//    }
+//
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
+//    public String getConfirmPassword() {
+//        return confirmPassword;
+//    }
+//
+//    public void setConfirmPassword(String confirmPassword) {
+//        this.confirmPassword = confirmPassword;
+//    }
+//
+//    public String getPhoneNumber() {
+//        return phoneNumber;
+//    }
+//
+//    public void setPhoneNumber(String phoneNumber) {
+//        this.phoneNumber = phoneNumber;
+//    }
+//
+//    public String getCompany() {
+//        return company;
+//    }
+//
+//    public void setCompany(String company) {
+//        this.company = company;
+//    }
+//
+//    public Departament getDepartament() {
+//        return departament;
+//    }
+//
+//    public void setDepartament(Departament departament) {
+//        this.departament = departament;
+//    }
+//
+//    public JobTitle getJobTitle() {
+//        return jobTitle;
+//    }
+//
+//    public void setJobTitle(JobTitle jobTitle) {
+//        this.jobTitle = jobTitle;
+//    }
+//
+//    public String getAbout() {
+//        return about;
+//    }
+//
+//    public void setAbout(String about) {
+//        this.about = about;
+//    }
+//
+//    public EmploymentType getEmploymentType() {
+//        return employmentType;
+//    }
+//
+//    public void setEmploymentType(EmploymentType employmentType) {
+//        this.employmentType = employmentType;
+//    }
+//
+//    public Status getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(Status status) {
+//        this.status = status;
+//    }
+//
+//    public String getPhoto() {
+//        return photo;
+//    }
+//
+//    public void setPhoto(String photo) {
+//        this.photo = photo;
+//    }
 }

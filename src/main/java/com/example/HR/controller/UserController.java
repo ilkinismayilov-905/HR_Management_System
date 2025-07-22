@@ -53,11 +53,11 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<UserDTO> createEmployee(@RequestBody @Valid UserDTO UserDTO) throws IOException {
-//        log.info("Creating new employee: {}", employeeDTO.getFullname());
+    public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO UserDTO) throws IOException {
+        log.info("Creating new user: {}", UserDTO.getUsername());
         UserDTO savedUser = userService.save(UserDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(UserDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     //GET ALL USERS
@@ -71,9 +71,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getAll")
-    public ResponseEntity<List<UserDTO>> viewAllEmployees() throws MalformedURLException {
+    public ResponseEntity<List<UserDTO>> viewAllUsers() throws MalformedURLException {
         List<UserDTO> userDTOList = userService.getAll();
-//        log.info("All Employee list returned");
+        log.info("All user list returned");
 
         return ResponseEntity.ok(userDTOList);
     }
@@ -89,7 +89,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
         return userService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -106,10 +106,10 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<Optional<UserDTO>> viewEmployeesByEmail(@PathVariable String email) throws MalformedURLException {
-        Optional<UserDTO> userDTOList = userService.getByEmail(email);
+    public ResponseEntity<List<UserDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
+        List<UserDTO> userDTOList = userService.getByEmail(email);
 
-//        log.info("Employee list returned by status: {}", status);
+        log.info("User list returned by email: {}", email);
 
         return ResponseEntity.ok(userDTOList);
     }
@@ -128,7 +128,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> viewUsersByRole(@PathVariable UserRoles role) throws MalformedURLException {
         List<UserDTO> user = userService.getByRoles(role);
 
-//        log.info("Employee list returned by fullname: {}" ,fullname);
+        log.info("User list returned by role: {}" ,role);
         return ResponseEntity.ok(user);
     }
 
