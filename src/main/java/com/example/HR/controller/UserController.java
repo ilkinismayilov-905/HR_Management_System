@@ -54,7 +54,7 @@ public class UserController {
     })
     @PostMapping("/add")
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO UserDTO) throws IOException {
-        log.info("Creating new user: {}", UserDTO.getUsername());
+//        log.info("Creating new user: {}", UserDTO.getUsername());
         UserDTO savedUser = userService.save(UserDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
@@ -73,7 +73,7 @@ public class UserController {
     @GetMapping("/getAll")
     public ResponseEntity<List<UserDTO>> viewAllUsers() throws MalformedURLException {
         List<UserDTO> userDTOList = userService.getAll();
-        log.info("All user list returned");
+//        log.info("All user list returned");
 
         return ResponseEntity.ok(userDTOList);
     }
@@ -109,7 +109,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
         List<UserDTO> userDTOList = userService.getByEmail(email);
 
-        log.info("User list returned by email: {}", email);
+//        log.info("User list returned by email: {}", email);
 
         return ResponseEntity.ok(userDTOList);
     }
@@ -128,7 +128,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> viewUsersByRole(@PathVariable UserRoles role) throws MalformedURLException {
         List<UserDTO> user = userService.getByRoles(role);
 
-        log.info("User list returned by role: {}" ,role);
+//        log.info("User list returned by role: {}" ,role);
         return ResponseEntity.ok(user);
     }
 

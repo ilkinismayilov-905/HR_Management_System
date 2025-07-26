@@ -21,7 +21,10 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         employee.setJobTitle(dto.getJobTitle());
         employee.setAbout(dto.getAbout());
         employee.setEmploymentType(dto.getEmploymentType());
-        employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE); // default as ACTIVE
+        employee.setStatus(dto.getStatus() != null ? dto.getStatus() : Status.ACTIVE);// default as ACTIVE
+//        employee.setImageType(dto.getImageType());
+//        employee.setImageName(dto.getImageName());
+//        employee.setImageDate(dto.getImageDate());
         // Note: User relationships should be set in the service layer
         return employee;
     }
@@ -43,6 +46,9 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         dto.setAbout(employee.getAbout());
         dto.setEmploymentType(employee.getEmploymentType());
         dto.setStatus(employee.getStatus());
+//        dto.setImageType(employee.getImageType());
+//        dto.setImageName(employee.getImageName());
+//        dto.setImageDate(employee.getImageDate());
         // User relationships — convert to String
         if (employee.getUsername() != null) {
             dto.setUsername(employee.getUsername().getUsername());

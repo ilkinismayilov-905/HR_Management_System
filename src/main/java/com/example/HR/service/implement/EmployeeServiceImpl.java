@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -44,10 +45,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteById(Long id) {
         if (employeeRepository.existsById(id)) {
-            log.info("Deleted");
+//            log.info("Deleted");
             employeeRepository.deleteById(id);
         }else {
-            log.warn("There is no Employee with this ID");
+//            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
         }
 
@@ -58,7 +59,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 //        validCheck(employeeDTO);
 
-        log.info("Employee saved: {}" ,employeeDTO.getFullname());
+//        log.info("Employee saved: {}" ,employeeDTO.getFullname());
 
         // Find existing User by username, email, and password
         User existingUser = userRepository.findByUsername(employeeDTO.getUsername())
@@ -101,11 +102,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
 
         if (optionalEmployee.isPresent()) {
-            log.info("Employee was found with id: {}" + id);
+//            log.info("Employee was found with id: {}" + id);
             return optionalEmployee
                     .map(employeeConverter::entityToDto);
         }else {
-            log.warn("There is no Employee with this ID");
+//            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
         }
     }
@@ -136,7 +137,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
 
         if (employeeStatus == null || employeeStatus.isEmpty()) {
-            log.warn("No employees found with status: {}", status);
+//            log.warn("No employees found with status: {}", status);
             throw new EmployeeNotFoundException("Employee list is empty for status: " + status);
         }
 
@@ -148,7 +149,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
 
         if(employeeJob == null || employeeJob.isEmpty()){
-            log.warn("No employees found with job: {}", jobTitle);
+//            log.warn("No employees found with job: {}", jobTitle);
             throw new EmployeeNotFoundException("Employee list is empty for job: " + jobTitle);
         }
 
@@ -160,7 +161,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
 
         if(employee == null || employee.isEmpty()){
-            log.warn("No employees found for type: {}", employmentType);
+//            log.warn("No employees found for type: {}", employmentType);
             throw new EmployeeNotFoundException("No employees found for type: " + employmentType);
         }
 
@@ -176,7 +177,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeList = employeeRepository.getEmployeeByFullname(fullname.trim());
 
         if(employeeList == null || employeeList.isEmpty()){
-           log.warn("No employees found for fullname: {}", fullname);
+//           log.warn("No employees found for fullname: {}", fullname);
             throw new EmployeeNotFoundException("No employees found for fullname: " + fullname);
         }
         return employeeList.stream()
@@ -189,9 +190,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
 
         if(employeeList == null || employeeList.isEmpty()){
-            log.warn("No employees found with date: {}", localDate);
+//            log.warn("No employees found with date: {}", localDate);
             throw new EmployeeNotFoundException("No employees found for date: " + localDate);
         }
         return employeeConverter.entityListToDtoList(employeeList);
+    }
+
+    @Override
+    public EmployeeDTO addEmployee(EmployeeDTO employeeDTO, MultipartFile imageFile) throws IOException {
+//        employeeDTO.setImageName(imageFile.getOriginalFilename());
+//        employeeDTO.setImageType(imageFile.getContentType());
+//        employeeDTO.setImageDate(imageFile.getBytes());
+        Employee employee = employeeConverter.dtoToEntity(employeeDTO);
+        Employee savedEmployee = employeeRepository.save(employee);
+        return employeeConverter.entityToDto(savedEmployee);
     }
 }

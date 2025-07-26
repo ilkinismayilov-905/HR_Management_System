@@ -6,18 +6,18 @@ import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.service.EmployeeService;
-import com.example.HR.service.implement.FileUploadService;
+//import com.example.HR.service.implement.FileUploadService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,12 +25,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
 @Slf4j
-//@RequiredArgsConstructor
-//@Validated
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -51,20 +50,25 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<EmployeeDTO> createEmployee(@ModelAttribute @Valid EmployeeDTO employeeDTO,
-                                                      @RequestParam("photo") MultipartFile multipartFile) throws IOException {
-//        log.info("Creating new employee: {}", employeeDTO.getFullname());
-        if(!multipartFile.isEmpty()){
-            String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-            employeeDTO.setPhoto(fileName);
-            EmployeeDTO savedEmployee = employeeService.save(employeeDTO);
-
-            String uploadDir = "employee-photos/"+savedEmployee.getUsername();
-            FileUploadService.uploadFile(uploadDir,fileName,multipartFile);
-        }
-
-
-
+    public ResponseEntity<?> createEmployee(@RequestBody @Valid EmployeeDTO employeeDTO) throws IOException {
+        log.info("=== Employee Creation Request ===");
+        log.info("Creating new employee: {}", employeeDTO.getFullname());
+        log.info("Email received: '{}'", employeeDTO.getEmail());
+        log.info("Username received: '{}'", employeeDTO.getUsername());
+        log.info("Password received: '{}'", employeeDTO.getPassword());
+        log.info("ConfirmPassword received: '{}'", employeeDTO.getConfirmPassword());
+        log.info("EmployeeId received: '{}'", employeeDTO.getEmployeeId());
+        log.info("PhoneNumber received: '{}'", employeeDTO.getPhoneNumber());
+        log.info("Company received: '{}'", employeeDTO.getCompany());
+        log.info("Departament received: '{}'", employeeDTO.getDepartament());
+        log.info("JobTitle received: '{}'", employeeDTO.getJobTitle());
+        log.info("EmploymentType received: '{}'", employeeDTO.getEmploymentType());
+        log.info("Status received: '{}'", employeeDTO.getStatus());
+        log.info("About received: '{}'", employeeDTO.getAbout());
+        log.info("JoinDate received: '{}'", employeeDTO.getJoinDate());
+        log.info("=================================");
+        
+        EmployeeDTO employee = employeeService.save(employeeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -80,7 +84,7 @@ public class EmployeeController {
     @GetMapping("/getAll")
     public ResponseEntity<List<EmployeeDTO>> viewAllEmployees() throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getAll();
-        log.info("All Employee list returned");
+//        log.info("All Employee list returned");
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -112,7 +116,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getByStatus(status);
 
-        log.info("Employee list returned by status: {}", status);
+//        log.info("Employee list returned by status: {}", status);
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -129,7 +133,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getByFulName(fullname);
 
-        log.info("Employee list returned by fullname: {}" ,fullname);
+//        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);
     }
 
@@ -145,7 +149,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getByJobPosition(jobTitle);
 
-        log.info("Employee list returned by jobTitle: {}", jobTitle);
+//        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -162,7 +166,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByEmploymentType(@PathVariable EmploymentType employmentType) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getByEmploymentType(employmentType);
 
-        log.info("Employee list returned by employment type: {}", employmentType);
+//        log.info("Employee list returned by employment type: {}", employmentType);
 
         return ResponseEntity.ok(employeeDTOList);
     }
@@ -179,7 +183,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
         List<EmployeeDTO> employeeDTOList = employeeService.getByDate(localDate);
 
-        log.info("Employee list returned by joinDate: {}", localDate);
+//        log.info("Employee list returned by joinDate: {}", localDate);
 
         return ResponseEntity.ok(employeeDTOList);
     }
