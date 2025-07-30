@@ -12,7 +12,6 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         }
         Employee employee = new Employee();
         employee.setId(dto.getId());
-        employee.setFullname(dto.getFullname());
         employee.setEmployeeId(dto.getEmployeeId());
         employee.setJoinDate(dto.getJoinDate());
         employee.setPhoneNumber(dto.getPhoneNumber());
@@ -36,7 +35,6 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         }
         EmployeeDTO dto = new EmployeeDTO();
         dto.setId(employee.getId());
-        dto.setFullname(employee.getFullname());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
         dto.setPhoneNumber(employee.getPhoneNumber());
@@ -50,17 +48,14 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
 //        dto.setImageName(employee.getImageName());
 //        dto.setImageDate(employee.getImageDate());
         // User relationships — convert to String
-        if (employee.getUsername() != null) {
-            dto.setUsername(employee.getUsername().getUsername());
+        if (employee.getFullname() != null) {
+            dto.setFullname(employee.getFullname().getFullname());
         }
         if (employee.getEmail() != null) {
             dto.setEmail(employee.getEmail().getEmail());
         }
         if (employee.getPassword() != null) {
             dto.setPassword(employee.getPassword().getPassword());
-        }
-        if (employee.getConfirmPassword() != null) {
-            dto.setConfirmPassword(employee.getConfirmPassword().getConfirmPassword());
         }
         return dto;
     }
@@ -75,7 +70,6 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
             return;
         }
         if(dto.getId() != null) entity.setId(dto.getId());
-        if (dto.getFullname() != null) entity.setFullname(dto.getFullname());
         if (dto.getEmployeeId() != null) entity.setEmployeeId(dto.getEmployeeId());
         if (dto.getJoinDate() != null) entity.setJoinDate(dto.getJoinDate());
         if (dto.getPhoneNumber() != null) entity.setPhoneNumber(dto.getPhoneNumber());
@@ -86,17 +80,14 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
         if (dto.getEmploymentType() != null) entity.setEmploymentType(dto.getEmploymentType());
         if (dto.getStatus() != null) entity.setStatus(dto.getStatus());
         // User relationships — update fields if User object exists
-        if (dto.getUsername() != null && entity.getUsername() != null) {
-            entity.getUsername().setUsername(dto.getUsername());
+        if (dto.getFullname() != null && entity.getFullname() != null) {
+            entity.getFullname().setFullname(dto.getFullname());
         }
         if (dto.getEmail() != null && entity.getEmail() != null) {
             entity.getEmail().setEmail(dto.getEmail());
         }
         if (dto.getPassword() != null && entity.getPassword() != null) {
             entity.getPassword().setPassword(dto.getPassword());
-        }
-        if (dto.getConfirmPassword() != null && entity.getConfirmPassword() != null) {
-            entity.getConfirmPassword().setConfirmPassword(dto.getConfirmPassword());
         }
     }
 } 

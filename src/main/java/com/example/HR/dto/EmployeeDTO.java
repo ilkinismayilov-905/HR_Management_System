@@ -72,10 +72,6 @@ public class EmployeeDTO{
     @PastOrPresent(message = "Join date cannot be in the future")
     private LocalDate joinDate;
 
-    @Schema(description = "Username linked with the user account", required = true, example = "johndoe")
-    @NotNull(message = "Username is required")
-    private String username;
-
     @Schema(description = "Email account of the employee", required = true, example = "johndoe@example.com")
     @NotNull(message = "Email is required")
     @Email(message = "Email should be valid")
@@ -188,14 +184,6 @@ public class EmployeeDTO{
 
     public void setJoinDate(LocalDate joinDate) {
         this.joinDate = joinDate;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getEmail() {

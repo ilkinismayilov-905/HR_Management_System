@@ -19,11 +19,10 @@ public class UserConverter extends Convert<UserDTO, User> {
         }
         User user = new User();
         user.setId(dto.getId());
-        user.setUsername(dto.getUsername());
+        user.setFullname(dto.getFullname());
         user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail());
-        user.setConfirmPassword(dto.getConfirmPassword());
-        user.setRoles(dto.getRoles());
+//        user.setRoles(dto.getRoles());
 
         // Note: User relationships should be set in the service layer
         return user;
@@ -37,11 +36,10 @@ public class UserConverter extends Convert<UserDTO, User> {
 
         UserDTO dto = new UserDTO();
         dto.setId(entity.getId());
-        dto.setUsername(entity.getUsername());
+        dto.setFullname(entity.getFullname());
         dto.setPassword(entity.getPassword());
         dto.setEmail(entity.getEmail());
-        dto.setConfirmPassword(entity.getConfirmPassword());
-        dto.setRoles(entity.getRoles());
+//        dto.setRoles(entity.getRoles());
 
         return dto;
     }
@@ -54,10 +52,9 @@ public class UserConverter extends Convert<UserDTO, User> {
             return;
         }
         if (dto.getId() != null) entity.setId(dto.getId());
-        if (dto.getUsername() != null) entity.setUsername(dto.getUsername());
+        if (dto.getFullname() != null) entity.setFullname(dto.getFullname());
         if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
         if (dto.getEmail() != null) entity.setEmail(dto.getEmail());
-        if (dto.getConfirmPassword() != null) entity.setConfirmPassword(dto.getConfirmPassword());
-        if (dto.getRoles() != null) entity.setRoles(dto.getRoles());
+//        if (dto.getRoles() != null) entity.setRoles(dto.getRoles());
     }
 }

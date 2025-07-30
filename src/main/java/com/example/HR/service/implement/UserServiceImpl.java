@@ -34,10 +34,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO entity) throws IOException {
+    public UserDTO save(UserDTO userDTO) throws IOException {
 
-        if(entity.getPassword().equals(entity.getConfirmPassword())) {
-            User convertedUser = converter.dtoToEntity(entity);
+        if(userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
+            User convertedUser = converter.dtoToEntity(userDTO);
 
             User savedUser = userRepository.save(convertedUser);
 
@@ -50,9 +50,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getByUsername(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User not found by username: " + username));
+    public Optional<UserDTO> getByFullname(String fullname) {
+        User user = userRepository.findByFullname(fullname)
+                .orElseThrow(() -> new NotFoundException("User not found by username: " + fullname));
 
 
         return Optional.ofNullable(converter.entityToDto(user));
@@ -78,12 +78,12 @@ public class UserServiceImpl implements UserService {
         return converter.entityListToDtoList(user);
     }
 
-    @Override
-    public List<UserDTO> getByRoles(UserRoles role) {
-        List<User> user = userRepository.findByRoles(role);
-
-       return converter.entityListToDtoList(user);
-    }
+//    @Override
+//    public List<UserDTO> getByRoles(UserRoles role) {
+//        List<User> user = userRepository.findByRoles(role);
+//
+//       return converter.entityListToDtoList(user);
+//    }
 
     @Override
     public void deleteById(Long id) {

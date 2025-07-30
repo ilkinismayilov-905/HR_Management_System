@@ -2,6 +2,7 @@ package com.example.HR.service.implement;
 
 import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.dto.EmployeeDTO;
+import com.example.HR.dto.UserDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.EmploymentType;
@@ -62,30 +63,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 //        log.info("Employee saved: {}" ,employeeDTO.getFullname());
 
         // Find existing User by username, email, and password
-        User existingUser = userRepository.findByUsername(employeeDTO.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found with username: " + employeeDTO.getUsername()));
+        User existingUser = userRepository.findByFullname(employeeDTO.getFullname())
+                .orElseThrow(() -> new NotFoundException("User not found with username: " + employeeDTO.getFullname()));
 
         // Verify that the found user has matching email and password
         if (!existingUser.getEmail().equals(employeeDTO.getEmail())) {
-            throw new ValidException("Email mismatch for user: " + employeeDTO.getUsername());
+            throw new ValidException("Email mismatch for user: " + employeeDTO.getFullname());
         }
 
         if (!existingUser.getPassword().equals(employeeDTO.getPassword())) {
-            throw new ValidException("Password mismatch for user: " + employeeDTO.getUsername());
+            throw new ValidException("Password mismatch for user: " + employeeDTO.getFullname());
         }
 
         // Check if an employee already exists for this user
-        if (employeeRepository.findByUsername(existingUser) != null ||
-                employeeRepository.findByEmail(existingUser) != null ||
-                employeeRepository.findByPassword(existingUser) != null) {
-            throw new ValidException("Employee already exists for user: " + employeeDTO.getUsername());
+//        if (employeeRepository.findByFullname(existingUser) != null ||
+//                employeeRepository.findByEmail(existingUser) != null ||
+//                employeeRepository.findByPassword(existingUser) != null) {
+//            throw new ValidException("Employee already exists for user: " + employeeDTO.getFullname());
+//        }
+        Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser);
+        if (existingEmployee.isPresent()) {
+            throw new ValidException("Employee already exists for user: " + employeeDTO.getFullname());
         }
 
         // Create Employee object using converter
         Employee employee = employeeConverter.dtoToEntity(employeeDTO);
 
         // Set the existing User object for all three relationships
-        employee.setUsername(existingUser);
+        employee.setFullname(existingUser);
         employee.setEmail(existingUser);
         employee.setPassword(existingUser);
 
@@ -169,20 +174,27 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getByFulName(String fullname) {
+    public Optional<EmployeeDTO> getByFullname(String fullname) {
 
-        if (fullname == null || fullname.trim().isEmpty()) {
-            throw new IllegalArgumentException("Fullname must not be blank");
-        }
-        List<Employee> employeeList = employeeRepository.getEmployeeByFullname(fullname.trim());
+        Optional<User> userOptional = userRepository.findByFullname(fullname);
 
-        if(employeeList == null || employeeList.isEmpty()){
-//           log.warn("No employees found for fullname: {}", fullname);
-            throw new EmployeeNotFoundException("No employees found for fullname: " + fullname);
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException("User not found with fullname: " + fullname);
         }
-        return employeeList.stream()
-                .map(employeeConverter::entityToDto)
-                .collect(Collectors.toList());
+
+
+        Optional<Employee> employee = employeeRepository.findByFullname(userOptional.get());
+//        if(employee.isPresent()){
+//            Employee employee1 = employee.get();
+//            return Optional.of(employeeConverter.entityToDto(employee1));
+//        }
+
+        if(employee.isEmpty()){
+            throw new NotFoundException("There is no Employee by fullname: " + fullname);
+        }
+        else {
+            return Optional.of(employeeConverter.entityToDto(employee.get()));
+        }
     }
 
     @Override

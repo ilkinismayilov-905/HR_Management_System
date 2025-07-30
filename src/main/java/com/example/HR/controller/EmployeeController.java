@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -54,7 +55,7 @@ public class EmployeeController {
         log.info("=== Employee Creation Request ===");
         log.info("Creating new employee: {}", employeeDTO.getFullname());
         log.info("Email received: '{}'", employeeDTO.getEmail());
-        log.info("Username received: '{}'", employeeDTO.getUsername());
+        log.info("Username received: '{}'", employeeDTO.getFullname());
         log.info("Password received: '{}'", employeeDTO.getPassword());
         log.info("ConfirmPassword received: '{}'", employeeDTO.getConfirmPassword());
         log.info("EmployeeId received: '{}'", employeeDTO.getEmployeeId());
@@ -130,8 +131,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByFullname/{fullname}")
-    public ResponseEntity<List<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
-        List<EmployeeDTO> employeeDTOList = employeeService.getByFulName(fullname);
+    public ResponseEntity<Optional<EmployeeDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
+        Optional<EmployeeDTO> employeeDTOList = employeeService.getByFullname(fullname);
 
 //        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);

@@ -32,19 +32,18 @@ public class User {
 
     @NotBlank
     @Column(nullable = false,unique = true)
-    private String username;
+    private String fullname;
 
     @NotBlank
     @Column(unique = true,nullable = false)
     private String password;
-    private String confirmPassword;
 
     @Column(nullable = false,unique = true)
     @Email
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private UserRoles roles;
+//    @Enumerated(EnumType.STRING)
+//    private UserRoles roles;
 
     public Long getId() {
         return id;
@@ -54,12 +53,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getPassword() {
@@ -70,14 +69,6 @@ public class User {
         this.password = password;
     }
 
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -86,11 +77,11 @@ public class User {
         this.email = email;
     }
 
-    public UserRoles getRoles() {
-        return roles;
-    }
-
-    public void setRoles(UserRoles roles) {
-        this.roles = roles;
-    }
+//    public UserRoles getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(UserRoles roles) {
+//        this.roles = roles;
+//    }
 }

@@ -8,15 +8,15 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     public List<Employee> getEmployeeByStatus(Status status);
     public List<Employee> getEmployeeByJobTitle(JobTitle jobTitle);
-    public List<Employee> getEmployeeByFullname(String fullName);
     public List<Employee> getEmployeeByEmploymentType(EmploymentType employmentType);
     public List<Employee> getEmployeeByJoinDate(LocalDate localDate);
-    public Employee findByUsername(User username);
+    Optional<Employee> findByFullname(User fullname);
     public Employee findByEmail(User email);
     public Employee findByPassword(User password);
 }

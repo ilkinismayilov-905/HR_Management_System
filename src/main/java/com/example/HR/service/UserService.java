@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService extends GeneralService<UserDTO,Long>{
-    public Optional<UserDTO> getByUsername(String username);
+    public Optional<UserDTO> getByFullname(String fullname);
     public Optional<UserDTO> getByPassword(String password);
     public List<UserDTO> getByEmail(String email);
-    public List<UserDTO> getByRoles(UserRoles role);
+//    public List<UserDTO> getByRoles(UserRoles role);
 }

@@ -20,9 +20,6 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String fullname;
-
     @Column(nullable = false,unique = true)
     @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number is invalid")
     private String phoneNumber;
@@ -52,15 +49,12 @@ public class Employee {
     private String employeeId;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_name_id", nullable = false,unique = true)
-    private User username;
+    @JoinColumn(name = "full_name_id", nullable = false,unique = true)
+    private User fullname;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "password_id", nullable = false,unique = true)
     private User password;
-
-    @Transient
-    private User confirmPassword;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "email_id", nullable = false,unique = true)
@@ -110,13 +104,6 @@ public Long getId() {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
     }
 
     public String getPhoneNumber() {
@@ -183,12 +170,12 @@ public Long getId() {
         this.employeeId = employeeId;
     }
 
-    public User getUsername() {
-        return username;
+    public User getFullname() {
+        return fullname;
     }
 
-    public void setUsername(User username) {
-        this.username = username;
+    public void setFullname(User fullname) {
+        this.fullname = fullname;
     }
 
     public User getPassword() {
@@ -197,14 +184,6 @@ public Long getId() {
 
     public void setPassword(User password) {
         this.password = password;
-    }
-
-    public User getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(User confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public User getEmail() {

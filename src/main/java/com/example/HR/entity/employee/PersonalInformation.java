@@ -62,7 +62,7 @@ public class PersonalInformation {
 
 
     public String getFullName() {
-        return employee != null ? employee.getFullname() : null;
+        return user != null ? user.getFullname() : null;
     }
 
     public String getPhoneNumber() {

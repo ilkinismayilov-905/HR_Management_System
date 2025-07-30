@@ -44,15 +44,15 @@ public class UserController {
 
     //ADD NEW USER
     @Operation(
-            summary = "Create a new user",
-            description = "Creates a new user with the provided information"
+            summary = "Register a new user",
+            description = "Register a new user with the provided information"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "201", description = "User registered successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/add")
+    @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody @Valid UserDTO UserDTO) throws IOException {
 //        log.info("Creating new user: {}", UserDTO.getUsername());
         UserDTO savedUser = userService.save(UserDTO);
@@ -114,23 +114,23 @@ public class UserController {
         return ResponseEntity.ok(userDTOList);
     }
 
-    //GET USER BY ROLE
-
-    @Operation(summary = "Get user by role",
-            description = "Returns a list of all user by role"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No user found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @GetMapping("/getByRole/{role}")
-    public ResponseEntity<List<UserDTO>> viewUsersByRole(@PathVariable UserRoles role) throws MalformedURLException {
-        List<UserDTO> user = userService.getByRoles(role);
-
-//        log.info("User list returned by role: {}" ,role);
-        return ResponseEntity.ok(user);
-    }
+//    //GET USER BY ROLE
+//
+//    @Operation(summary = "Get user by role",
+//            description = "Returns a list of all user by role"
+//    )
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully"),
+//            @ApiResponse(responseCode = "404", description = "No user found"),
+//            @ApiResponse(responseCode = "500", description = "Internal server error")
+//    })
+//    @GetMapping("/getByRole/{role}")
+//    public ResponseEntity<List<UserDTO>> viewUsersByRole(@PathVariable UserRoles role) throws MalformedURLException {
+//        List<UserDTO> user = userService.getByRoles(role);
+//
+////        log.info("User list returned by role: {}" ,role);
+//        return ResponseEntity.ok(user);
+//    }
 
     //UPDATE USER
 
@@ -162,4 +162,7 @@ public class UserController {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
 }

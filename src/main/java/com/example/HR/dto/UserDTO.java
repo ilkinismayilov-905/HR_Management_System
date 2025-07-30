@@ -33,17 +33,17 @@ public class UserDTO {
     @Schema(description = "Unique identifier", example = "1")
     private Long id;
 
-    @Schema(description = "Username for login", example = "johndoe", required = true)
-    @NotBlank(message = "Username is required")
-    private String username;
+    @Schema(description = "Fullname for login", example = "johndoe", required = true)
+    @NotBlank(message = "fullname is required")
+    private String fullname;
 
     @Schema(description = "Password for login", required = true)
     @NotBlank(message = "Password is required")
     private String password;
 
-    @Schema(description = "User roles assigned to the user", example = "ADMIN", allowableValues = {"USER", "ADMIN", "MODERATOR", "GUEST"}, required = true)
-    @NotNull(message = "Role is required")
-    private UserRoles roles;
+//    @Schema(description = "User roles assigned to the user", example = "ADMIN", allowableValues = {"USER", "ADMIN", "MODERATOR", "GUEST"}, required = true)
+//    @NotNull(message = "Role is required")
+//    private UserRoles roles;
 
     @Schema(description = "Email address", example = "johndoe@example.com", required = true)
     @Email(message = "Email should be valid")
@@ -62,12 +62,12 @@ public class UserDTO {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getPassword() {
@@ -78,13 +78,13 @@ public class UserDTO {
         this.password = password;
     }
 
-    public UserRoles getRoles() {
-        return roles;
-    }
-
-    public void setRoles(UserRoles roles) {
-        this.roles = roles;
-    }
+//    public UserRoles getRoles() {
+//        return roles;
+//    }
+//
+//    public void setRoles(UserRoles roles) {
+//        this.roles = roles;
+//    }
 
     public String getEmail() {
         return email;
