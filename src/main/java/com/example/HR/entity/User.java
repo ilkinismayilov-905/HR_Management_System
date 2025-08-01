@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 //@Setter
 //@Getter
 @Entity(name = "users")
@@ -42,8 +44,15 @@ public class User {
     @Email
     private String email;
 
-//    @Enumerated(EnumType.STRING)
-//    private UserRoles roles;
+    private String otp;
+
+    private LocalDateTime createdTime;
+
+    @Column(nullable = true)
+    private boolean active;
+
+    @Enumerated(EnumType.STRING)
+    private UserRoles roles;
 
     public Long getId() {
         return id;
@@ -77,11 +86,34 @@ public class User {
         this.email = email;
     }
 
-//    public UserRoles getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(UserRoles roles) {
-//        this.roles = roles;
-//    }
+    public String getOtp() {
+        return otp;
+    }
+
+    public void setOtp(String otp) {
+        this.otp = otp;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+        public UserRoles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(UserRoles roles) {
+        this.roles = roles;
+    }
 }

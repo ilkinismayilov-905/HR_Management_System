@@ -20,5 +20,7 @@ public class EmailUtil {
         mimeMessageHelper.setSubject("Verify OTP");
         mimeMessageHelper.setText("Your OTP is: " + otp);
 
+        javaMailSender.send(mimeMessage);
+
     }
 }

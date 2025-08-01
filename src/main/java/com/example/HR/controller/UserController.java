@@ -106,8 +106,8 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<List<UserDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
-        List<UserDTO> userDTOList = userService.getByEmail(email);
+    public ResponseEntity<Optional<UserDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
+        Optional<UserDTO> userDTOList = userService.getByEmail(email);
 
 //        log.info("User list returned by email: {}", email);
 
@@ -162,6 +162,27 @@ public class UserController {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Verify OTP",
+            description = "Verifies current OTP with given"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OTP deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "OTP not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/verify-otp")
+    public ResponseEntity<String> verifyAccount(@RequestParam String email,
+                                                @RequestParam String otp){
+        userService.verifyAccount(email,otp);
+
+        return ResponseEntity.ok().build();
+    }
+
+//    @PutMapping("/regenerate-otp")
+//    public ResponseEntity<String> regenerateOtp(@RequestParam String email){
+//
+//    }
 
 
 

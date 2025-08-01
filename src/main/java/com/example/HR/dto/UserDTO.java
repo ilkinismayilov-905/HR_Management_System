@@ -41,9 +41,9 @@ public class UserDTO {
     @NotBlank(message = "Password is required")
     private String password;
 
-//    @Schema(description = "User roles assigned to the user", example = "ADMIN", allowableValues = {"USER", "ADMIN", "MODERATOR", "GUEST"}, required = true)
-//    @NotNull(message = "Role is required")
-//    private UserRoles roles;
+    @Schema(description = "User roles assigned to the user", example = "ADMIN", allowableValues = {"USER", "ADMIN", "MODERATOR", "GUEST"}, required = true)
+    @NotNull(message = "Role is required")
+    private UserRoles roles;
 
     @Schema(description = "Email address", example = "johndoe@example.com", required = true)
     @Email(message = "Email should be valid")
@@ -78,13 +78,13 @@ public class UserDTO {
         this.password = password;
     }
 
-//    public UserRoles getRoles() {
-//        return roles;
-//    }
-//
-//    public void setRoles(UserRoles roles) {
-//        this.roles = roles;
-//    }
+    public UserRoles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(UserRoles roles) {
+        this.roles = roles;
+    }
 
     public String getEmail() {
         return email;

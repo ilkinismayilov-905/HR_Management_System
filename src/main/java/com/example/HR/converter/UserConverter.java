@@ -2,9 +2,6 @@ package com.example.HR.converter;
 
 import com.example.HR.dto.UserDTO;
 import com.example.HR.entity.User;
-import com.example.HR.entity.employee.Employee;
-import com.example.HR.enums.Status;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +19,7 @@ public class UserConverter extends Convert<UserDTO, User> {
         user.setFullname(dto.getFullname());
         user.setPassword(dto.getPassword());
         user.setEmail(dto.getEmail());
-//        user.setRoles(dto.getRoles());
+        user.setRoles(dto.getRoles());
 
         // Note: User relationships should be set in the service layer
         return user;
@@ -39,7 +36,7 @@ public class UserConverter extends Convert<UserDTO, User> {
         dto.setFullname(entity.getFullname());
         dto.setPassword(entity.getPassword());
         dto.setEmail(entity.getEmail());
-//        dto.setRoles(entity.getRoles());
+        dto.setRoles(entity.getRoles());
 
         return dto;
     }
@@ -55,6 +52,6 @@ public class UserConverter extends Convert<UserDTO, User> {
         if (dto.getFullname() != null) entity.setFullname(dto.getFullname());
         if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
         if (dto.getEmail() != null) entity.setEmail(dto.getEmail());
-//        if (dto.getRoles() != null) entity.setRoles(dto.getRoles());
+        if (dto.getRoles() != null) entity.setRoles(dto.getRoles());
     }
 }

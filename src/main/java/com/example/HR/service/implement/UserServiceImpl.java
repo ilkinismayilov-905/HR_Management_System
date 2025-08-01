@@ -9,6 +9,9 @@ import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.UserService;
+import com.example.HR.util.EmailUtil;
+import com.example.HR.util.OtpUtil;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,18 +32,31 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserConverter converter;
+    private final EmailUtil emailUtil;
+    private final OtpUtil otpUtil;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserConverter converter) {
+    public UserServiceImpl(UserRepository userRepository, UserConverter converter, EmailUtil emailUtil, OtpUtil otpUtil) {
         this.userRepository = userRepository;
         this.converter = converter;
+        this.emailUtil = emailUtil;
+        this.otpUtil = otpUtil;
     }
 
     @Override
     public UserDTO save(UserDTO userDTO) throws IOException {
+        String otp = otpUtil.generateOtp();
+        try {
+            emailUtil.sendOtpEmail(userDTO.getEmail(), otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to sent otp,try again");
+        }
+
 
         if(userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
             User convertedUser = converter.dtoToEntity(userDTO);
+            convertedUser.setOtp(otp);
+            convertedUser.setCreatedTime(LocalDateTime.now());
 
             User savedUser = userRepository.save(convertedUser);
 
@@ -68,14 +87,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getByEmail(String email) {
-        List<User> user = userRepository.findByEmail(email);
+    public Optional<UserDTO> getByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
 
-        if(user.isEmpty()){
-            throw new NotFoundException("There is no user by email: " + email);
-        }
 
-        return converter.entityListToDtoList(user);
+        return Optional.ofNullable(converter.entityToDto(user));
     }
 
 //    @Override
@@ -125,5 +142,50 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getAll() throws MalformedURLException {
         return converter.entityListToDtoList(userRepository.findAll());
     }
+
+    @Override
+    public String verifyAccount(String email,String otp){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
+
+        if(user.getOtp().equals(otp) && Duration.between(user.getCreatedTime(),
+                LocalDateTime.now()).getSeconds() < (1*60)) {
+            user.setActive(true);
+            userRepository.save(user);
+            return "OTP verified succesfully";
+        }
+
+        return "Please regenerate OTP";
+    }
+
+    @Override
+    public String regenerateOtp(String email){
+
+        String otp = otpUtil.generateOtp();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
+
+        try{
+            emailUtil.sendOtpEmail(email,otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to sent OTP");
+        }
+
+        user.setOtp(otp);
+        user.setCreatedTime(LocalDateTime.now());
+        userRepository.save(user);
+
+        return "Email sent,please verify account in 1minutes";
+
+    }
+
+//    @Override
+//    public String login(UserDTO userDTO){
+//        User user = userRepository.findByFullname(userDTO.getFullname())
+//                .orElseThrow(() -> new NotFoundException("User not found by username: " + userDTO.getFullname()));
+//
+//        if(userDTO.getPassword().equals(user.getPassword()));
+//    }
 
 }
