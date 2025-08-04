@@ -7,15 +7,23 @@ import com.example.HR.entity.User;
 import com.example.HR.enums.UserRoles;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.NotFoundException;
+import com.example.HR.exception.ValidException;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.UserService;
 import com.example.HR.util.EmailUtil;
 import com.example.HR.util.OtpUtil;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,19 +36,22 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
+@Valid
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserConverter converter;
     private final EmailUtil emailUtil;
     private final OtpUtil otpUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserConverter converter, EmailUtil emailUtil, OtpUtil otpUtil) {
+    public UserServiceImpl(UserRepository userRepository, UserConverter converter, EmailUtil emailUtil, OtpUtil otpUtil, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.converter = converter;
         this.emailUtil = emailUtil;
         this.otpUtil = otpUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -52,11 +63,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Unable to sent otp,try again");
         }
 
-
         if(userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
             User convertedUser = converter.dtoToEntity(userDTO);
             convertedUser.setOtp(otp);
             convertedUser.setCreatedTime(LocalDateTime.now());
+            convertedUser.setPassword(passwordEncoder.encode(convertedUser.getPassword()));
 
             User savedUser = userRepository.save(convertedUser);
 
@@ -65,7 +76,20 @@ public class UserServiceImpl implements UserService {
         else {
             throw  new IllegalArgumentException("ConfirmPassword did not matched");
         }
+//        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()){
+//            throw new ValidException("email should be unique");
+//        }
+//        else {
+//
+//        }
 
+    }
+
+    @Override
+    public boolean authenticateUser(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     @Override
@@ -152,10 +176,10 @@ public class UserServiceImpl implements UserService {
                 LocalDateTime.now()).getSeconds() < (1*60)) {
             user.setActive(true);
             userRepository.save(user);
-            return "OTP verified succesfully";
+            return "OTP_SUCCESS";
         }
 
-        return "Please regenerate OTP";
+        return "OTP_INVALID";
     }
 
     @Override
@@ -176,7 +200,7 @@ public class UserServiceImpl implements UserService {
         user.setCreatedTime(LocalDateTime.now());
         userRepository.save(user);
 
-        return "Email sent,please verify account in 1minutes";
+        return "OTP_SUCCES";
 
     }
 

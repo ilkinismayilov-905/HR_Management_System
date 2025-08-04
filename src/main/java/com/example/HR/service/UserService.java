@@ -13,5 +13,5 @@ public interface UserService extends GeneralService<UserDTO,Long>{
 //    public List<UserDTO> getByRoles(UserRoles role);
     public String verifyAccount(String email,String otp);
     public String regenerateOtp(String email);
-//    public String login(UserDTO user);
+    public boolean authenticateUser(String email, String password);
 }

@@ -16,6 +16,7 @@ public class EmailUtil {
     public void sendOtpEmail(String email,String otp) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom("ismayilovilkin2006@gmail.com");
         mimeMessageHelper.setTo(email);
         mimeMessageHelper.setSubject("Verify OTP");
         mimeMessageHelper.setText("Your OTP is: " + otp);

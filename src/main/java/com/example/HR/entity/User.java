@@ -11,6 +11,11 @@ import java.time.LocalDateTime;
 //@Setter
 //@Getter
 @Entity(name = "users")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = "fullname"),
+        @UniqueConstraint(columnNames = "email"),
+        @UniqueConstraint(columnNames = "password")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 //@Data
@@ -40,7 +45,7 @@ public class User {
     @Column(unique = true,nullable = false)
     private String password;
 
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     @Email
     private String email;
 
@@ -48,7 +53,7 @@ public class User {
 
     private LocalDateTime createdTime;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private boolean active;
 
     @Enumerated(EnumType.STRING)

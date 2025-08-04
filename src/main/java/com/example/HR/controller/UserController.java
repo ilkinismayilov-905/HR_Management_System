@@ -1,5 +1,6 @@
 package com.example.HR.controller;
 
+import com.example.HR.converter.UserConverter;
 import com.example.HR.dto.EmployeeDTO;
 import com.example.HR.dto.UserDTO;
 import com.example.HR.entity.User;
@@ -7,10 +8,14 @@ import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.enums.UserRoles;
+import com.example.HR.exception.NotFoundException;
 import com.example.HR.service.UserService;
+import com.example.HR.util.EmailUtil;
+import com.example.HR.util.OtpUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,15 +34,21 @@ import java.util.Optional;
 @CrossOrigin
 @Slf4j
 //@RequiredArgsConstructor
+@Valid
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
-
+    private final OtpUtil otpUtil;
+    private final EmailUtil emailUtil;
+    private final UserConverter userConverter;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, OtpUtil otpUtil, EmailUtil emailUtil, UserConverter userConverter) {
         this.userService = userService;
+        this.otpUtil = otpUtil;
+        this.emailUtil = emailUtil;
+        this.userConverter = userConverter;
     }
 
 
@@ -58,6 +69,16 @@ public class UserController {
         UserDTO savedUser = userService.save(UserDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String email, @RequestParam String password) {
+        boolean authenticated = userService.authenticateUser(email, password);
+        if (authenticated) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
     }
 
     //GET ALL USERS
@@ -174,15 +195,37 @@ public class UserController {
     @PutMapping("/verify-otp")
     public ResponseEntity<String> verifyAccount(@RequestParam String email,
                                                 @RequestParam String otp){
-        userService.verifyAccount(email,otp);
+        String result = userService.verifyAccount(email,otp);
 
-        return ResponseEntity.ok().build();
+        if ("OTP_SUCCESS".equals(result)) {
+            return ResponseEntity.ok("OTP verified successfully");
+        } else if ("OTP_INVALID".equals(result)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please regenerate OTP");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknown error");
+        }
     }
 
-//    @PutMapping("/regenerate-otp")
-//    public ResponseEntity<String> regenerateOtp(@RequestParam String email){
-//
-//    }
+    @PutMapping("/regenerate-otp")
+    public ResponseEntity<String> regenerateOtp(@RequestParam String email){
+        String result = userService.regenerateOtp(email);
+        if ("OTP_SUCCES".equals(result)) {
+
+            return ResponseEntity.ok("OTP regenerated successfully");
+
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Can not regenerate OTP");
+        }
+
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<?> sendOtp(@RequestParam String email) throws MessagingException {
+        String otp = otpUtil.generateOtp(); // 6 rəqəmli OTP yarat
+        emailUtil.sendOtpEmail(email, otp);
+        return ResponseEntity.ok("OTP email göndərildi");
+    }
 
 
 
