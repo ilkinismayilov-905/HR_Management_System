@@ -1,6 +1,5 @@
 package com.example.HR.dto;
 
-import com.example.HR.entity.User;
 import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
@@ -9,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import javax.xml.transform.Source;
 import java.time.LocalDate;
 
 //@Setter
@@ -17,48 +15,11 @@ import java.time.LocalDate;
 //@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDTO{
+public class EmployeeRequestDTO {
 
     @Schema(description = "Unique identifier", example = "1")
     private Long id;
 
-    //    private String photo;
-    //
-    //    public EmployeeDTO(String fullname,
-    //                       String employeeId,
-    //                       LocalDate joinDate,
-    //                       String username,
-    //                       String email,
-    //                       String password,
-    //                       String confirmPassword,
-    //                       String phoneNumber,
-    //                       String company,
-    //                       Departament departament,
-    //                       JobTitle jobTitle,
-    //                       String about,
-    //                       EmploymentType employmentType,
-    //                       Status status,
-    //                       String photo) {
-    //        this.fullname = fullname;
-    //        this.employeeId = employeeId;
-    //        this.joinDate = joinDate;
-    //        this.username = username;
-    //        this.email = email;
-    //        this.password = password;
-    //        this.confirmPassword = confirmPassword;
-    //        this.phoneNumber = phoneNumber;
-    //        this.company = company;
-    //        this.departament = departament;
-    //        this.jobTitle = jobTitle;
-    //        this.about = about;
-    //        this.employmentType = employmentType;
-    //        this.status = status;
-    //        this.photo = photo;
-    //    }
-    //
-    //    public EmployeeDTO() {
-    //    }
-    //
     @Schema(description = "Full name of the employee", example = "John Doe", required = true)
     @NotBlank(message = "Full name is required")
     private String fullname;

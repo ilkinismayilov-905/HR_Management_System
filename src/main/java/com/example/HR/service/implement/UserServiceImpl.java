@@ -1,13 +1,11 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.converter.UserConverter;
-import com.example.HR.dto.UserDTO;
+import com.example.HR.dto.UserRequestDTO;
+import com.example.HR.dto.UserResponseDTO;
 import com.example.HR.entity.User;
-import com.example.HR.enums.UserRoles;
 import com.example.HR.exception.NoIDException;
 import com.example.HR.exception.NotFoundException;
-import com.example.HR.exception.ValidException;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.UserService;
 import com.example.HR.util.EmailUtil;
@@ -15,19 +13,13 @@ import com.example.HR.util.OtpUtil;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,16 +47,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO save(UserDTO userDTO) throws IOException {
+    public UserRequestDTO save(UserRequestDTO userRequestDTO) throws IOException {
         String otp = otpUtil.generateOtp();
         try {
-            emailUtil.sendOtpEmail(userDTO.getEmail(), otp);
+            emailUtil.sendOtpEmail(userRequestDTO.getEmail(), otp);
         } catch (MessagingException e) {
             throw new RuntimeException("Unable to sent otp,try again");
         }
 
-        if(userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
-            User convertedUser = converter.dtoToEntity(userDTO);
+        if(userRequestDTO.getPassword().equals(userRequestDTO.getConfirmPassword())) {
+            User convertedUser = converter.dtoToEntity(userRequestDTO);
             convertedUser.setOtp(otp);
             convertedUser.setCreatedTime(LocalDateTime.now());
             convertedUser.setPassword(passwordEncoder.encode(convertedUser.getPassword()));
@@ -76,7 +68,7 @@ public class UserServiceImpl implements UserService {
         else {
             throw  new IllegalArgumentException("ConfirmPassword did not matched");
         }
-//        if(userRepository.findByEmail(userDTO.getEmail()).isPresent()){
+//        if(userRepository.findByEmail(userRequestDTO.getEmail()).isPresent()){
 //            throw new ValidException("email should be unique");
 //        }
 //        else {
@@ -86,14 +78,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticateUser(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-        return passwordEncoder.matches(password, user.getPassword());
-    }
-
-    @Override
-    public Optional<UserDTO> getByFullname(String fullname) {
+    public Optional<UserRequestDTO> getByFullname(String fullname) {
         User user = userRepository.findByFullname(fullname)
                 .orElseThrow(() -> new NotFoundException("User not found by username: " + fullname));
 
@@ -102,7 +87,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getByPassword(String password) {
+    public Optional<UserRequestDTO> getByPassword(String password) {
         User user = userRepository.findByPassword(password)
                 .orElseThrow(() -> new NotFoundException("User not found by password: " + password));
 
@@ -111,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getByEmail(String email) {
+    public Optional<UserRequestDTO> getByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
 
@@ -120,7 +105,7 @@ public class UserServiceImpl implements UserService {
     }
 
 //    @Override
-//    public List<UserDTO> getByRoles(UserRoles role) {
+//    public List<UserRequestDTO> getByRoles(UserRoles role) {
 //        List<User> user = userRepository.findByRoles(role);
 //
 //       return converter.entityListToDtoList(user);
@@ -136,7 +121,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getById(Long id) {
+    public Optional<UserRequestDTO> getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoIDException("There is no user found by id: " + id));
 
@@ -145,7 +130,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO update(Long id, UserDTO updatedDto) {
+    public UserRequestDTO update(Long id, UserRequestDTO updatedDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + id));
 
@@ -163,8 +148,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> getAll() throws MalformedURLException {
-        return converter.entityListToDtoList(userRepository.findAll());
+    public List<UserRequestDTO> getAll() throws MalformedURLException {
+        return List.of();
+    }
+
+    @Override
+    public List<UserResponseDTO> findAll() {
+        return converter.entityListToResponseDTOList(userRepository.findAll());
     }
 
     @Override
@@ -205,7 +195,7 @@ public class UserServiceImpl implements UserService {
     }
 
 //    @Override
-//    public String login(UserDTO userDTO){
+//    public String login(UserRequestDTO userDTO){
 //        User user = userRepository.findByFullname(userDTO.getFullname())
 //                .orElseThrow(() -> new NotFoundException("User not found by username: " + userDTO.getFullname()));
 //

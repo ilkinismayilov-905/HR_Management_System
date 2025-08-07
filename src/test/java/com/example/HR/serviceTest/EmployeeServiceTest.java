@@ -2,7 +2,7 @@
 //
 //import com.example.HR.converter.Convert;
 //import com.example.HR.converter.EmployeeConverter;
-//import com.example.HR.dto.EmployeeDTO;
+//import com.example.HR.dto.EmployeeRequestDTO;
 //import com.example.HR.entity.User;
 //import com.example.HR.entity.employee.Employee;
 //import com.example.HR.enums.*;
@@ -57,7 +57,7 @@
 //        user.setRoles(UserRoles.USER);
 //
 //        // Create test employee DTO
-//        EmployeeDTO employeeDTO = new EmployeeDTO();
+//        EmployeeRequestDTO employeeDTO = new EmployeeRequestDTO();
 //        employeeDTO.setFullname("John Doe");
 //        employeeDTO.setEmployeeId("EMP123456");
 //        employeeDTO.setEmail("ilkin2006@gmail.com");
@@ -84,7 +84,7 @@
 //
 //        try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
 //            // Mock Convert.dtoToEntity
-//            convertMock.when(() -> employeeConverter.dtoToEntity(any(EmployeeDTO.class))).thenReturn(employee);
+//            convertMock.when(() -> employeeConverter.dtoToEntity(any(EmployeeRequestDTO.class))).thenReturn(employee);
 //
 //            // Mock Convert.entityToDto
 //            convertMock.when(() -> employeeConverter.entityToDto(any(Employee.class))).thenReturn(employeeDTO);
@@ -99,7 +99,7 @@
 //            when(employeeRepository.save(any(Employee.class))).thenReturn(employee);
 //
 //            // Execute the method
-//            EmployeeDTO result = employeeServiceImpl.save(employeeDTO);
+//            EmployeeRequestDTO result = employeeServiceImpl.save(employeeDTO);
 //
 //            // Verify the result
 //            assertNotNull(result);
@@ -117,7 +117,7 @@
 //    @Test
 //    public void testSaveEmployee_UserNotFound() {
 //        // Create test employee DTO
-//        EmployeeDTO employeeDTO = new EmployeeDTO();
+//        EmployeeRequestDTO employeeDTO = new EmployeeRequestDTO();
 //        employeeDTO.setUsername("nonexistent");
 //        employeeDTO.setEmail("test@test.com");
 //        employeeDTO.setPassword("password");
@@ -142,7 +142,7 @@
 //        user.setPassword("password");
 //
 //        // Create test employee DTO with different email
-//        EmployeeDTO employeeDTO = new EmployeeDTO();
+//        EmployeeRequestDTO employeeDTO = new EmployeeRequestDTO();
 //        employeeDTO.setUsername("testuser");
 //        employeeDTO.setEmail("wrong@email.com");
 //        employeeDTO.setPassword("password");
@@ -165,7 +165,7 @@
 //        employee.setId(employeeId);
 //        employee.setFullname("John Doe");
 //
-//        EmployeeDTO employeeDTO = new EmployeeDTO();
+//        EmployeeRequestDTO employeeDTO = new EmployeeRequestDTO();
 //        employeeDTO.setFullname("John Doe");
 //
 //        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
@@ -173,7 +173,7 @@
 //        try (MockedStatic<Convert> convertMock = mockStatic(Convert.class)) {
 //            convertMock.when(() -> employeeConverter.entityToDto(employee)).thenReturn(employeeDTO);
 //
-//            Optional<EmployeeDTO> result = employeeServiceImpl.getById(employeeId);
+//            Optional<EmployeeRequestDTO> result = employeeServiceImpl.getById(employeeId);
 //
 //            assertTrue(result.isPresent());
 //            assertEquals("John Doe", result.get().getFullname());
@@ -193,10 +193,10 @@
 //
 //        List<Employee> employees = List.of(employee1, employee2);
 //
-//        EmployeeDTO dto1 = new EmployeeDTO();
+//        EmployeeRequestDTO dto1 = new EmployeeRequestDTO();
 //        dto1.setFullname("John Doe");
 //
-//        EmployeeDTO dto2 = new EmployeeDTO();
+//        EmployeeRequestDTO dto2 = new EmployeeRequestDTO();
 //        dto2.setFullname("Jane Smith");
 //
 //        when(employeeRepository.findAll()).thenReturn(employees);
@@ -205,7 +205,7 @@
 //            convertMock.when(() -> employeeConverter.entityToDto(employee1)).thenReturn(dto1);
 //            convertMock.when(() -> employeeConverter.entityToDto(employee2)).thenReturn(dto2);
 //
-//            List<EmployeeDTO> result = employeeServiceImpl.getAll();
+//            List<EmployeeRequestDTO> result = employeeServiceImpl.getAll();
 //
 //            assertNotNull(result);
 //            assertEquals(2, result.size());

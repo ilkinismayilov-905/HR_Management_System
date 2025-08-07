@@ -1,8 +1,8 @@
 package com.example.HR.service.implement;
 
 import com.example.HR.converter.EmployeeConverter;
-import com.example.HR.dto.EmployeeDTO;
-import com.example.HR.dto.UserDTO;
+import com.example.HR.dto.EmployeeRequestDTO;
+import com.example.HR.dto.EmployeeResponseDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.EmploymentType;
@@ -26,7 +26,6 @@ import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,38 +55,38 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO save(EmployeeDTO employeeDTO) throws IOException {
+    public EmployeeRequestDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException {
 
-//        validCheck(employeeDTO);
+//        validCheck(employeeRequestDTO);
 
-//        log.info("Employee saved: {}" ,employeeDTO.getFullname());
+//        log.info("Employee saved: {}" ,employeeRequestDTO.getFullname());
 
         // Find existing User by username, email, and password
-        User existingUser = userRepository.findByFullname(employeeDTO.getFullname())
-                .orElseThrow(() -> new NotFoundException("User not found with username: " + employeeDTO.getFullname()));
+        User existingUser = userRepository.findByFullname(employeeRequestDTO.getFullname())
+                .orElseThrow(() -> new NotFoundException("User not found with username: " + employeeRequestDTO.getFullname()));
 
         // Verify that the found user has matching email and password
-        if (!existingUser.getEmail().equals(employeeDTO.getEmail())) {
-            throw new ValidException("Email mismatch for user: " + employeeDTO.getFullname());
+        if (!existingUser.getEmail().equals(employeeRequestDTO.getEmail())) {
+            throw new ValidException("Email mismatch for user: " + employeeRequestDTO.getFullname());
         }
 
-        if (!existingUser.getPassword().equals(employeeDTO.getPassword())) {
-            throw new ValidException("Password mismatch for user: " + employeeDTO.getFullname());
+        if (!existingUser.getPassword().equals(employeeRequestDTO.getPassword())) {
+            throw new ValidException("Password mismatch for user: " + employeeRequestDTO.getFullname());
         }
 
         // Check if an employee already exists for this user
 //        if (employeeRepository.findByFullname(existingUser) != null ||
 //                employeeRepository.findByEmail(existingUser) != null ||
 //                employeeRepository.findByPassword(existingUser) != null) {
-//            throw new ValidException("Employee already exists for user: " + employeeDTO.getFullname());
+//            throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
 //        }
         Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser);
         if (existingEmployee.isPresent()) {
-            throw new ValidException("Employee already exists for user: " + employeeDTO.getFullname());
+            throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
         }
 
         // Create Employee object using converter
-        Employee employee = employeeConverter.dtoToEntity(employeeDTO);
+        Employee employee = employeeConverter.dtoToEntity(employeeRequestDTO);
 
         // Set the existing User object for all three relationships
         employee.setFullname(existingUser);
@@ -103,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<EmployeeDTO> getById(Long id) {
+    public Optional<EmployeeRequestDTO> getById(Long id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
 
         if (optionalEmployee.isPresent()) {
@@ -117,7 +116,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO update(Long id, EmployeeDTO updatedDto) {
+    public EmployeeRequestDTO update(Long id, EmployeeRequestDTO updatedDto) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found by id: " + id));
 
@@ -129,15 +128,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getAll() throws MalformedURLException {
+    public List<EmployeeResponseDTO> findAll() {
         List<Employee> employeeList = employeeRepository.findAll();
 
-        return employeeConverter.entityListToDtoList(employeeList);
+        return employeeConverter.entityListToResponseDTOList(employeeList);
     }
 
+    @Override
+    public List<EmployeeRequestDTO> getAll() throws MalformedURLException {
+        return List.of();
+    }
 
     @Override
-    public List<EmployeeDTO> getByStatus(Status status) {
+    public List<EmployeeRequestDTO> getByStatus(Status status) {
 
         List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
 
@@ -150,7 +153,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getByJobPosition(JobTitle jobTitle) {
+    public List<EmployeeRequestDTO> getByJobPosition(JobTitle jobTitle) {
         List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
 
         if(employeeJob == null || employeeJob.isEmpty()){
@@ -162,7 +165,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getByEmploymentType(EmploymentType employmentType) {
+    public List<EmployeeRequestDTO> getByEmploymentType(EmploymentType employmentType) {
         List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
 
         if(employee == null || employee.isEmpty()){
@@ -174,7 +177,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<EmployeeDTO> getByFullname(String fullname) {
+    public Optional<EmployeeRequestDTO> getByFullname(String fullname) {
 
         Optional<User> userOptional = userRepository.findByFullname(fullname);
 
@@ -198,7 +201,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeDTO> getByDate(LocalDate localDate) {
+    public List<EmployeeRequestDTO> getByDate(LocalDate localDate) {
         List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
 
         if(employeeList == null || employeeList.isEmpty()){
@@ -206,15 +209,5 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("No employees found for date: " + localDate);
         }
         return employeeConverter.entityListToDtoList(employeeList);
-    }
-
-    @Override
-    public EmployeeDTO addEmployee(EmployeeDTO employeeDTO, MultipartFile imageFile) throws IOException {
-//        employeeDTO.setImageName(imageFile.getOriginalFilename());
-//        employeeDTO.setImageType(imageFile.getContentType());
-//        employeeDTO.setImageDate(imageFile.getBytes());
-        Employee employee = employeeConverter.dtoToEntity(employeeDTO);
-        Employee savedEmployee = employeeRepository.save(employee);
-        return employeeConverter.entityToDto(savedEmployee);
     }
 }

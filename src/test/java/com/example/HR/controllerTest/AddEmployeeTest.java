@@ -31,7 +31,7 @@
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//import com.example.HR.dto.EmployeeDTO;
+//import com.example.HR.dto.EmployeeRequestDTO;
 //
 //@AutoConfigureMockMvc
 //@SpringBootTest
@@ -184,7 +184,7 @@
 //            """;
 //
 //        // Deserialize the JSON to DTO
-//        EmployeeDTO dto = objectMapper.readValue(testJson, EmployeeDTO.class);
+//        EmployeeRequestDTO dto = objectMapper.readValue(testJson, EmployeeRequestDTO.class);
 //
 //        // Log all values to see what's happening
 //        System.out.println("=== DTO Values After Deserialization ===");
@@ -238,7 +238,7 @@
 //
 //        // Test 1: Direct deserialization
 //        try {
-//            EmployeeDTO dto = objectMapper.readValue(postmanJson, EmployeeDTO.class);
+//            EmployeeRequestDTO dto = objectMapper.readValue(postmanJson, EmployeeRequestDTO.class);
 //            System.out.println("Direct deserialization successful");
 //            System.out.println("Email from DTO: " + dto.getEmail());
 //            System.out.println("Username from DTO: " + dto.getUsername());

@@ -1,12 +1,16 @@
 package com.example.HR.converter;
 
-import com.example.HR.dto.EmployeeDTO;
+import com.example.HR.dto.EmployeeRequestDTO;
+import com.example.HR.dto.EmployeeResponseDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.Status;
 
-public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
     @Override
-    public Employee dtoToEntity(EmployeeDTO dto) {
+    public Employee dtoToEntity(EmployeeRequestDTO dto) {
         if (dto == null) {
             return null;
         }
@@ -29,11 +33,11 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
     }
 
     @Override
-    public EmployeeDTO entityToDto(Employee employee) {
+    public EmployeeRequestDTO entityToDto(Employee employee) {
         if (employee == null) {
             return null;
         }
-        EmployeeDTO dto = new EmployeeDTO();
+        EmployeeRequestDTO dto = new EmployeeRequestDTO();
         dto.setId(employee.getId());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
@@ -61,11 +65,11 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
     }
 
     /**
-     * Updates the given Employee entity with non-null values from the EmployeeDTO.
+     * Updates the given Employee entity with non-null values from the EmployeeRequestDTO.
      * User relationships are updated only if the User object is not null.
      * This does not create new User objects.
      */
-    public void updateEntityFromDto(EmployeeDTO dto, Employee entity) {
+    public void updateEntityFromDto(EmployeeRequestDTO dto, Employee entity) {
         if (dto == null || entity == null) {
             return;
         }
@@ -90,4 +94,35 @@ public class EmployeeConverter extends Convert<EmployeeDTO, Employee> {
             entity.getPassword().setPassword(dto.getPassword());
         }
     }
-} 
+
+    public EmployeeResponseDTO entityToResponseDTO(Employee employee) {
+        EmployeeResponseDTO dto = new EmployeeResponseDTO();
+
+        // Email və FullName User entity-sindən gəlir
+
+        if (employee.getFullname() != null) {
+            dto.setFullname(employee.getFullname().getFullname());
+        }
+        if (employee.getEmail() != null) {
+            dto.setEmail(employee.getEmail().getEmail());
+        }
+
+        dto.setEmployeeId(employee.getEmployeeId());
+        dto.setJoinDate(employee.getJoinDate());
+        dto.setPhoneNumber(employee.getPhoneNumber());
+        dto.setCompany(employee.getCompany());
+        dto.setDepartament(employee.getDepartament());
+        dto.setJobTitle(employee.getJobTitle());
+        dto.setAbout(employee.getAbout());
+        dto.setEmploymentType(employee.getEmploymentType());
+        dto.setStatus(employee.getStatus());
+
+        return dto;
+    }
+
+    public List<EmployeeResponseDTO> entityListToResponseDTOList(List<Employee> employees){
+        return employees.stream()
+                .map(this::entityToResponseDTO)
+                .collect(Collectors.toList());
+    }
+}

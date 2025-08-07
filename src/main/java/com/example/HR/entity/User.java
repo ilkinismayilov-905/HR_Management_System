@@ -53,7 +53,7 @@ public class User {
 
     private LocalDateTime createdTime;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private boolean active;
 
     @Enumerated(EnumType.STRING)

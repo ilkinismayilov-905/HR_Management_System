@@ -54,7 +54,7 @@ The error was caused by Tomcat's default file count limit being too restrictive 
 2. **Test with a single file upload**
    ```bash
    curl -X POST http://localhost:8080/employee/add \
-     -F "employeeDTO={\"fullname\":\"Test User\",\"username\":\"testuser\"}" \
+     -F "employeeRequestDTO={\"fullname\":\"Test User\",\"username\":\"testuser\"}" \
      -F "multipartFile=@path/to/your/file.jpg" \
      -H "Content-Type: multipart/form-data"
    ```

@@ -12,11 +12,11 @@ import lombok.*;
 //@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
-    //    public UserDTO() {
+public class UserRequestDTO {
+    //    public UserRequestDTO() {
     //    }
     //
-    //    public UserDTO(Long id,
+    //    public UserRequestDTO(Long id,
     //                   String username,
     //                   String password,
     //                   UserRoles roles,
@@ -100,5 +100,11 @@ public class UserDTO {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public UserRequestDTO(String fullname, UserRoles roles, String email) {
+        this.fullname = fullname;
+        this.roles = roles;
+        this.email = email;
     }
 }

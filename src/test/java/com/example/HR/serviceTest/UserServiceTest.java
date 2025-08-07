@@ -1,7 +1,7 @@
 //package com.example.HR.serviceTest;
 //
 //import com.example.HR.converter.UserConverter;
-//import com.example.HR.dto.UserDTO;
+//import com.example.HR.dto.UserRequestDTO;
 //import com.example.HR.entity.User;
 //import com.example.HR.enums.UserRoles;
 //import com.example.HR.exception.NotFoundException;
@@ -35,7 +35,7 @@
 //    private UserServiceImpl userService;
 //
 //    private User user;
-//    private UserDTO userDTO;
+//    private UserRequestDTO userDTO;
 //
 //    @BeforeEach
 //    public void init(){
@@ -47,7 +47,7 @@
 //        user.setConfirmPassword("123456");
 //        user.setRoles(UserRoles.USER);
 //
-//        userDTO = new UserDTO();
+//        userDTO = new UserRequestDTO();
 //        userDTO.setId(1L);
 //        userDTO.setEmail("ilkin2006@gmail.com");
 //        userDTO.setPassword("123456");
@@ -59,11 +59,11 @@
 //    @Test
 //    public void testSaveUser() throws IOException {
 //
-//        when(userConverter.dtoToEntity(any(UserDTO.class))).thenReturn(user);
+//        when(userConverter.dtoToEntity(any(UserRequestDTO.class))).thenReturn(user);
 //        when(userConverter.entityToDto(any(User.class))).thenReturn(userDTO);
 //        when(userRepository.save(any(User.class))).thenReturn(user);
 //
-//        UserDTO result = userService.save(userDTO);
+//        UserRequestDTO result = userService.save(userDTO);
 //
 //        assertNotNull(result);
 //        assertEquals("ilkin6666", result.getUsername());
@@ -80,7 +80,7 @@
 //        when(userRepository.findByUsername("ilkin6666")).thenReturn(Optional.of(user));
 //        when(userConverter.entityToDto(user)).thenReturn(userDTO);
 //
-//        Optional<UserDTO> result = userService.getByUsername("ilkin6666");
+//        Optional<UserRequestDTO> result = userService.getByUsername("ilkin6666");
 //
 //        assertTrue(result.isPresent());
 //        assertEquals("ilkin6666", result.get().getUsername());
@@ -108,7 +108,7 @@
 //        user2.setConfirmPassword("abcdef");
 //        user2.setRoles(UserRoles.ADMIN);
 //
-//        UserDTO userDTO1 = new UserDTO();
+//        UserRequestDTO userDTO1 = new UserRequestDTO();
 //        userDTO1.setId(1L);
 //        userDTO1.setEmail("ilkin2006@gmail.com");
 //        userDTO1.setPassword("123456");
@@ -116,7 +116,7 @@
 //        userDTO1.setConfirmPassword("123456");
 //        userDTO1.setRoles(UserRoles.USER);
 //
-//        UserDTO userDTO2 = new UserDTO();
+//        UserRequestDTO userDTO2 = new UserRequestDTO();
 //        userDTO2.setId(2L);
 //        userDTO2.setEmail("test2@gmail.com");
 //        userDTO2.setPassword("abcdef");
@@ -140,7 +140,7 @@
 //
 //    @Test
 //    public void userUpdateTest(){
-//        UserDTO newUser = new UserDTO();
+//        UserRequestDTO newUser = new UserRequestDTO();
 //        newUser.setUsername("huseyn");
 //        newUser.setPassword("hus123");
 //
@@ -148,7 +148,7 @@
 //        when(userConverter.entityToDto(user)).thenReturn(userDTO);
 //        when(userRepository.save(any(User.class))).thenReturn(user);
 //
-//        UserDTO savedUserDto = userService.update(1L,newUser);
+//        UserRequestDTO savedUserDto = userService.update(1L,newUser);
 //
 //        Assertions.assertThat(savedUserDto).isNotNull();
 //    }
