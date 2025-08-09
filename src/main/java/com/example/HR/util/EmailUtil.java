@@ -24,4 +24,17 @@ public class EmailUtil {
         javaMailSender.send(mimeMessage);
 
     }
+
+
+    public void send(String email,String subject,String text) throws MessagingException{
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true,"UTF-8");
+
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject(subject);
+        mimeMessageHelper.setText(text,true);
+
+        javaMailSender.send(mimeMessage);
+
+    }
 }

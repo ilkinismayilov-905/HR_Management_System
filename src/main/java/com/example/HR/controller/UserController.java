@@ -4,6 +4,7 @@ import com.example.HR.converter.UserConverter;
 import com.example.HR.dto.EmployeeRequestDTO;
 import com.example.HR.dto.UserRequestDTO;
 import com.example.HR.dto.UserResponseDTO;
+import com.example.HR.service.PasswordResetTokenService;
 import com.example.HR.service.UserService;
 import com.example.HR.util.EmailUtil;
 import com.example.HR.util.OtpUtil;
@@ -35,13 +36,15 @@ public class UserController {
     private final OtpUtil otpUtil;
     private final EmailUtil emailUtil;
     private final UserConverter userConverter;
+    private final PasswordResetTokenService resetTokenService;
 
     @Autowired
-    public UserController(UserService userService, OtpUtil otpUtil, EmailUtil emailUtil, UserConverter userConverter) {
+    public UserController(UserService userService, OtpUtil otpUtil, EmailUtil emailUtil, UserConverter userConverter, PasswordResetTokenService resetTokenService) {
         this.userService = userService;
         this.otpUtil = otpUtil;
         this.emailUtil = emailUtil;
         this.userConverter = userConverter;
+        this.resetTokenService = resetTokenService;
     }
 
 
@@ -218,6 +221,22 @@ public class UserController {
         String otp = otpUtil.generateOtp(); // 6 rəqəmli OTP yarat
         emailUtil.sendOtpEmail(email, otp);
         return ResponseEntity.ok("OTP email göndərildi");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) throws MessagingException {
+        resetTokenService.createPasswordResetToken(email);
+        return ResponseEntity.ok("Əgər email mövcuddursa, reset link göndərildi.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token,
+                                                @RequestParam String newPassword){
+        boolean succes = resetTokenService.resetPassword(token,newPassword);
+
+        return succes
+                ? ResponseEntity.ok("Şifrə uğurla yeniləndi.")
+                : ResponseEntity.badRequest().body("Token etibarsız və ya vaxtı bitib.");
     }
 
 
