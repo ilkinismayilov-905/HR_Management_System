@@ -11,7 +11,7 @@ import lombok.*;
 //@Getter
 //@Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 public class UserRequestDTO {
     //    public UserRequestDTO() {
     //    }
@@ -30,6 +30,11 @@ public class UserRequestDTO {
     //        this.confirmPassword = confirmPassword;
     //    }
     //
+
+
+    public UserRequestDTO() {
+    }
+
     @Schema(description = "Unique identifier", example = "1")
     private Long id;
 

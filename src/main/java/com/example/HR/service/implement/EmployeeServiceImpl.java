@@ -1,6 +1,7 @@
 package com.example.HR.service.implement;
 
 import com.example.HR.converter.EmployeeConverter;
+import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.EmployeeRequestDTO;
 import com.example.HR.dto.EmployeeResponseDTO;
 import com.example.HR.entity.User;
@@ -102,13 +103,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<EmployeeRequestDTO> getById(Long id) {
+    public Optional<EmployeeResponseDTO> getById(Long id) {
         Optional<Employee> optionalEmployee = employeeRepository.findById(id);
 
         if (optionalEmployee.isPresent()) {
 //            log.info("Employee was found with id: {}" + id);
             return optionalEmployee
-                    .map(employeeConverter::entityToDto);
+                    .map(employeeConverter::entityToResponseDTO);
         }else {
 //            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
@@ -135,12 +136,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeRequestDTO> getAll() throws MalformedURLException {
-        return List.of();
-    }
-
-    @Override
-    public List<EmployeeRequestDTO> getByStatus(Status status) {
+    public List<EmployeeResponseDTO> getByStatus(Status status) {
 
         List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
 
@@ -149,11 +145,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee list is empty for status: " + status);
         }
 
-        return employeeConverter.entityListToDtoList(employeeStatus);
+        return employeeConverter.entityListToResponseDTOList(employeeStatus);
     }
 
     @Override
-    public List<EmployeeRequestDTO> getByJobPosition(JobTitle jobTitle) {
+    public List<EmployeeResponseDTO> getByJobPosition(JobTitle jobTitle) {
         List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
 
         if(employeeJob == null || employeeJob.isEmpty()){
@@ -161,11 +157,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("Employee list is empty for job: " + jobTitle);
         }
 
-        return employeeConverter.entityListToDtoList(employeeJob);
+        return employeeConverter.entityListToResponseDTOList(employeeJob);
     }
 
     @Override
-    public List<EmployeeRequestDTO> getByEmploymentType(EmploymentType employmentType) {
+    public List<EmployeeResponseDTO> getByEmploymentType(EmploymentType employmentType) {
         List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
 
         if(employee == null || employee.isEmpty()){
@@ -173,11 +169,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeNotFoundException("No employees found for type: " + employmentType);
         }
 
-        return employeeConverter.entityListToDtoList(employee);
+        return employeeConverter.entityListToResponseDTOList(employee);
     }
 
     @Override
-    public Optional<EmployeeRequestDTO> getByFullname(String fullname) {
+    public Optional<EmployeeResponseDTO> getByFullname(String fullname) {
 
         Optional<User> userOptional = userRepository.findByFullname(fullname);
 
@@ -196,18 +192,27 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new NotFoundException("There is no Employee by fullname: " + fullname);
         }
         else {
-            return Optional.of(employeeConverter.entityToDto(employee.get()));
+            return Optional.of(employeeConverter.entityToResponseDTO(employee.get()));
         }
     }
 
     @Override
-    public List<EmployeeRequestDTO> getByDate(LocalDate localDate) {
+    public List<EmployeeResponseDTO> getByDate(LocalDate localDate) {
         List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
 
         if(employeeList == null || employeeList.isEmpty()){
 //            log.warn("No employees found with date: {}", localDate);
             throw new EmployeeNotFoundException("No employees found for date: " + localDate);
         }
-        return employeeConverter.entityListToDtoList(employeeList);
+        return employeeConverter.entityListToResponseDTOList(employeeList);
+    }
+
+    @Override
+    public Optional<EmployeeInformationDTO> getByEmployeeID(String employeeID){
+        Employee employeeOpt = employeeRepository.findByEmployeeId(employeeID)
+                .orElseThrow(() -> new NotFoundException("Employee not found by EmployeeID: {}" +employeeID));
+
+        return Optional.ofNullable(employeeConverter.entityToEmployeeInfo(employeeOpt));
+
     }
 }

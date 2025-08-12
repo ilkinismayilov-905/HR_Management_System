@@ -1,5 +1,6 @@
 package com.example.HR.converter;
 
+import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.EmployeeRequestDTO;
 import com.example.HR.dto.EmployeeResponseDTO;
 import com.example.HR.entity.employee.Employee;
@@ -125,4 +126,19 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
                 .map(this::entityToResponseDTO)
                 .collect(Collectors.toList());
     }
+
+
+    public EmployeeInformationDTO entityToEmployeeInfo(Employee employee) {
+        EmployeeInformationDTO dto = new EmployeeInformationDTO();
+
+        dto.setEmployeeId(employee.getEmployeeId());
+        dto.setJoinDate(employee.getJoinDate());
+        dto.setDepartament(employee.getDepartament());
+        dto.setJobTitle(employee.getJobTitle());
+        dto.setEmploymentType(employee.getEmploymentType());
+        dto.setStatus(employee.getStatus());
+
+        return dto;
+    }
+
 }

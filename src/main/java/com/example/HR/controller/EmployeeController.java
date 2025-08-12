@@ -1,5 +1,6 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.EmployeeRequestDTO;
 import com.example.HR.dto.EmployeeResponseDTO;
 import com.example.HR.enums.EmploymentType;
@@ -85,6 +86,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeResponseDTOList);
     }
 
+
     @Operation(summary = "Get employee by ID",
             description = "Returns a single employee by ID"
     )
@@ -94,7 +96,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeRequestDTO> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable Long id) {
         return employeeService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -109,8 +111,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByStatus/{status}")
-    public ResponseEntity<List<EmployeeRequestDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
-        List<EmployeeRequestDTO> employeeRequestDTOList = employeeService.getByStatus(status);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByStatus(status);
 
 //        log.info("Employee list returned by status: {}", status);
 
@@ -126,8 +128,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByFullname/{fullname}")
-    public ResponseEntity<Optional<EmployeeRequestDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
-        Optional<EmployeeRequestDTO> employeeDTOList = employeeService.getByFullname(fullname);
+    public ResponseEntity<Optional<EmployeeResponseDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
+        Optional<EmployeeResponseDTO> employeeDTOList = employeeService.getByFullname(fullname);
 
 //        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);
@@ -142,8 +144,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByJob/{jobTitle}")
-    public ResponseEntity<List<EmployeeRequestDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
-        List<EmployeeRequestDTO> employeeRequestDTOList = employeeService.getByJobPosition(jobTitle);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByJobPosition(jobTitle);
 
 //        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
@@ -159,8 +161,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmploymentType/{employmentType}")
-    public ResponseEntity<List<EmployeeRequestDTO>> viewEmployeesByEmploymentType(@PathVariable EmploymentType employmentType) throws MalformedURLException {
-        List<EmployeeRequestDTO> employeeRequestDTOList = employeeService.getByEmploymentType(employmentType);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByEmploymentType(@PathVariable EmploymentType employmentType) throws MalformedURLException {
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByEmploymentType(employmentType);
 
 //        log.info("Employee list returned by employment type: {}", employmentType);
 
@@ -176,8 +178,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByDate/{localDate}")
-    public ResponseEntity<List<EmployeeRequestDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
-        List<EmployeeRequestDTO> employeeRequestDTOList = employeeService.getByDate(localDate);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByDate(localDate);
 
 //        log.info("Employee list returned by joinDate: {}", localDate);
 
@@ -214,4 +216,21 @@ public class EmployeeController {
         employeeService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Get employee information",
+            description = "Returns a list of employee informations"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of employee information retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No employee found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/employeeInfo/{employeeID}")
+    public ResponseEntity<Optional<EmployeeInformationDTO>> viewEmployeesByJoinDate(@PathVariable String employeeID) throws MalformedURLException {
+        Optional<EmployeeInformationDTO> employee = employeeService.getByEmployeeID(employeeID);
+
+
+        return ResponseEntity.ok(employee);
+    }
+
 }
