@@ -1,5 +1,6 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.EducationInfoDTO;
 import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.EmployeeRequestDTO;
 import com.example.HR.dto.EmployeeResponseDTO;
@@ -217,20 +218,9 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Get employee information",
-            description = "Returns a list of employee informations"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of employee information retrieved successfully"),
-            @ApiResponse(responseCode = "404", description = "No employee found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @GetMapping("/employeeInfo/{employeeID}")
-    public ResponseEntity<Optional<EmployeeInformationDTO>> viewEmployeesByJoinDate(@PathVariable String employeeID) throws MalformedURLException {
-        Optional<EmployeeInformationDTO> employee = employeeService.getByEmployeeID(employeeID);
 
 
-        return ResponseEntity.ok(employee);
-    }
+
+
 
 }

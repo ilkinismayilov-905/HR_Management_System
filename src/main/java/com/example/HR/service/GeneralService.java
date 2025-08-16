@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface GeneralService<T,K> {
     void deleteById(K id);
-    T save(T entity) throws IOException;
+    T save(T dto) throws IOException;
     Optional<T> getById(K id);
     T update(K id,T updatedDto);
     List<T> getAll() throws MalformedURLException;
