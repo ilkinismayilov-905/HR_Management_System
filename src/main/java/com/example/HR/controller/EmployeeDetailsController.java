@@ -4,6 +4,8 @@ import com.example.HR.dto.EducationInfoDTO;
 import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.service.EducationInfoService;
 import com.example.HR.service.EmployeeService;
+import com.example.HR.validation.Create;
+import com.example.HR.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -61,7 +64,7 @@ public class EmployeeDetailsController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/addInfo")
-    public ResponseEntity<EducationInfoDTO> addInformatoin(@RequestBody @Valid EducationInfoDTO dto) throws IOException {
+    public ResponseEntity<EducationInfoDTO> addInformatoin(@RequestBody @Validated(Create.class) EducationInfoDTO dto) throws IOException {
         EducationInfoDTO information = infoService.save(dto);
         return  ResponseEntity.status(HttpStatus.OK).body(information);
     }
@@ -70,5 +73,41 @@ public class EmployeeDetailsController {
     public ResponseEntity<List<EducationInfoDTO>> getAll() throws MalformedURLException {
         List<EducationInfoDTO> list = infoService.getAll();
         return ResponseEntity.ok(list);
+    }
+
+
+    @Operation(summary = "Delete information",
+            description = "Deletes an informatoin by ID"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Information deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Information not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id){
+        infoService.deleteById(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update informatoin",
+            description = "Updates an existing info"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Information updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Information not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Optional<EducationInfoDTO>> update(@PathVariable Long id, @RequestBody @Validated(Update.class) EducationInfoDTO dto){
+        infoService.update(id, dto);
+
+        return ResponseEntity.ok(infoService.getById(id));
+
+
+
+
     }
 }

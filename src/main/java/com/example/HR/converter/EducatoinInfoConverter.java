@@ -1,6 +1,8 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.EducationInfoDTO;
+import com.example.HR.dto.UserRequestDTO;
+import com.example.HR.entity.User;
 import com.example.HR.entity.employee.EducationInformation;
 import org.springframework.stereotype.Component;
 
@@ -46,5 +48,16 @@ public class EducatoinInfoConverter extends Convert<EducationInfoDTO, EducationI
         return list.stream()
                 .map(this::entityToDto)
                 .collect(Collectors.toList());
+    }
+
+    public void update(EducationInfoDTO dto, EducationInformation entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+        if (dto.getId() != null) entity.setId(dto.getId());
+        if (dto.getUniversityName() != null) entity.setUniversityName(dto.getUniversityName());
+        if (dto.getMajor() != null) entity.setMajor(dto.getMajor());
+        if (dto.getStartDate() != null) entity.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null) entity.setEndDate(dto.getEndDate());
     }
 }

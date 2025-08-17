@@ -78,30 +78,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserRequestDTO> getByFullname(String fullname) {
+    public Optional<UserResponseDTO> getByFullname(String fullname) {
         User user = userRepository.findByFullname(fullname)
                 .orElseThrow(() -> new NotFoundException("User not found by username: " + fullname));
 
 
-        return Optional.ofNullable(converter.entityToDto(user));
+        return Optional.ofNullable(converter.entityToResponseDTO(user));
     }
 
     @Override
-    public Optional<UserRequestDTO> getByPassword(String password) {
+    public Optional<UserResponseDTO> getByPassword(String password) {
         User user = userRepository.findByPassword(password)
                 .orElseThrow(() -> new NotFoundException("User not found by password: " + password));
 
 
-        return Optional.ofNullable(converter.entityToDto(user));
+        return Optional.ofNullable(converter.entityToResponseDTO(user));
     }
 
     @Override
-    public Optional<UserRequestDTO> getByEmail(String email) {
+    public Optional<UserResponseDTO> getByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
 
 
-        return Optional.ofNullable(converter.entityToDto(user));
+        return Optional.ofNullable(converter.entityToResponseDTO(user));
     }
 
 //    @Override
@@ -121,16 +121,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserRequestDTO> getById(Long id) {
+    public UserResponseDTO save(UserResponseDTO dto) throws IOException {
+        return null;
+    }
+
+
+    @Override
+    public Optional<UserResponseDTO> getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoIDException("There is no user found by id: " + id));
 
-        return Optional.ofNullable(converter.entityToDto(user));
+        return Optional.ofNullable(converter.entityToResponseDTO(user));
 
     }
 
     @Override
-    public UserRequestDTO update(Long id, UserRequestDTO updatedDto) {
+    public UserResponseDTO update(Long id, UserResponseDTO updatedDto) {
+        return null;
+    }
+
+    @Override
+    public UserResponseDTO update(Long id, UserRequestDTO updatedDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found by id: " + id));
 
@@ -144,11 +155,11 @@ public class UserServiceImpl implements UserService {
         converter.update(updatedDto,user);
 
         User savedUser = userRepository.save(user);
-        return converter.entityToDto(savedUser);
+        return converter.entityToResponseDTO(savedUser);
     }
 
     @Override
-    public List<UserRequestDTO> getAll() throws MalformedURLException {
+    public List<UserResponseDTO> getAll() throws MalformedURLException {
         return List.of();
     }
 
