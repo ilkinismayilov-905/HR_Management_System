@@ -1,4 +1,4 @@
-package com.example.HR.dto;
+package com.example.HR.dto.user;
 
 import com.example.HR.enums.UserRoles;
 import com.example.HR.validation.Create;

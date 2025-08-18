@@ -1,9 +1,7 @@
 package com.example.HR.controller;
 
-import com.example.HR.dto.EducationInfoDTO;
-import com.example.HR.dto.EmployeeInformationDTO;
-import com.example.HR.dto.EmployeeRequestDTO;
-import com.example.HR.dto.EmployeeResponseDTO;
+import com.example.HR.dto.employee.EmployeeRequestDTO;
+import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;

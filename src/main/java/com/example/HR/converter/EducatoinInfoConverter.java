@@ -1,8 +1,6 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.EducationInfoDTO;
-import com.example.HR.dto.UserRequestDTO;
-import com.example.HR.entity.User;
 import com.example.HR.entity.employee.EducationInformation;
 import org.springframework.stereotype.Component;
 

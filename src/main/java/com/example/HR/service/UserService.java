@@ -1,8 +1,8 @@
 package com.example.HR.service;
 
 
-import com.example.HR.dto.UserRequestDTO;
-import com.example.HR.dto.UserResponseDTO;
+import com.example.HR.dto.user.UserRequestDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 
 import java.io.IOException;
 import java.util.List;

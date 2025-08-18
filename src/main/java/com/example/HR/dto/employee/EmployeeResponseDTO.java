@@ -1,4 +1,4 @@
-package com.example.HR.dto;
+package com.example.HR.dto.employee;
 
 import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
@@ -7,19 +7,15 @@ import com.example.HR.enums.Status;
 import com.example.HR.validation.Create;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-//@Setter
-//@Getter
-//@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeRequestDTO {
-
-    @Schema(description = "Unique identifier", example = "1")
-    private Long id;
+//@Data
+public class EmployeeResponseDTO {
 
     @Schema(description = "Full name of the employee", example = "John Doe", required = true)
     @NotBlank(groups = Create.class,message = "Full name is required")
@@ -38,14 +34,6 @@ public class EmployeeRequestDTO {
     @NotNull(groups = Create.class,message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
-
-    @Schema(description = "Password for the user account", required = true)
-    @NotNull(groups = Create.class,message = "Password is required")
-    private String password;
-
-    @Schema(description = "Password confirmation", required = true)
-    @NotNull(groups = Create.class,message = "Confirm password is required")
-    private String confirmPassword;
 
     @Schema(description = "Phone number of the employee", example = "+994501234567", required = true)
     @NotBlank(groups = Create.class,message = "Phone number is required")
@@ -73,56 +61,6 @@ public class EmployeeRequestDTO {
 
     @Schema(description = "Employee status", example = "ACTIVE", allowableValues = {"ACTIVE", "INACTIVE", "SUSPENDED"})
     private Status status;
-
-//    @Schema(description = "Stored image name")
-//    private String imageName;
-//
-//    @Schema(description = "Stored image MIME type")
-//    private String imageType;
-//
-//    @Schema(description = "Stored image data as byte array")
-//    private byte[] imageDate;
-
-    //    public String getImageName() {
-//        return imageName;
-//    }
-
-//    public void setImageName(String imageName) {
-//        this.imageName = imageName;
-//    }
-
-//    public String getImageType() {
-//        return imageType;
-//    }
-//
-//    public void setImageType(String imageType) {
-//        this.imageType = imageType;
-//    }
-//
-//    public byte[] getImageDate() {
-//        return imageDate;
-//    }
-//
-//    public void setImageDate(byte[] imageDate) {
-//        this.imageDate = imageDate;
-//    }
-
-    //    public String getPhoto() {
-//        return photo;
-//    }
-//
-//    public void setPhoto(String photo) {
-//        this.photo = photo;
-//    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFullname() {
         return fullname;
@@ -154,22 +92,6 @@ public class EmployeeRequestDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public String getPhoneNumber() {

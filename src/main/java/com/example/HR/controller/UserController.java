@@ -1,10 +1,8 @@
 package com.example.HR.controller;
 
 import com.example.HR.converter.UserConverter;
-import com.example.HR.dto.EmployeeRequestDTO;
-import com.example.HR.dto.UserRequestDTO;
-import com.example.HR.dto.UserResponseDTO;
-import com.example.HR.entity.employee.Employee;
+import com.example.HR.dto.user.UserRequestDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.PasswordResetTokenService;
 import com.example.HR.service.UserService;
 import com.example.HR.util.EmailUtil;
