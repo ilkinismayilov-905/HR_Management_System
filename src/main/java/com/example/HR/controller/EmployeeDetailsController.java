@@ -2,17 +2,18 @@ package com.example.HR.controller;
 
 import com.example.HR.dto.EducationInfoDTO;
 import com.example.HR.dto.EmployeeInformationDTO;
-import com.example.HR.dto.tool.ToolRequestDTO;
+import com.example.HR.dto.experience.ExperienceRequestDTO;
+import com.example.HR.dto.experience.ExperienceResponseDTO;
 import com.example.HR.dto.tool.ToolResponseDTO;
-import com.example.HR.entity.employee.Tool;
 import com.example.HR.service.EducationInfoService;
 import com.example.HR.service.EmployeeService;
-import com.example.HR.service.ToolService;
+import com.example.HR.service.ExperienceService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,20 +27,20 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
 @Slf4j
 @RequestMapping("/employeeDetails")
+@CrossOrigin(origins = "*")
 public class EmployeeDetailsController {
 
     private final EmployeeService employeeService;
     private final EducationInfoService infoService;
-    private final ToolService toolService;
+    private final ExperienceService experienceService;
 
     @Autowired
-    public EmployeeDetailsController(EmployeeService employeeService, EducationInfoService infoService, ToolService toolService) {
+    public EmployeeDetailsController(EmployeeService employeeService, EducationInfoService infoService, ExperienceService experienceService) {
         this.employeeService = employeeService;
         this.infoService = infoService;
-        this.toolService = toolService;
+        this.experienceService = experienceService;
     }
 
     @Operation(summary = "Get employee information",
@@ -113,15 +114,26 @@ public class EmployeeDetailsController {
 
     }
 
-    @PostMapping("/experience/add")
-    public ResponseEntity<ToolRequestDTO> create(@RequestBody ToolRequestDTO tool) throws IOException {
-        ToolRequestDTO tools = toolService.save(tool);
-        return ResponseEntity.status(HttpStatus.CREATED).body(tools);
+    @PostMapping
+    @Operation(summary = "Create new experience",
+            description = "Create a new experience with tools and skills")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully created experience"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "409", description = "Experience with title already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ExperienceResponseDTO> createExperience(@Valid @RequestBody ExperienceRequestDTO requestDTO){
+
+
+        ExperienceResponseDTO createdExperience = experienceService.createExperience(requestDTO);
+
+
+        log.info("Successfully created experience with ID: {}", createdExperience.getId());
+
+        // 200 OK status ilə yaradılan Experience qaytarırıq
+        return ResponseEntity.ok(createdExperience);
+
     }
 
-    @GetMapping("/experience/getAll")
-    public ResponseEntity<List<ToolResponseDTO>> getAllTools() throws MalformedURLException {
-
-        return ResponseEntity.ok(toolService.getAll());
-    }
 }

@@ -1,8 +1,18 @@
 package com.example.HR.dto.tool;
 
-import com.example.HR.dto.skill.SkillResponseDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-public record ToolResponseDTO(Long id, String name, Set<SkillResponseDTO> skills) {
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ToolResponseDTO {
+    private Long id;
+    private String name;
+    private Set<String> skills;
 }

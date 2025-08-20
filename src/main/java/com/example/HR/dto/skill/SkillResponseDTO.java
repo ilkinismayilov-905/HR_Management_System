@@ -1,4 +1,14 @@
 package com.example.HR.dto.skill;
 
-public record SkillResponseDTO(Long id, String name) {
+import lombok.*;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class SkillResponseDTO {
+
+    private Long id;
+    private String name;
+
 }
