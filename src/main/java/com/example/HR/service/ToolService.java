@@ -14,6 +14,7 @@ public interface ToolService {
     ToolResponseDTO getToolByName(String name);
 //    List<ToolResponseDTO> getAllTools();
     void deleteTool(Long id);
+    public List<ToolResponseDTO> getToolsBySkill(String skill);
     public List<ToolResponseDTO> getToolsWithAllSkills();
     boolean toolExists(String name);
 

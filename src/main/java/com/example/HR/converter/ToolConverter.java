@@ -2,6 +2,8 @@ package com.example.HR.converter;
 
 import com.example.HR.dto.tool.ToolRequestDTO;
 import com.example.HR.dto.tool.ToolResponseDTO;
+import com.example.HR.dto.user.UserRequestDTO;
+import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Tool;
 import org.springframework.stereotype.Component;
 
@@ -48,5 +50,14 @@ public class ToolConverter {
         tool.setSkills(dto.getSkills() != null ? new ArrayList<>(dto.getSkills()) : new ArrayList<>());
 
         return tool;
+    }
+
+    public void update(ToolRequestDTO dto, Tool entity) {
+        if (dto == null || entity == null) {
+            return;
+        }
+        if (dto.getId() != null) entity.setId(dto.getId());
+        if (dto.getName() != null) entity.setName(dto.getName());
+        if (dto.getSkills() != null) entity.setSkills(dto.getSkills());
     }
 }

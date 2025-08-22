@@ -12,13 +12,10 @@ import java.util.Optional;
 @Repository
 public interface ToolRepository extends JpaRepository<Tool,Long> {
 
-    List<Tool> findByNameIgnoreCase(String name);
+    Optional<Tool> findByNameIgnoreCase(String name);
 
     @Query("SELECT t FROM Tool t JOIN t.skills s WHERE LOWER(s) LIKE LOWER(CONCAT('%', :skill, '%'))")
     List<Tool> findBySkillsContaining(@Param("skill") String skill);
-
-//    @Query("SELECT DISTINCT t.name FROM Tool t WHERE t.name IS NOT NULL ORDER BY t.name")
-//    List<String> findAllNames();
 
     boolean existsByNameIgnoreCase(String name);
 
