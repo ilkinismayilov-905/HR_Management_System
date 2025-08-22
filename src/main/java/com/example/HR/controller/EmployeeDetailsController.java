@@ -2,12 +2,11 @@ package com.example.HR.controller;
 
 import com.example.HR.dto.EducationInfoDTO;
 import com.example.HR.dto.EmployeeInformationDTO;
-import com.example.HR.dto.experience.ExperienceRequestDTO;
-import com.example.HR.dto.experience.ExperienceResponseDTO;
+import com.example.HR.dto.tool.ToolRequestDTO;
 import com.example.HR.dto.tool.ToolResponseDTO;
 import com.example.HR.service.EducationInfoService;
 import com.example.HR.service.EmployeeService;
-import com.example.HR.service.ExperienceService;
+import com.example.HR.service.ToolService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -34,13 +35,13 @@ public class EmployeeDetailsController {
 
     private final EmployeeService employeeService;
     private final EducationInfoService infoService;
-    private final ExperienceService experienceService;
+    private final ToolService toolService;
 
     @Autowired
-    public EmployeeDetailsController(EmployeeService employeeService, EducationInfoService infoService, ExperienceService experienceService) {
+    public EmployeeDetailsController(EmployeeService employeeService, EducationInfoService infoService, ToolService toolService) {
         this.employeeService = employeeService;
         this.infoService = infoService;
-        this.experienceService = experienceService;
+        this.toolService = toolService;
     }
 
     @Operation(summary = "Get employee information",
@@ -114,26 +115,55 @@ public class EmployeeDetailsController {
 
     }
 
-    @PostMapping
-    @Operation(summary = "Create new experience",
-            description = "Create a new experience with tools and skills")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully created experience"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data"),
-            @ApiResponse(responseCode = "409", description = "Experience with title already exists"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    public ResponseEntity<ExperienceResponseDTO> createExperience(@Valid @RequestBody ExperienceRequestDTO requestDTO){
+    @PostMapping("/addExperience")
+    public ResponseEntity<Map<String, Object>> create(@Valid @RequestBody ToolRequestDTO dto){
+        log.info("REST request to create tool: {}", dto.getName());
 
+        try {
+            ToolResponseDTO createdTool = toolService.createTool(dto);
 
-        ExperienceResponseDTO createdExperience = experienceService.createExperience(requestDTO);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Tool created successfully");
+            response.put("data", createdTool);
 
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            log.error("Error creating tool: {}", e.getMessage());
 
-        log.info("Successfully created experience with ID: {}", createdExperience.getId());
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to create tool: " + e.getMessage());
 
-        // 200 OK status ilə yaradılan Experience qaytarırıq
-        return ResponseEntity.ok(createdExperience);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
 
     }
+
+    @GetMapping("/getAllExperiences")
+    public ResponseEntity<Map<String, Object>> getAllToolsWithSkills() {
+        log.info("REST request to get all tools with skills");
+
+        try {
+            List<ToolResponseDTO> tools = toolService.getToolsWithAllSkills();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", tools);
+            response.put("count", tools.size());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching all tools with skills: {}", e.getMessage());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to fetch tools: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+
 
 }
