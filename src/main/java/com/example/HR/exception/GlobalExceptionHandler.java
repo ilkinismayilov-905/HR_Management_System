@@ -135,99 +135,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    // New multipart exception handlers
-    @ExceptionHandler(FileCountLimitExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleFileCountLimitExceeded(FileCountLimitExceededException ex,HttpServletRequest request) {
+    @ExceptionHandler(InvalidDateRangeException.class)
+    public ResponseEntity<Map<String,Object>> invalidDate(InvalidDateRangeException ex, HttpServletRequest request){
 
-        String path = request.getRequestURI();
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
-            return ResponseEntity.ok().build(); // Spring bu zaman default davranışı edəcək
-        }
+        Map<String,Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now());
+        error.put("status",HttpStatus.BAD_REQUEST.value());
+        error.put("error","Invalid Data Range");
+        error.put("message", ex.getMessage());
+        error.put("path", request.getRequestURI());
 
-        log.error("File count limit exceeded: {}", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
 
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("error", "File Count Limit Exceeded");
-        errorResponse.put("message", "Too many files in the request. Maximum allowed files: 100");
-        errorResponse.put("details", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    @ExceptionHandler(FileSizeLimitExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleFileSizeLimitExceeded(FileSizeLimitExceededException ex,HttpServletRequest request) {
 
-        String path = request.getRequestURI();
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
-            return ResponseEntity.ok().build(); // Spring bu zaman default davranışı edəcək
-        }
-
-        log.error("File size limit exceeded: {}", ex.getMessage());
-
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("error", "File Size Limit Exceeded");
-        errorResponse.put("message", "File size exceeds the maximum allowed size of 10MB");
-        errorResponse.put("details", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    @ExceptionHandler(SizeLimitExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleSizeLimitExceeded(SizeLimitExceededException ex,HttpServletRequest request) {
-
-        String path = request.getRequestURI();
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
-            return ResponseEntity.ok().build(); // Spring bu zaman default davranışı edəcək
-        }
-
-        log.error("Request size limit exceeded: {}", ex.getMessage());
-
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Request Size Limit Exceeded");
-        errorResponse.put("message", "Total request size exceeds the maximum allowed size of 100MB");
-        errorResponse.put("details", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceeded(MaxUploadSizeExceededException ex,HttpServletRequest request) {
-
-        String path = request.getRequestURI();
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
-            return ResponseEntity.ok().build();
-        }
-
-
-        log.error("Max upload size exceeded: {}", ex.getMessage());
-
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Upload Size Limit Exceeded");
-        errorResponse.put("message", "Upload size exceeds the configured maximum");
-        errorResponse.put("details", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-    @ExceptionHandler(MultipartException.class)
-    public ResponseEntity<Map<String, Object>> handleMultipartException(MultipartException ex, HttpServletRequest request) {
-        String path = request.getRequestURI();
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
-            return ResponseEntity.ok().build(); // Swagger-i pozmamaq üçün boş JSON status 200 qaytarırıq
-        }
-
-        log.error("Multipart exception: {}", ex.getMessage());
-
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("error", "Multipart Request Error");
-        errorResponse.put("message", "Error processing multipart request");
-        errorResponse.put("details", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
 }

@@ -68,7 +68,6 @@ public class EducationInfoServiceImpl implements EducationInfoService {
 
     @Override
     public List<EducationInfoDTO> getAll() throws MalformedURLException {
-        List<EducationInfoDTO> list = converter.entityListToDtoList(infoRepository.findAll());
-        return list;
+        return converter.entityListToDtoList(infoRepository.findAll());
     }
 }
