@@ -22,6 +22,7 @@ public class CalendarConverter {
                 .eventDate(calendar.getEventDate())
                 .description(calendar.getDescription())
                 .eventLocation(calendar.getLocation())
+                .upcoming(calendar.isUpcoming())
                 .build();
     }
 
