@@ -39,8 +39,8 @@ public class Calendar {
     @Column(name = "description", length = 500)
     private String description;
 
-    @Column(name = "is_upcoming")
-    public boolean isUpcoming = false;
+    @Transient
+    private boolean isUpcoming = false;
 
     @PrePersist
     @PreUpdate

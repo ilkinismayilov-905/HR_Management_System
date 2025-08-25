@@ -5,6 +5,8 @@ import com.example.HR.dto.calendar.CalendarResponseDTO;
 import com.example.HR.entity.Calendar;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,7 @@ public class CalendarConverter {
                 .eventDate(calendar.getEventDate())
                 .description(calendar.getDescription())
                 .eventLocation(calendar.getLocation())
-                .upcoming(calendar.isUpcoming())
+                .upcoming(calendar.getEventDate() != null && calendar.getEventDate().isAfter(LocalDate.now()))
                 .build();
     }
 

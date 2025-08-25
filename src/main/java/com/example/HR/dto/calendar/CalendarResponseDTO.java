@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,8 +38,10 @@ public class CalendarResponseDTO {
     /**
      * Utility method: check if event is in the future.
      */
-    public boolean isUpcoming() {
-        return startTime.isAfter(LocalTime.now());
+    public Boolean isUpcoming() {
+        return eventDate != null && eventDate.isAfter(LocalDate.now());
     }
+
+
 
 }

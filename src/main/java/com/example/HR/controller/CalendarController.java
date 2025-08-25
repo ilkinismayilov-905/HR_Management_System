@@ -5,14 +5,21 @@ import com.example.HR.dto.calendar.CalendarResponseDTO;
 import com.example.HR.dto.tool.ToolResponseDTO;
 import com.example.HR.service.CalendarService;
 import com.example.HR.validation.Create;
+import com.example.HR.validation.Update;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.web.ProjectedPayload;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,5 +79,100 @@ public class CalendarController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+
+    }
+
+    @Operation(summary = "Update event", description = "Update an existing event by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Event updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Event not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Map<String,Object>> update(@Validated(Update.class)
+                                                     @PathVariable Long id,
+                                                     @RequestBody CalendarRequestDTO dto){
+        log.info("REST request to update event with ID: {}", id);
+
+        try {
+            CalendarResponseDTO updatedEvent = service.updateEvent(id,dto);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",updatedEvent);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e){
+            log.error("Error updating event: {}", e.getMessage());
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message","Failed to update event: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @Operation(summary = "Get event by ID", description = "Retrieve a specific event by its unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Event retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Event not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id){
+        log.info("REST request to get event with ID: {}", id);
+
+        try {
+            CalendarResponseDTO dto = service.getById(id);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", dto);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching event: {}", e.getMessage());
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message", "Event not found: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @Operation(summary = "Get event by date", description = "Retrieve a specific event by its date")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Event retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Event not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/date/{date}")
+    public ResponseEntity<Map<String,Object>> getByDate(@PathVariable  @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date){
+        log.info("REST request to get event with date: {}", date);
+
+        try {
+
+            CalendarResponseDTO calendar = service.getByDate(date);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", calendar);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching event: {}", e.getMessage());
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message", "Event not found: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+
+
     }
 }

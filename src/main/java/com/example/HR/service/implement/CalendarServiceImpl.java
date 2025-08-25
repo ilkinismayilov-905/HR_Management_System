@@ -5,6 +5,7 @@ import com.example.HR.dto.calendar.CalendarRequestDTO;
 import com.example.HR.dto.calendar.CalendarResponseDTO;
 import com.example.HR.entity.Calendar;
 import com.example.HR.exception.NoIDException;
+import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.CalendarRepository;
 import com.example.HR.service.CalendarService;
 import jakarta.transaction.Transactional;
@@ -58,16 +59,35 @@ public class CalendarServiceImpl implements CalendarService {
 
     @Override
     public CalendarResponseDTO getById(Long id) {
-        return null;
+        log.info("View event by id: {} ",id);
+
+        Calendar calendar = calendarRepository.findById(id)
+                .orElseThrow(() -> new NoIDException("There is not event found by id: " + id));
+        log.info("Event successfully fetched by id: {}", id);
+
+        return converter.toResponseDTO(calendar);
     }
 
     @Override
     public CalendarResponseDTO getByDate(LocalDate date) {
-        return null;
+        log.info("View event by date: {}" , date);
+
+        Calendar calendar = calendarRepository.findByEventDate(date)
+                .orElseThrow(() -> new NotFoundException("Event not found by date: " + date));
+
+        log.info("Event successfully fetched by date: {}", date);
+
+        return converter.toResponseDTO(calendar);
     }
 
     @Override
     public void deleteById(Long id) {
+        log.info("Delete event by id: {}" , id);
 
+        Calendar calendar = calendarRepository.findById(id)
+                .orElseThrow(() -> new NoIDException("There is not event found by id: " + id));
+        log.info("Event successfully fetched by id: {}", id);
+
+        calendarRepository.deleteById(id);
     }
 }
