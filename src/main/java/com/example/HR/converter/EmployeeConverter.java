@@ -1,8 +1,8 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.EmployeeInformationDTO;
-import com.example.HR.dto.EmployeeRequestDTO;
-import com.example.HR.dto.EmployeeResponseDTO;
+import com.example.HR.dto.employee.EmployeeRequestDTO;
+import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.Status;
 

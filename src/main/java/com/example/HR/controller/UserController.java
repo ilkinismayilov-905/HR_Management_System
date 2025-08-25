@@ -1,13 +1,14 @@
 package com.example.HR.controller;
 
 import com.example.HR.converter.UserConverter;
-import com.example.HR.dto.EmployeeRequestDTO;
-import com.example.HR.dto.UserRequestDTO;
-import com.example.HR.dto.UserResponseDTO;
+import com.example.HR.dto.user.UserRequestDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.PasswordResetTokenService;
 import com.example.HR.service.UserService;
 import com.example.HR.util.EmailUtil;
 import com.example.HR.util.OtpUtil;
+import com.example.HR.validation.Create;
+import com.example.HR.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -60,7 +62,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/register")
-    public ResponseEntity<UserRequestDTO> createUser(@RequestBody @Valid UserRequestDTO UserRequestDTO) throws IOException {
+    public ResponseEntity<UserRequestDTO> createUser(@RequestBody @Validated(Create.class) UserRequestDTO UserRequestDTO) throws IOException {
 //        log.info("Creating new user: {}", UserRequestDTO.getUsername());
         UserRequestDTO savedUser = userService.save(UserRequestDTO);
 
@@ -106,7 +108,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserRequestDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         return userService.getById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -123,8 +125,8 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<Optional<UserRequestDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
-        Optional<UserRequestDTO> userDTOList = userService.getByEmail(email);
+    public ResponseEntity<Optional<UserResponseDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
+        Optional<UserResponseDTO> userDTOList = userService.getByEmail(email);
 
 //        log.info("User list returned by email: {}", email);
 
@@ -161,9 +163,12 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/update/{id}")
-    public ResponseEntity<EmployeeRequestDTO> updateUser(@PathVariable Long id, @RequestBody @Valid UserRequestDTO userRequestDTO) throws IOException {
+    public ResponseEntity<Optional<UserResponseDTO>> updateUser(@PathVariable Long id,
+                                                         @RequestBody @Validated(Update.class)
+                                                         UserRequestDTO userRequestDTO) throws IOException {
         userService.update(id, userRequestDTO);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @Operation(summary = "Delete user",

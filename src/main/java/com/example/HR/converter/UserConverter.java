@@ -1,7 +1,7 @@
 package com.example.HR.converter;
 
-import com.example.HR.dto.UserRequestDTO;
-import com.example.HR.dto.UserResponseDTO;
+import com.example.HR.dto.user.UserRequestDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.entity.User;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;

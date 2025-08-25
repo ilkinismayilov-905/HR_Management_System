@@ -2,8 +2,8 @@ package com.example.HR.service.implement;
 
 import com.example.HR.converter.EmployeeConverter;
 import com.example.HR.dto.EmployeeInformationDTO;
-import com.example.HR.dto.EmployeeRequestDTO;
-import com.example.HR.dto.EmployeeResponseDTO;
+import com.example.HR.dto.employee.EmployeeRequestDTO;
+import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.EmploymentType;
@@ -20,10 +20,8 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

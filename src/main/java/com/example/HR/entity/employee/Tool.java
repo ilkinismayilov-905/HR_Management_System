@@ -1,26 +1,35 @@
 package com.example.HR.entity.employee;
 
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Entity(name = "tool")
+@Table(name = "tools")
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tool {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    private String name; // e.g. "Figma", "Framer"
+    @Column(nullable = false, unique = true, length = 25)
+    private String name;
 
-    @OneToMany(mappedBy = "tool", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Skill> skills = new ArrayList<>();
+    @ElementCollection
+    @CollectionTable(name = "tool_skills", joinColumns = @JoinColumn(name = "tool_id"))
+    @Column(name = "skill_name")
+    private List<String> skills;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 }
