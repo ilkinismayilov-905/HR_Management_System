@@ -12,5 +12,6 @@ public interface CalendarService {
     CalendarResponseDTO updateEvent(Long id,CalendarRequestDTO dto);
     CalendarResponseDTO getById(Long id);
     CalendarResponseDTO getByDate(LocalDate date);
+    List<CalendarResponseDTO> getBetweenDates(LocalDate startDate, LocalDate endDate);
     void deleteById(Long id);
 }

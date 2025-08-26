@@ -175,4 +175,28 @@ public class CalendarController {
 
 
     }
+
+    @GetMapping("/between")
+    public ResponseEntity<Map<String,Object>> getBetweenDates(@RequestParam("start") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate start,
+                                                              @RequestParam("end") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate end){
+        log.info("REST request to get events between: {} and {}", start, end);
+
+        Map<String,Object> response = new HashMap<>();
+        try {
+            List<CalendarResponseDTO> events = service.getBetweenDates(start, end);
+            response.put("success", true);
+            response.put("data", events);
+            response.put("count", events.size());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            log.error("Error fetching events between dates: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "Failed to fetch events: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

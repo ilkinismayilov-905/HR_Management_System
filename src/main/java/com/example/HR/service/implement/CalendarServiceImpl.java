@@ -81,6 +81,18 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
+    public List<CalendarResponseDTO> getBetweenDates(LocalDate startDate, LocalDate endDate) {
+        log.info("View events between dates: {} and {}", startDate, endDate);
+
+        if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("Invalid date range");
+        }
+
+        List<Calendar> events = calendarRepository.findByEventDateBetween(startDate, endDate);
+        return converter.toResponseDTOList(events);
+    }
+
+    @Override
     public void deleteById(Long id) {
         log.info("Delete event by id: {}" , id);
 
