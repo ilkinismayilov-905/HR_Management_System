@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,5 +199,29 @@ public class CalendarController {
             response.put("message", "Failed to fetch events: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<Map<String,Object>> getUpcomingEvents(){
+
+        try {
+
+            List<CalendarResponseDTO> upcomingEvents = service.getUpcomingEvents();
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("data", upcomingEvents);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Error fetching event: {}", e.getMessage());
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message", "Event not found: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 }

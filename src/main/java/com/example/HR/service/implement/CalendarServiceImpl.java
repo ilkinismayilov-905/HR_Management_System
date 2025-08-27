@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -101,5 +102,14 @@ public class CalendarServiceImpl implements CalendarService {
         log.info("Event successfully fetched by id: {}", id);
 
         calendarRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CalendarResponseDTO> getUpcomingEvents() {
+        return calendarRepository.findAll()
+                .stream()
+                .filter(event -> event.getEventDate().isAfter(LocalDate.now()))
+                .map(converter::toResponseDTO)
+                .toList();
     }
 }
