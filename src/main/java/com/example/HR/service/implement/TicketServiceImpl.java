@@ -6,6 +6,7 @@ import com.example.HR.dto.ticket.TicketRequestDTO;
 import com.example.HR.dto.ticket.TicketResponseDTO;
 import com.example.HR.entity.Ticket;
 import com.example.HR.entity.User;
+import com.example.HR.enums.TicketStatus;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.TicketRepository;
 import com.example.HR.repository.UserRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -37,21 +39,21 @@ public class TicketServiceImpl implements TicketService {
             throw new RuntimeException("Assigned user full name cannot be null or empty");
         }
 
-        String trimmedName = dto.getAssignedToFullName().trim();
-        log.info("Trimmed fullname: '{}'", trimmedName);
+        String fullname = dto.getAssignedToFullName();
 
-        User user = userRepository.findByFullname(trimmedName)
-                .orElseThrow(() -> new RuntimeException("User not found with fullname: " + trimmedName));
+            User user = userRepository.findByFullname(fullname)
+                .orElseThrow(() -> new RuntimeException("User not found with fullname: " + fullname));
 
         log.info("Found user: {}", user.getFullname());
 
 
         Ticket ticket = converter.toEntity(dto,user);
         ticket.setEmail(user.getEmail());
+        ticket.setCreatedAt(LocalDate.now());
         Ticket savedTicket = ticketRepository.save(ticket);
         savedTicket.setTicketID(String.format("#TC-%03d", savedTicket.getId()));
 
-        log.info("Ticked created successfully: {}",savedTicket.getTicketID());
+        log.info("Ticket created successfully: {}",savedTicket.getTicketID());
 
 
         return converter.toResponseDTO(savedTicket);
@@ -78,16 +80,40 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketResponseDTO update(Long id, TicketRequestDTO dto) {
+        log.info("Update ticket by ID: {}", id);
         Ticket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Ticket not found by id: " + id));
 
-        User user = userRepository.findByFullname(dto.getAssignedToFullName())
+        User user = userRepository.findByFullname(ticket.getAssignedToFullName())
                         .orElseThrow(() -> new NotFoundException("User not found by fullname: " + dto.getAssignedToFullName()));
         converter.update(dto,ticket,user);
+        log.info("Ticket updated successfully");
 
         Ticket savedTicket = ticketRepository.save(ticket);
+        log.info("Updated ticket saved successfully");
 
         return converter.toResponseDTO(savedTicket);
+    }
+
+    @Override
+    public List<TicketResponseDTO> getByStatus(TicketStatus status) {
+
+        List<Ticket> ticket = ticketRepository.findByStatus(status);
+        log.info("Tickets fetched by status");
+
+        return converter.toResponseDTOList(ticket);
+
+    }
+
+    @Override
+    public List<TicketResponseDTO> getTicketsFromLastDays(int days) {
+
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days);
+
+        List<Ticket> ticket = ticketRepository.findByCreatedAtBetween(startDate,endDate);
+
+        return converter.toResponseDTOList(ticket);
     }
 
     @Override

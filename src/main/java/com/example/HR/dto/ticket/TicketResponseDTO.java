@@ -2,11 +2,14 @@ package com.example.HR.dto.ticket;
 
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.enums.TicketStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -36,4 +39,8 @@ public class TicketResponseDTO {
 
     @Schema(description = "Ticket status", example = "OPEN")
     private TicketStatus status;
+
+    @Schema(description = "Created Date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate createdDate;
 }

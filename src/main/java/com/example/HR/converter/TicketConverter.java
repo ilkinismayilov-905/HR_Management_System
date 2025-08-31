@@ -23,7 +23,7 @@ public class TicketConverter {
                 .ticketID(ticket.getTicketID())
                 .assignedTo(ticket.getAssignedToFullName())
                 .subject(ticket.getSubject())
-//                .assignedToFullName(ticket.getAssignedToFullName())
+                .createdDate(ticket.getCreatedAt())
                 .build();
     }
 

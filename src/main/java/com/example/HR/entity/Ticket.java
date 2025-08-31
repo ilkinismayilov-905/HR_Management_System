@@ -3,6 +3,9 @@ package com.example.HR.entity;
 import com.example.HR.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "ticket")
@@ -41,5 +44,9 @@ public class Ticket {
 
     @Column(nullable = false,name = "email")
     private String email;
+
+    @CreationTimestamp
+    @Column(nullable = false,name = "created_date")
+    private LocalDate createdAt;
 
 }

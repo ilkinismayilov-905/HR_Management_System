@@ -34,6 +34,15 @@ public class CalendarController {
 
     private final CalendarService service;
 
+    @Operation(
+            summary = "Add a new calendar event",
+            description = "Creates a new calendar event with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Event created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/addEvent")
     public ResponseEntity<Map<String,Object>> add(@Validated(Create.class) @RequestBody CalendarRequestDTO dto){
         log.info("REST request to add event: {}", dto.getEventName());
@@ -59,6 +68,15 @@ public class CalendarController {
         }
     }
 
+    @Operation(
+            summary = "Get all calendar events",
+            description = "Retrieves all calendar events from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Events retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No events found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/getAll")
     public ResponseEntity<Map<String,Object>> getAll(){
 
@@ -83,7 +101,9 @@ public class CalendarController {
 
     }
 
-    @Operation(summary = "Update event", description = "Update an existing event by ID")
+    @Operation(
+            summary = "Update event",
+            description = "Update an existing event by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Event updated successfully"),
             @ApiResponse(responseCode = "404", description = "Event not found"),

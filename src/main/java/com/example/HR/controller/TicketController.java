@@ -6,6 +6,9 @@ import com.example.HR.entity.Ticket;
 import com.example.HR.service.TicketService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,15 @@ public class TicketController {
 
     private final TicketService ticketService;
 
+    @Operation(
+            summary = "Add a new ticket",
+            description = "Creates a new ticket with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Ticket created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/add")
     public ResponseEntity<Map<String,Object>> add(@RequestBody @Validated(Create.class) TicketRequestDTO dto){
         try {
@@ -46,6 +58,15 @@ public class TicketController {
         }
     }
 
+    @Operation(
+            summary = "Get all ticket",
+            description = "Retrieves all tickets from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No tickets found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/getAll")
     public ResponseEntity<Map<String,Object>> getAll(){
         try {
@@ -60,15 +81,24 @@ public class TicketController {
 
             Map<String,Object> response = new HashMap<>();
             response.put("success:", false);
-            response.put("message:","Failed to fetch tickets");
+            response.put("message:","Failed to fetch tickets" + e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
+    @Operation(
+            summary = "Update ticket",
+            description = "Update an existing ticket by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Ticket not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String,Object>> update(@Validated(Update.class) @PathVariable Long id,
-                                                     @RequestBody TicketRequestDTO dto){
+    public ResponseEntity<Map<String,Object>> update(@PathVariable Long id,
+                                                     @RequestBody @Validated(Update.class)TicketRequestDTO dto){
         log.info("REST request to update ticket with ID: {}", id);
 
         try {
@@ -85,12 +115,21 @@ public class TicketController {
 
             Map<String,Object> response = new HashMap<>();
             response.put("success:", false);
-            response.put("message:","Failed to update ticket");
+            response.put("message:","Failed to update ticket" + e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
+    @Operation(
+            summary = "Get ticket by ID",
+            description = "Retrieves ticket by ID from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Map<String,Object>> getByID(@PathVariable Long id) {
         try {
@@ -105,10 +144,64 @@ public class TicketController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("success:", false);
-            response.put("message:", "Failed to fetch ticket by id: " + id);
+            response.put("message:", "Failed to fetch ticket: " + e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
+    @GetMapping("/getFromLastDays/{days}")
+    public ResponseEntity<Map<String,Object>> getByLastDays(@PathVariable int days){
+        log.info("Rest request to get tickets by last days");
+
+        try {
+            List<TicketResponseDTO> list = ticketService.getTicketsFromLastDays(days);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success:",true);
+            response.put("data:",list);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success:", false);
+            response.put("message:", "Failed to fetch ticket: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @Operation(
+            summary = "Delete ticket by ID",
+            description = "Deletes ticket by its unique identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String,Object>> deleteByID(@PathVariable Long id){
+
+        log.info("Rest request to delete ticket by ID: {}", id);
+        try {
+
+            TicketResponseDTO dto = ticketService.getById(id);
+            ticketService.deleteById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success:",true);
+            response.put("message:","Ticket deleted by ID successfully");
+            response.put("data:",dto);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success:",false);
+            response.put("message:","Failed to delete ticket" + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }
