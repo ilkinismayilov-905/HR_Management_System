@@ -2,19 +2,25 @@ package com.example.HR.service.implement;
 
 
 import com.example.HR.converter.TicketConverter;
+import com.example.HR.dto.ticket.TicketCommentDTO;
 import com.example.HR.dto.ticket.TicketRequestDTO;
 import com.example.HR.dto.ticket.TicketResponseDTO;
-import com.example.HR.entity.Ticket;
+import com.example.HR.entity.ticket.Ticket;
 import com.example.HR.entity.User;
+import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.entity.ticket.TicketComment;
 import com.example.HR.enums.TicketStatus;
 import com.example.HR.exception.NotFoundException;
-import com.example.HR.repository.TicketRepository;
+import com.example.HR.exception.ResourceNotFoundException;
+import com.example.HR.repository.ticket.TicketCommentRepository;
+import com.example.HR.repository.ticket.TicketRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.TicketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +34,8 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final TicketConverter converter;
+    private final TicketCommentRepository commentRepository;
+    private final FileStorageService fileStorageService;
 
     @Override
     public TicketResponseDTO create(TicketRequestDTO dto) {
@@ -125,5 +133,34 @@ public class TicketServiceImpl implements TicketService {
         ticketRepository.deleteById(id);
         log.info("Ticket successfully deleted by id: {}", id);
 
+    }
+
+    @Override
+    public TicketAttachment uploadAttachment(String ticketId, MultipartFile file) {
+        Ticket ticket = ticketRepository.findByTicketID(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
+
+        TicketAttachment attachment = fileStorageService.storeFile(file,ticket);
+        log.info("Uploaded attachment {} for ticket {}", file.getOriginalFilename(), ticketId);
+
+        return attachment;
+    }
+
+    @Override
+    public TicketCommentDTO addComment(String ticketId, String content, String authorName, String authorEmail) {
+        Ticket ticket = ticketRepository.findByTicketID(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
+
+        TicketComment comment = TicketComment.builder()
+                .content(content)
+                .authorName(authorName)
+                .authorEmail(authorEmail)
+                .ticket(ticket)
+                .build();
+
+        comment = commentRepository.save(comment);
+        log.info("Added comment to ticket: {}", ticketId);
+
+        return converter.mapCommentToDTO(comment);
     }
 }

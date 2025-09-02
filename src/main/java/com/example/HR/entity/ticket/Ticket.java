@@ -1,17 +1,19 @@
-package com.example.HR.entity;
+package com.example.HR.entity.ticket;
 
+import com.example.HR.entity.User;
+import com.example.HR.enums.TicketPriority;
 import com.example.HR.enums.TicketStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "ticket")
 @Data
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -42,11 +44,22 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TicketStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private TicketPriority priority = TicketPriority.MEDIUM;
+
     @Column(nullable = false,name = "email")
     private String email;
 
     @CreationTimestamp
     @Column(nullable = false,name = "created_date")
     private LocalDate createdAt;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<TicketAttachment> attachments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<TicketComment> comments = new ArrayList<>();
 
 }

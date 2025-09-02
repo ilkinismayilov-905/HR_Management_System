@@ -1,6 +1,7 @@
 package com.example.HR.dto.ticket;
 
 import com.example.HR.entity.User;
+import com.example.HR.enums.TicketPriority;
 import com.example.HR.enums.TicketStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -39,5 +40,7 @@ public class TicketRequestDTO {
     @Schema(description = "Current status of the ticket", example = "OPEN", required = true)
     @NotNull(message = "Status cannot be null")
     private TicketStatus status;
+
+    private TicketPriority priority;
 
 }

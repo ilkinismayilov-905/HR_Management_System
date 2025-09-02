@@ -1,8 +1,11 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.ticket.TicketAttachmentDTO;
+import com.example.HR.dto.ticket.TicketCommentDTO;
 import com.example.HR.dto.ticket.TicketRequestDTO;
 import com.example.HR.dto.ticket.TicketResponseDTO;
-import com.example.HR.entity.Ticket;
+import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.enums.TicketStatus;
 import com.example.HR.service.TicketService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -150,6 +154,16 @@ public class TicketController {
         }
     }
 
+
+    @Operation(
+            summary = "Get ticket by lastDays",
+            description = "Retrieves ticket by lastDays from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/getFromLastDays/{days}")
     public ResponseEntity<Map<String,Object>> getByLastDays(@PathVariable int days){
         log.info("Rest request to get tickets by last days");
@@ -170,6 +184,40 @@ public class TicketController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+
+    @Operation(
+            summary = "Get ticket by status",
+            description = "Retrieves ticket by status from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/{status}")
+    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable TicketStatus status){
+        log.info("Rest request to get ticket by status");
+
+        try {
+            List<TicketResponseDTO> dto = ticketService.getByStatus(status);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success:",true);
+            response.put("data:",dto);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success:", false);
+            response.put("message:", "Failed to fetch ticket: " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }
+    }
+
 
     @Operation(
             summary = "Delete ticket by ID",
@@ -204,4 +252,38 @@ public class TicketController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
+
+    @PostMapping("/{ticketId}/attachments")
+    public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable String ticketId,
+                                                          @RequestParam("file") MultipartFile file) {
+        TicketAttachment attachment = ticketService.uploadAttachment(ticketId, file);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "File uploaded successfully");
+        response.put("attachment", TicketAttachmentDTO.builder()
+                .id(attachment.getId())
+                .fileName(attachment.getFileName())
+                .originalFileName(attachment.getOriginalFileName())
+                .contentType(attachment.getContentType())
+                .fileSize(attachment.getFileSize())
+                .uploadedDate(attachment.getUploadedDate())
+                .build());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{ticketId}/comments")
+    public ResponseEntity<TicketCommentDTO> addComment(@PathVariable String ticketId,
+                                                       @RequestBody Map<String, String> commentData) {
+        TicketCommentDTO comment = ticketService.addComment(
+                ticketId,
+                commentData.get("content"),
+                commentData.get("authorName"),
+                commentData.get("authorEmail")
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(comment);
+    }
+
+
 }
