@@ -7,14 +7,18 @@ import com.example.HR.dto.ticket.TicketResponseDTO;
 import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.TicketStatus;
 import com.example.HR.service.TicketService;
+import com.example.HR.service.implement.FileStorageService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +30,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/ticket")
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @Slf4j
 @RequiredArgsConstructor
 public class TicketController {
 
     private final TicketService ticketService;
+    private final FileStorageService fileStorageService;
 
     @Operation(
             summary = "Add a new ticket",
@@ -80,7 +85,7 @@ public class TicketController {
             response.put("success:", true);
             response.put("data:",list);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e){
 
             Map<String,Object> response = new HashMap<>();
@@ -271,6 +276,26 @@ public class TicketController {
                 .build());
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/attachments/download/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName){
+        Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" +resource.getFilename() +"\"")
+                .body(resource);
+    }
+
+    @GetMapping("/attachments/view/{fileName}")
+    public ResponseEntity<Resource> viewFile(@PathVariable String fileName){
+        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
     @PostMapping("/{ticketId}/comments")

@@ -1,6 +1,7 @@
 package com.example.HR.entity.employee;
 
 import com.example.HR.entity.User;
+import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
@@ -10,10 +11,14 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity(name = "employee")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class Employee {
 
     @Id
@@ -45,7 +50,7 @@ public class Employee {
     @Column(columnDefinition = "TEXT")
     private String about;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String employeeId;
 
     @OneToOne(optional = false)
@@ -63,4 +68,8 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     @Column(name = "departament",nullable = false)
     private Departament departament;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<EmployeeAttachment> attachments = new ArrayList<>();
 }

@@ -6,20 +6,22 @@ import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.entity.User;
 import com.example.HR.entity.employee.Employee;
+import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.ticket.Ticket;
+import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
-import com.example.HR.exception.EmployeeNotFoundException;
-import com.example.HR.exception.NoIDException;
-import com.example.HR.exception.NotFoundException;
-import com.example.HR.exception.ValidException;
+import com.example.HR.exception.*;
 import com.example.HR.repository.EmployeeRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.EmployeeService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -29,17 +31,19 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final EmployeeConverter employeeConverter = new EmployeeConverter();
+    private final EmployeeImagesService imagesService;
 
-    @Autowired
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository) {
-        this.employeeRepository = employeeRepository;
-        this.userRepository = userRepository;
-    }
+//    @Autowired
+//    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository) {
+//        this.employeeRepository = employeeRepository;
+//        this.userRepository = userRepository;
+//    }
 
     @Override
     public void deleteById(Long id) {
@@ -56,9 +60,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeRequestDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException {
 
-//        validCheck(employeeRequestDTO);
 
-//        log.info("Employee saved: {}" ,employeeRequestDTO.getFullname());
+        log.info("Employee saved: {}" ,employeeRequestDTO.getFullname());
 
         // Find existing User by username, email, and password
         User existingUser = userRepository.findByFullname(employeeRequestDTO.getFullname())
@@ -73,12 +76,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ValidException("Password mismatch for user: " + employeeRequestDTO.getFullname());
         }
 
-        // Check if an employee already exists for this user
-//        if (employeeRepository.findByFullname(existingUser) != null ||
-//                employeeRepository.findByEmail(existingUser) != null ||
-//                employeeRepository.findByPassword(existingUser) != null) {
-//            throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
-//        }
         Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser);
         if (existingEmployee.isPresent()) {
             throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
@@ -94,6 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // Save the employee
         Employee savedEmployee = employeeRepository.save(employee);
+        savedEmployee.setEmployeeId(String.format("#TC-%03d", savedEmployee.getId()));
 
         // Return the saved employee as DTO
         return employeeConverter.entityToDto(savedEmployee);
@@ -212,5 +210,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return Optional.ofNullable(employeeConverter.entityToEmployeeInfo(employeeOpt));
 
+    }
+
+    @Override
+    public EmployeeAttachment uploadAttachment(String ticketId, MultipartFile file) {
+        Employee employee = employeeRepository.findByEmployeeId(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
+
+        EmployeeAttachment attachment = imagesService.storeFile(file,employee);
+        log.info("Uploaded attachment {} for ticket {}", file.getOriginalFilename(), ticketId);
+
+        return attachment;
     }
 }

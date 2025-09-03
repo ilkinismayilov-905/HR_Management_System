@@ -3,7 +3,6 @@ package com.example.HR.repository.ticket;
 import com.example.HR.entity.ticket.Ticket;
 import com.example.HR.enums.TicketStatus;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,8 +22,7 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
             "(:subject IS NULL OR LOWER(t.subject) LIKE LOWER(CONCAT('%', :subject, '%'))) AND " +
             "(:email IS NULL OR LOWER(t.email) LIKE LOWER(CONCAT('%', :email, '%'))) AND " +
             "(:status IS NULL OR t.status = :status)")
-    Page<Ticket> searchTickets(@Param("subject") String subject,
+    List<Ticket> searchTickets(@Param("subject") String subject,
                                @Param("email") String email,
-                               @Param("status") TicketStatus status,
-                               Pageable pageable);
+                               @Param("status") TicketStatus status);
 }

@@ -1,9 +1,13 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.config.FileStorageProperties;
+
+import com.example.HR.config.EmployeeImagesStorageProperties;
+import com.example.HR.entity.employee.Employee;
+import com.example.HR.entity.employee.EmployeeAttachment;
 import com.example.HR.entity.ticket.Ticket;
 import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.exception.FileStorageException;
+import com.example.HR.repository.EmployeeAttachmentRepository;
 import com.example.HR.repository.ticket.TicketAttachmentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +16,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -27,15 +30,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FileStorageService {
-    private final FileStorageProperties fileStorageProperties;
-    private final TicketAttachmentRepository attachmentRepository;
+public class EmployeeImagesService {
+
+    private final EmployeeImagesStorageProperties imagesStorageProperties;
+    private final EmployeeAttachmentRepository attachmentRepository;
 
     private Path fileStorageLocation;
 
     @PostConstruct
     public void init(){
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
+        this.fileStorageLocation = Paths.get(imagesStorageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
 
         try {
@@ -45,7 +49,7 @@ public class FileStorageService {
         }
     }
 
-    public TicketAttachment storeFile(MultipartFile file, Ticket ticket){
+    public EmployeeAttachment storeFile(MultipartFile file, Employee employee){
         validateFile(file);
 
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -60,13 +64,13 @@ public class FileStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(originalFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            TicketAttachment attachment = TicketAttachment.builder()
+            EmployeeAttachment attachment = EmployeeAttachment.builder()
                     .fileName(fileName)
                     .originalFileName(originalFileName)
                     .filePath(targetLocation.toString())
                     .contentType(file.getContentType())
                     .fileSize(file.getSize())
-                    .ticket(ticket)
+                    .employee(employee)
                     .build();
 
             return attachmentRepository.save(attachment);
@@ -86,7 +90,7 @@ public class FileStorageService {
                 throw new FileStorageException("File not found " + originalFileName);
             }
         } catch (MalformedURLException ex) {
-        throw new FileStorageException("File not found " + originalFileName, ex);
+            throw new FileStorageException("File not found " + originalFileName, ex);
         }
     }
 
@@ -103,11 +107,11 @@ public class FileStorageService {
         if(file.isEmpty()){
             throw new FileStorageException("Cannot store empty file");
         }
-        if(file.getSize()> fileStorageProperties.getMaxFileSize()){
+        if(file.getSize()> imagesStorageProperties.getMaxFileSize()){
             throw new FileStorageException("File size exceeds maximum allowed size");
         }
         String fileExtension = getFileExtension(file.getOriginalFilename());
-        if (!Arrays.asList(fileStorageProperties.getAllowedExtensions()).contains(fileExtension.toLowerCase())){
+        if (!Arrays.asList(imagesStorageProperties.getAllowedExtensions()).contains(fileExtension.toLowerCase())){
             throw new FileStorageException("File type not allowed: " + fileExtension);
         }
     }

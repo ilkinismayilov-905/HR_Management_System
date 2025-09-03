@@ -1,40 +1,49 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.employee.EmployeeAttachmentDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
+import com.example.HR.dto.ticket.TicketAttachmentDTO;
+import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.service.EmployeeService;
 //import com.example.HR.service.implement.FileUploadService;
+import com.example.HR.service.implement.EmployeeImagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @Slf4j
 @RequestMapping("/employee")
+@RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-
-    @Autowired
-    public EmployeeController(EmployeeService employeeService) {
-        this.employeeService = employeeService;
-    }
+    private final EmployeeImagesService imagesService;
 
     @Operation(
             summary = "Create a new employee",
@@ -53,7 +62,6 @@ public class EmployeeController {
         log.info("Username received: '{}'", employeeRequestDTO.getFullname());
         log.info("Password received: '{}'", employeeRequestDTO.getPassword());
         log.info("ConfirmPassword received: '{}'", employeeRequestDTO.getConfirmPassword());
-        log.info("EmployeeId received: '{}'", employeeRequestDTO.getEmployeeId());
         log.info("PhoneNumber received: '{}'", employeeRequestDTO.getPhoneNumber());
         log.info("Company received: '{}'", employeeRequestDTO.getCompany());
         log.info("Departament received: '{}'", employeeRequestDTO.getDepartament());
@@ -214,6 +222,47 @@ public class EmployeeController {
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/{employeeId}/attachments")
+    public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable String employeeId,
+                                                          @RequestParam("file") MultipartFile file) {
+        EmployeeAttachment attachment = employeeService.uploadAttachment(employeeId, file);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "File uploaded successfully");
+        response.put("attachment", EmployeeAttachmentDTO.builder()
+                .id(attachment.getId())
+                .fileName(attachment.getFileName())
+                .originalFileName(attachment.getOriginalFileName())
+                .contentType(attachment.getContentType())
+                .fileSize(attachment.getFileSize())
+                .uploadedDate(attachment.getUploadedDate())
+                .build());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/attachments/download/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName){
+        Resource resource = imagesService.loadFileAsResource(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" +resource.getFilename() +"\"")
+                .body(resource);
+    }
+
+    @GetMapping("/attachments/view/{fileName}")
+    public ResponseEntity<Resource> viewFile(@PathVariable String fileName){
+        Resource resource = imagesService.loadFileAsResource(fileName);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
 

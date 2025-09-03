@@ -16,6 +16,7 @@ import java.time.LocalDate;
 //@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class EmployeeRequestDTO {
 
     @Schema(description = "Unique identifier", example = "1")
@@ -25,9 +26,9 @@ public class EmployeeRequestDTO {
     @NotBlank(groups = Create.class,message = "Full name is required")
     private String fullname;
 
-    @Schema(description = "Unique employee ID", example = "EMP123456", required = true)
-    @NotBlank(groups = Create.class,message = "Employee ID is required")
-    private String employeeId;
+//    @Schema(description = "Unique employee ID", example = "EMP123456", required = true)
+//    @NotBlank(groups = Create.class,message = "Employee ID is required")
+//    private String employeeId;
 
     @Schema(description = "Joining date of the employee", example = "2023-01-15", required = true, type = "string", format = "date")
     @NotNull(groups = Create.class,message = "Join date is required")
@@ -73,158 +74,4 @@ public class EmployeeRequestDTO {
 
     @Schema(description = "Employee status", example = "ACTIVE", allowableValues = {"ACTIVE", "INACTIVE", "SUSPENDED"})
     private Status status;
-
-//    @Schema(description = "Stored image name")
-//    private String imageName;
-//
-//    @Schema(description = "Stored image MIME type")
-//    private String imageType;
-//
-//    @Schema(description = "Stored image data as byte array")
-//    private byte[] imageDate;
-
-    //    public String getImageName() {
-//        return imageName;
-//    }
-
-//    public void setImageName(String imageName) {
-//        this.imageName = imageName;
-//    }
-
-//    public String getImageType() {
-//        return imageType;
-//    }
-//
-//    public void setImageType(String imageType) {
-//        this.imageType = imageType;
-//    }
-//
-//    public byte[] getImageDate() {
-//        return imageDate;
-//    }
-//
-//    public void setImageDate(byte[] imageDate) {
-//        this.imageDate = imageDate;
-//    }
-
-    //    public String getPhoto() {
-//        return photo;
-//    }
-//
-//    public void setPhoto(String photo) {
-//        this.photo = photo;
-//    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public LocalDate getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(LocalDate joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
-    }
-
-    public Departament getDepartament() {
-        return departament;
-    }
-
-    public void setDepartament(Departament departament) {
-        this.departament = departament;
-    }
-
-    public JobTitle getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(JobTitle jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
-    public String getAbout() {
-        return about;
-    }
-
-    public void setAbout(String about) {
-        this.about = about;
-    }
-
-    public EmploymentType getEmploymentType() {
-        return employmentType;
-    }
-
-    public void setEmploymentType(EmploymentType employmentType) {
-        this.employmentType = employmentType;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 }

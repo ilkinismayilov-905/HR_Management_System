@@ -3,9 +3,12 @@ package com.example.HR.service;
 import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
+import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,6 +27,7 @@ public interface EmployeeService{
     public EmployeeRequestDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException;
     public EmployeeRequestDTO update(Long id, EmployeeRequestDTO updatedDto);
     public Optional<EmployeeResponseDTO> getById(Long id);
+    EmployeeAttachment uploadAttachment(String ticketId, MultipartFile file);
     public void deleteById(Long id);
 
 

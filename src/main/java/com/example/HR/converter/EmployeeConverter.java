@@ -1,9 +1,13 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.EmployeeInformationDTO;
+import com.example.HR.dto.employee.EmployeeAttachmentDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
+import com.example.HR.dto.ticket.TicketAttachmentDTO;
 import com.example.HR.entity.employee.Employee;
+import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.Status;
 
 import java.util.List;
@@ -17,7 +21,6 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         }
         Employee employee = new Employee();
         employee.setId(dto.getId());
-        employee.setEmployeeId(dto.getEmployeeId());
         employee.setJoinDate(dto.getJoinDate());
         employee.setPhoneNumber(dto.getPhoneNumber());
         employee.setCompany(dto.getCompany());
@@ -40,7 +43,6 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         }
         EmployeeRequestDTO dto = new EmployeeRequestDTO();
         dto.setId(employee.getId());
-        dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
         dto.setPhoneNumber(employee.getPhoneNumber());
         dto.setCompany(employee.getCompany());
@@ -49,9 +51,6 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         dto.setAbout(employee.getAbout());
         dto.setEmploymentType(employee.getEmploymentType());
         dto.setStatus(employee.getStatus());
-//        dto.setImageType(employee.getImageType());
-//        dto.setImageName(employee.getImageName());
-//        dto.setImageDate(employee.getImageDate());
         // User relationships — convert to String
         if (employee.getFullname() != null) {
             dto.setFullname(employee.getFullname().getFullname());
@@ -75,7 +74,6 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
             return;
         }
         if(dto.getId() != null) entity.setId(dto.getId());
-        if (dto.getEmployeeId() != null) entity.setEmployeeId(dto.getEmployeeId());
         if (dto.getJoinDate() != null) entity.setJoinDate(dto.getJoinDate());
         if (dto.getPhoneNumber() != null) entity.setPhoneNumber(dto.getPhoneNumber());
         if (dto.getCompany() != null) entity.setCompany(dto.getCompany());
@@ -117,6 +115,9 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         dto.setAbout(employee.getAbout());
         dto.setEmploymentType(employee.getEmploymentType());
         dto.setStatus(employee.getStatus());
+        dto.setAttachments(employee.getAttachments().stream()
+                .map(this::mapAttachmentToDTO)
+                .collect(Collectors.toList()));
 
         return dto;
     }
@@ -139,6 +140,17 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         dto.setStatus(employee.getStatus());
 
         return dto;
+    }
+
+    private EmployeeAttachmentDTO mapAttachmentToDTO(EmployeeAttachment attachment) {
+        return EmployeeAttachmentDTO.builder()
+                .id(attachment.getId())
+                .fileName(attachment.getFileName())
+                .originalFileName(attachment.getOriginalFileName())
+                .contentType(attachment.getContentType())
+                .fileSize(attachment.getFileSize())
+                .uploadedDate(attachment.getUploadedDate())
+                .build();
     }
 
 }
