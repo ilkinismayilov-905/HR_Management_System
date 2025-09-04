@@ -18,5 +18,5 @@ public interface TicketService {
     List<TicketResponseDTO> getTicketsFromLastDays(int days);
     void deleteById(Long id);
     TicketAttachment uploadAttachment(String ticketId, MultipartFile file);
-    TicketCommentDTO addComment(String ticketId, String content, String authorName, String authorEmail);
+    TicketCommentDTO addComment(String ticketId, String content);
 }

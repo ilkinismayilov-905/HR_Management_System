@@ -19,6 +19,7 @@ import com.example.HR.service.TicketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -147,14 +148,16 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public TicketCommentDTO addComment(String ticketId, String content, String authorName, String authorEmail) {
+    public TicketCommentDTO addComment(String ticketId, String content) {
         Ticket ticket = ticketRepository.findByTicketID(ticketId)
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
 
+        User currentUser = getCurrentUser();
+
         TicketComment comment = TicketComment.builder()
                 .content(content)
-                .authorName(authorName)
-                .authorEmail(authorEmail)
+                .authorName(getCurrentUser().getFullname())
+                .authorEmail(getCurrentUser().getUsername())
                 .ticket(ticket)
                 .build();
 
@@ -162,5 +165,10 @@ public class TicketServiceImpl implements TicketService {
         log.info("Added comment to ticket: {}", ticketId);
 
         return converter.mapCommentToDTO(comment);
+    }
+
+    private User getCurrentUser() {
+        return (User) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
     }
 }

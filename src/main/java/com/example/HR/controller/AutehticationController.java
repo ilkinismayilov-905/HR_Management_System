@@ -3,6 +3,7 @@ package com.example.HR.controller;
 import com.example.HR.dto.auth.AuthResponseDTO;
 import com.example.HR.dto.auth.LoginRequestDTO;
 import com.example.HR.dto.auth.RegisterDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.AuthService;
 import com.example.HR.validation.Create;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,8 +30,8 @@ public class AutehticationController {
 
     @PostMapping("/register")
     @Operation(summary = "User registration", description = "Yeni employee qeydiyyatı")
-    public ResponseEntity<AuthResponseDTO> register(@Valid @RequestBody RegisterDTO request) {
-        AuthResponseDTO response = authService.register(request);
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody RegisterDTO request) {
+        UserResponseDTO response = authService.register(request);
         return ResponseEntity.ok(response);
     }
 

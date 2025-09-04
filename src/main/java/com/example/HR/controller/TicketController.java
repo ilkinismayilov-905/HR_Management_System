@@ -303,9 +303,7 @@ public class TicketController {
                                                        @RequestBody Map<String, String> commentData) {
         TicketCommentDTO comment = ticketService.addComment(
                 ticketId,
-                commentData.get("content"),
-                commentData.get("authorName"),
-                commentData.get("authorEmail")
+                commentData.get("content")
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
