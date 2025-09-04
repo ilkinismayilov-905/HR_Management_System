@@ -1,0 +1,28 @@
+package com.example.HR.dto.task;
+
+import com.example.HR.dto.ticket.TicketAttachmentDTO;
+import com.example.HR.entity.employee.Employee;
+import com.example.HR.enums.TaskPriority;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+public class TaskResponseDTO {
+
+    private Long id;
+    private String taskName;
+    private TaskPriority priority;
+    private LocalDate timeLine;
+    private Long progress;
+    private List<TaskAttachmentDTO> attachments;
+    private List<Employee> people;
+    private List<TaskCommentDTO> comments;
+}

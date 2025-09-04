@@ -1,5 +1,6 @@
 package com.example.HR.converter;
 
+import com.example.HR.dto.auth.UserInfoDTO;
 import com.example.HR.dto.user.UserRequestDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.entity.User;
@@ -64,7 +65,7 @@ public class UserConverter extends Convert<UserRequestDTO, User> {
         dto.setEmail(user.getEmail());
         dto.setFullname(user.getFullname());
         dto.setRoles(user.getRoles());
-        dto.setActive(user.isActive());
+        dto.setActive(user.isEnabled());
         return dto;
     }
 
@@ -72,5 +73,15 @@ public class UserConverter extends Convert<UserRequestDTO, User> {
         return users.stream()
                 .map(this::entityToResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    public UserInfoDTO mapToUserInfo(User user) {
+        UserInfoDTO userInfo = new UserInfoDTO();
+        userInfo.setId(user.getId());
+        userInfo.setEmail(user.getEmail());
+        userInfo.setFullname(user.getFullname());
+        userInfo.setRole(user.getRoles().name());
+        userInfo.setActive(user.isEnabled());
+        return userInfo;
     }
 }

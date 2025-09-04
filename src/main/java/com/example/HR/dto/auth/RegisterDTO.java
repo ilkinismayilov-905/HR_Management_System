@@ -1,4 +1,4 @@
-package com.example.HR.dto.user;
+package com.example.HR.dto.auth;
 
 import com.example.HR.enums.UserRoles;
 import com.example.HR.validation.Create;
@@ -6,14 +6,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRequestDTO {
+public class RegisterDTO {
 
-    @Schema(description = "Unique identifier", example = "1")
     private Long id;
 
     @Schema(description = "Fullname for login", example = "johndoe", required = true)
@@ -36,10 +39,4 @@ public class UserRequestDTO {
     @Schema(description = "Password confirmation", required = true)
     @NotBlank(groups = Create.class,message = "Confirm password is required")
     private String confirmPassword;
-
-    public UserRequestDTO(String fullname, UserRoles roles, String email) {
-        this.fullname = fullname;
-        this.roles = roles;
-        this.email = email;
-    }
 }
