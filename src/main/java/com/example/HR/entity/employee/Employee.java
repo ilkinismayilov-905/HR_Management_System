@@ -1,7 +1,8 @@
 package com.example.HR.entity.employee;
 
+import com.example.HR.entity.task.Task;
+import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.entity.User;
-import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
@@ -12,7 +13,10 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity(name = "employee")
 @AllArgsConstructor
@@ -72,4 +76,14 @@ public class Employee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<EmployeeAttachment> attachments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskAssignment> taskAssignments = new HashSet<>();
+
+    // Helper method - assigned tasks əldə etmək üçün
+    public Set<Task> getAssignedTasks() {
+        return taskAssignments.stream()
+                .map(TaskAssignment::getTask)
+                .collect(Collectors.toSet());
+    }
 }

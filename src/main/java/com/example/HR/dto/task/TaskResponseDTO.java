@@ -21,7 +21,6 @@ public class TaskResponseDTO {
     private String taskName;
     private TaskPriority priority;
     private LocalDate timeLine;
-    private Long progress;
     private List<TaskAttachmentDTO> attachments;
     private List<Employee> people;
     private List<TaskCommentDTO> comments;

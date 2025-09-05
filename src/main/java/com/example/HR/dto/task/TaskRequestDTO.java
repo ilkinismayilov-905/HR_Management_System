@@ -19,7 +19,8 @@ public class TaskRequestDTO {
 
     private Long id;
     private LocalDate timeLine;
-    private List<Employee> teamMembers;
+    private String taskName;
+    private List<Long> teamMembers;
     private TaskStatus status;
     private TaskPriority priority;
     private String description;
