@@ -42,7 +42,7 @@ public class TaskController {
             response.put("success:",false);
             response.put("message:",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);ot
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
     }

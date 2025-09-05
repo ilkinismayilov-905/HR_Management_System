@@ -34,6 +34,7 @@ public class Task {
     private LocalDate timeLine;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
 
 
