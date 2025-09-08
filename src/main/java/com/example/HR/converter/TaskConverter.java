@@ -1,78 +1,153 @@
 package com.example.HR.converter;
 
-import com.example.HR.dto.task.TaskAttachmentDTO;
-import com.example.HR.dto.task.TaskCommentDTO;
-import com.example.HR.dto.task.TaskRequestDTO;
-import com.example.HR.dto.task.TaskResponseDTO;
+import com.example.HR.dto.employee.EmployeeResponseDTO;
+import com.example.HR.dto.task.*;
+import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.task.Task;
+import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.task.TaskComment;
+import com.example.HR.repository.EmployeeRepository;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.LazyInitializationException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class TaskConverter {
 
-    public TaskResponseDTO toResponseDto(Task entity){
-        if(entity == null) return  null;
+    private final EmployeeConverter converter;
+    private final EmployeeRepository repository;
+
+    public TaskResponseDTO toResponseDto(Task entity) {
+        if (entity == null) return null;
 
         return TaskResponseDTO.builder()
                 .id(entity.getId())
                 .taskName(entity.getTaskName())
-                .people(entity.getAssignedEmployees().stream().toList())
                 .priority(entity.getPriority())
                 .timeLine(entity.getTimeLine())
-                .attachments(entity.getAttachments().stream()
-                        .map(this::mapAttachmentToDto)
+
+                // DÜZGÜN yol - birbaşa taskAssignments istifadə edin
+                .people(entity.getTaskAssignments().stream()
+                        .map(TaskAssignment::getEmployee)
+                        .map(this::mapEmployeeToDto)
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toList()))
-                .comments(entity.getComments().stream()
-                        .map(this::mapCommentToDto)
-                        .collect(Collectors.toList()))
+
+                // Attachments üçün - əgər lazy-dirsə, null check əlavə edin
+                .attachments(mapAttachments(entity))
+
+                // Comments üçün - əgər lazy-dirsə, null check əlavə edin
+                .comments(mapComments(entity))
 
                 .build();
     }
 
-    public List<TaskResponseDTO> toResponseDtoList(List<Task> list){
+    // Helper metodlar - lazy loading-dən qorunmaq üçün
+    private List<TaskAttachmentDTO> mapAttachments(Task entity) {
+        try {
+            return entity.getAttachments() != null
+                    ? entity.getAttachments().stream()
+                    .map(this::mapAttachmentToDto)
+                    .collect(Collectors.toList())
+                    : Collections.emptyList();
+        } catch (LazyInitializationException e) {
+            // Lazy loading uğursuz olarsa, boş list qaytarın
+            return Collections.emptyList();
+        }
+    }
+
+    private List<TaskCommentDTO> mapComments(Task entity) {
+        try {
+            return entity.getComments() != null
+                    ? entity.getComments().stream()
+                    .map(this::mapCommentToDTO)
+                    .collect(Collectors.toList())
+                    : Collections.emptyList();
+        } catch (LazyInitializationException e) {
+            // Lazy loading uğursuz olarsa, boş list qaytarın
+            return Collections.emptyList();
+        }
+    }
+
+    public List<TaskResponseDTO> toResponseDtoList(List<Task> list) {
+        if (list == null) return Collections.emptyList();
+
         return list.stream()
                 .map(this::toResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public Task toEntity(TaskRequestDTO dto){
-        if (dto == null) return null;
+    private TaskEmployeeResponseDTO mapEmployeeToDto(Employee employee) {
+        if (employee == null) return null;
 
-        return Task.builder()
-                .status(dto.getStatus())
-                .taskName(dto.getTaskName())
-                .timeLine(dto.getTimeLine())
-                .priority(dto.getPriority())
-                .id(dto.getId())
-                .status(dto.getStatus())
-                .description(dto.getDescription())
+        return TaskEmployeeResponseDTO.builder()
+                .id(employee.getId())
+                .fullName(employee.getFullname().getFullname())
                 .build();
     }
 
-    public TaskCommentDTO mapCommentToDto(TaskComment comment){
-        return TaskCommentDTO.builder()
-                .id(comment.getId())
-                .authorEmail(comment.getAuthorEmail())
-                .authorName(comment.getAuthorName())
-                .content(comment.getContent())
-                .createdDate(comment.getCreatedDate())
-                .build();
+    private TaskAttachmentDTO mapAttachmentToDto(TaskAttachment attachment) {
+        if (attachment == null) return null;
 
-    }
-
-    public TaskAttachmentDTO mapAttachmentToDto(TaskAttachment attachment){
         return TaskAttachmentDTO.builder()
                 .id(attachment.getId())
-                .contentType(attachment.getContentType())
-                .originalFileName(attachment.getOriginalFileName())
                 .fileName(attachment.getFileName())
                 .uploadedDate(attachment.getUploadedDate())
                 .fileSize(attachment.getFileSize())
+                .originalFileName(attachment.getOriginalFileName())
+                .contentType(attachment.getContentType())
                 .build();
+    }
+
+    public TaskCommentDTO mapCommentToDTO(TaskComment comment) {
+        if (comment == null) return null;
+
+        return TaskCommentDTO.builder()
+                .id(comment.getId())
+                .content(comment.getContent())
+                .createdDate(comment.getCreatedDate())
+                .authorName(comment.getAuthorName() != null ? comment.getAuthorName() : null)
+                .authorEmail(comment.getAuthorEmail() != null ? comment.getAuthorEmail() : null)
+                .build();
+    }
+
+    public Task toEntity (TaskRequestDTO dto){
+
+        Task task = Task.builder()
+                .id(dto.getId())
+                .taskName(dto.getTaskName())
+                .status(dto.getStatus())
+                .description(dto.getDescription())
+                .priority(dto.getPriority())
+                .timeLine(dto.getTimeLine())
+                .build();
+
+        if (dto.getTeamMembers() != null && !dto.getTeamMembers().isEmpty()) {
+
+            Set<TaskAssignment> assignments = dto.getTeamMembers().stream()
+                    .map(employeeId -> {
+                        Employee employee = repository.findById(employeeId)
+                                .orElseThrow(() -> new RuntimeException("Employee not found: " + employeeId));
+
+                        TaskAssignment ta = new TaskAssignment();
+                        ta.setEmployee(employee);
+                        ta.setTask(task); // task reference burada vacibdir
+                        return ta;
+                    })
+                    .collect(Collectors.toSet());
+
+            task.setTaskAssignments(assignments);
+        }
+
+        return task;
+
     }
 }

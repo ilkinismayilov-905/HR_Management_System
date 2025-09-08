@@ -1,5 +1,6 @@
 package com.example.HR.dto.task;
 
+import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.dto.ticket.TicketAttachmentDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.TaskPriority;
@@ -22,6 +23,6 @@ public class TaskResponseDTO {
     private TaskPriority priority;
     private LocalDate timeLine;
     private List<TaskAttachmentDTO> attachments;
-    private List<Employee> people;
+    private List<TaskEmployeeResponseDTO> people;
     private List<TaskCommentDTO> comments;
 }

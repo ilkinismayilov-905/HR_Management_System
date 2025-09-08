@@ -4,15 +4,22 @@ import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.employee.EmployeeAttachmentDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
+import com.example.HR.dto.employee.EmployeeTaskResponseDTO;
 import com.example.HR.dto.ticket.TicketAttachmentDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.task.Task;
+import com.example.HR.entity.task.TaskAssignment;
+import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.Status;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Component
 public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
     @Override
     public Employee dtoToEntity(EmployeeRequestDTO dto) {
@@ -106,6 +113,7 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
             dto.setEmail(employee.getEmail().getEmail());
         }
 
+        dto.setId(employee.getId());
         dto.setEmployeeId(employee.getEmployeeId());
         dto.setJoinDate(employee.getJoinDate());
         dto.setPhoneNumber(employee.getPhoneNumber());
@@ -117,6 +125,11 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
         dto.setStatus(employee.getStatus());
         dto.setAttachments(employee.getAttachments().stream()
                 .map(this::mapAttachmentToDTO)
+                .collect(Collectors.toList()));
+        dto.setTasks(employee.getTaskAssignments().stream()
+                .map(TaskAssignment::getTask)
+                .map(this::mapTaskToDTO)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
 
         return dto;
@@ -150,6 +163,13 @@ public class EmployeeConverter extends Convert<EmployeeRequestDTO, Employee> {
                 .contentType(attachment.getContentType())
                 .fileSize(attachment.getFileSize())
                 .uploadedDate(attachment.getUploadedDate())
+                .build();
+    }
+
+    private EmployeeTaskResponseDTO mapTaskToDTO(Task task){
+        return EmployeeTaskResponseDTO.builder()
+                .id(task.getId())
+                .taskName(task.getTaskName())
                 .build();
     }
 

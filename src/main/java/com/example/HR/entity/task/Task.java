@@ -5,6 +5,7 @@ import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.entity.ticket.TicketComment;
 import com.example.HR.enums.TaskPriority;
 import com.example.HR.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,10 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -34,14 +32,30 @@ public class Task {
     private LocalDate timeLine;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
 
-
+    // Helper method - assigned employees əldə etmək üçün
+    @JsonIgnore
     public Set<Employee> getAssignedEmployees() {
+        // Bu metod lazy loading trigger edir - CONVERTER-də İSTİFADƏ ETMƏYİN!
+        if (taskAssignments == null) {
+            return Collections.emptySet(); // Return an empty set instead of throwing an error
+        }
         return taskAssignments.stream()
                 .map(TaskAssignment::getEmployee)
                 .collect(Collectors.toSet());
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id != null && Objects.equals(id, task.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Enumerated(value = EnumType.STRING)

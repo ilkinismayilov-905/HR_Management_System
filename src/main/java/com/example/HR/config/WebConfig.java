@@ -28,6 +28,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(false)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*");
+
+        registry.addMapping("/task/**")
+                .allowedOrigins("*")
+                .allowCredentials(false)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*");
     }
 
     @Override
@@ -37,6 +43,9 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/employeeImage/**")
                 .addResourceLocations("file:employeeImage/");
+
+        registry.addResourceHandler("/task/**")
+                .addResourceLocations("file:taskImage/**");
     }
 
 //    @Bean

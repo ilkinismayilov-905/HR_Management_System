@@ -20,7 +20,7 @@ public interface TaskService {
     TaskResponseDTO update(Long id,TaskRequestDTO dto);
     List<TaskResponseDTO> getByStatus(TicketStatus status);
     void deleteById(Long id);
-    TaskAttachment uploadAttachment(String ticketId, MultipartFile file);
-    TaskCommentDTO addComment(String taskId, String content);
+    TaskAttachment uploadAttachment(Long ticketId, MultipartFile file);
+    TaskCommentDTO addComment(Long taskId, String content);
     void assignEmployeesToTask(Long taskId, List<Long> employeeIds);
 }

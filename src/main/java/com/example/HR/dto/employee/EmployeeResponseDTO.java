@@ -9,6 +9,7 @@ import com.example.HR.validation.Create;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class EmployeeResponseDTO {
+
+    private Long id;
 
     @Schema(description = "Full name of the employee", example = "John Doe", required = true)
     @NotBlank(groups = Create.class,message = "Full name is required")
@@ -66,5 +70,6 @@ public class EmployeeResponseDTO {
     private Status status;
 
     private List<EmployeeAttachmentDTO> attachments;
+    private List<EmployeeTaskResponseDTO> tasks;
 
 }

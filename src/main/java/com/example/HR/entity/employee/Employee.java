@@ -12,10 +12,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity(name = "employee")
@@ -80,10 +77,23 @@ public class Employee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
 
-    // Helper method - assigned tasks əldə etmək üçün
+
     public Set<Task> getAssignedTasks() {
         return taskAssignments.stream()
                 .map(TaskAssignment::getTask)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // yalnız id istifadə et
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employee)) return false;
+        Employee other = (Employee) o;
+        return Objects.equals(id, other.id);
     }
 }
