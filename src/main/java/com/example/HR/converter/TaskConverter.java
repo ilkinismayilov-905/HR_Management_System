@@ -154,12 +154,22 @@ public class TaskConverter {
     public void update (TaskRequestDTO dto,Task entity){
         if(dto == null || entity == null) {return ;}
 
-        entity.setId(dto.getId());
-        entity.setTaskName(dto.getTaskName());
-        entity.setDescription(dto.getDescription());
-        entity.setPriority(dto.getPriority());
-        entity.setStatus(dto.getStatus());
-        entity.setTimeLine(dto.getTimeLine());
+//        entity.setId(dto.getId());
+        if (dto.getTaskName() != null) {
+            entity.setTaskName(dto.getTaskName());
+        }
+        if (dto.getDescription() != null) {
+            entity.setDescription(dto.getDescription());
+        }
+        if (dto.getPriority() != null) {
+            entity.setPriority(dto.getPriority());
+        }
+        if (dto.getStatus() != null) {
+            entity.setStatus(dto.getStatus());
+        }
+        if (dto.getTimeLine() != null) {
+            entity.setTimeLine(dto.getTimeLine());
+        }
 
         if(dto.getTeamMembers() != null && !dto.getTeamMembers().isEmpty()){
             Set<TaskAssignment>assignments = dto.getTeamMembers().stream()
