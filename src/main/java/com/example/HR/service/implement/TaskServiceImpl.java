@@ -12,6 +12,7 @@ import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.task.TaskComment;
 import com.example.HR.entity.ticket.Ticket;
 import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.enums.TaskStatus;
 import com.example.HR.enums.TicketStatus;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.exception.ResourceNotFoundException;
@@ -80,21 +81,47 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponseDTO getById(Long id) {
-        return null;
+        log.info("Get task by given id: {}", id);
+         Task task = taskRepository.findById(id)
+                 .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+
+         log.info("Task fetched successfully from database.");
+
+         return converter.toResponseDto(task);
     }
 
     @Override
     public TaskResponseDTO update(Long id, TaskRequestDTO dto) {
-        return null;
+        log.info("Updating task: {}", id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+
+        converter.update(dto,task);
+        log.info("Task updated: {}", task.getTaskName());
+
+        Task updatedTask = taskRepository.save(task);
+        log.info("Task saved");
+
+        return converter.toResponseDto(updatedTask);
+
     }
 
     @Override
-    public List<TaskResponseDTO> getByStatus(TicketStatus status) {
-        return List.of();
+    public List<TaskResponseDTO> getByStatus(TaskStatus status) {
+        List<Task> task = taskRepository.findByStatus(status);
+
+        log.info("Tasks fetched by status");
+        return converter.toResponseDtoList(task);
     }
 
     @Override
     public void deleteById(Long id) {
+        log.info("Deleting task by id: {}", id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+
+        taskRepository.deleteById(id);
+        log.info("Task deleted.");
 
     }
 

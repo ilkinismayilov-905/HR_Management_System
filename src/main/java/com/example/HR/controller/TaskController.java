@@ -8,9 +8,11 @@ import com.example.HR.dto.task.TaskResponseDTO;
 import com.example.HR.dto.ticket.TicketAttachmentDTO;
 import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.enums.TaskStatus;
 import com.example.HR.service.TaskService;
 import com.example.HR.service.implement.TaskImageStorageService;
 import com.example.HR.validation.Create;
+import com.example.HR.validation.Update;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -63,6 +65,88 @@ public class TaskController {
     public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
         List<TaskResponseDTO> tasks = taskService.getAll();
         return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id){
+        try {
+            TaskResponseDTO task = taskService.getById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",task);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String,Object>> deleteById(@PathVariable Long id){
+        try {
+            TaskResponseDTO task = taskService.getById(id);
+            taskService.deleteById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",task);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @PutMapping("/update/{taskId}")
+    public ResponseEntity<Map<String,Object>> updateTask(@Validated(Update.class)
+                                                             @PathVariable Long taskId,
+                                                         @RequestBody TaskRequestDTO dto){
+        try {
+            TaskResponseDTO task = taskService.update(taskId,dto);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",task);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable TaskStatus status){
+        try {
+            List<TaskResponseDTO> task = taskService.getByStatus(status);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",task);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @PostMapping("/{taskId}/comments")

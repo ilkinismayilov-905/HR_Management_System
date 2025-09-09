@@ -150,4 +150,31 @@ public class TaskConverter {
         return task;
 
     }
+
+    public void update (TaskRequestDTO dto,Task entity){
+        if(dto == null || entity == null) {return ;}
+
+        entity.setId(dto.getId());
+        entity.setTaskName(dto.getTaskName());
+        entity.setDescription(dto.getDescription());
+        entity.setPriority(dto.getPriority());
+        entity.setStatus(dto.getStatus());
+        entity.setTimeLine(dto.getTimeLine());
+
+        if(dto.getTeamMembers() != null && !dto.getTeamMembers().isEmpty()){
+            Set<TaskAssignment>assignments = dto.getTeamMembers().stream()
+                    .map(employeeId -> {
+                        Employee employee = repository.findById(employeeId)
+                                .orElseThrow(() -> new RuntimeException("Employee not found: " + employeeId));
+
+                        TaskAssignment taskAssignment = new TaskAssignment();
+                        taskAssignment.setEmployee(employee);
+                        taskAssignment.setTask(entity);
+
+                        return taskAssignment;
+                    })
+                    .collect(Collectors.toSet());
+            entity.setTaskAssignments(assignments);
+        }
+    }
 }
