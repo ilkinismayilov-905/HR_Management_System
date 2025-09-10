@@ -26,6 +26,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -49,6 +51,7 @@ public class AuthServiceImpl implements AuthService {
         User user = (User) authentication.getPrincipal();
         User user1 = userRepository.findById(user.getId())
                 .orElseThrow(() -> new NotFoundException("User not found"));
+        RefreshToken exRefreshToken = refreshTokenRepository.findByUserId(user1.getId());
 
         String token = jwtUtil.generateToken(user, user.getId(), user.getUsername());
         String refreshToken = jwtUtil.generateRefreshToken(user);
@@ -58,6 +61,11 @@ public class AuthServiceImpl implements AuthService {
         entityRefreshToken.setTokenHash(refreshToken);
         entityRefreshToken.setUser(user1);
         entityRefreshToken.setExpiresIn(86400L);
+
+        if(exRefreshToken != null){
+            refreshTokenRepository.delete(exRefreshToken);
+        }
+
 
         RefreshToken savedRefreshToken = refreshTokenRepository.save(entityRefreshToken);
 
@@ -100,5 +108,62 @@ public class AuthServiceImpl implements AuthService {
 //                .tokenType("Bearer")
 //                .build();
 
+    }
+
+    @Override
+    public AuthResponseDTO refreshToken(String refreshToken){
+
+        try {
+
+            log.info("Refresh token process started");
+            if (refreshToken == null || refreshToken.trim().isEmpty()) {
+                throw new RuntimeException("Refresh token boşdur!");
+            }
+
+            if (jwtUtil.isTokenExpired(refreshToken)){
+                throw new RuntimeException("Refresh token is not validated!");
+            }
+
+            RefreshToken entityRefreshToken = refreshTokenRepository.findByTokenHash(refreshToken)
+                    .orElseThrow(() -> new NotFoundException("Refresh token is not found"));
+
+            if(entityRefreshToken.getCreatedAt().plusSeconds(entityRefreshToken.getExpiresIn())
+                    .isBefore(LocalDateTime.now())){
+                refreshTokenRepository.delete(entityRefreshToken);
+                throw new RuntimeException("Refresh token is expired");
+            }
+
+            User user = entityRefreshToken.getUser();
+
+            if(user == null || !user.isEnabled()){
+                throw new NotFoundException("User not found");
+            }
+
+            String newToken = jwtUtil.generateToken(user, user.getId(), user.getUsername());
+
+            String newRefreshToken = jwtUtil.generateRefreshToken(user);
+
+            refreshTokenRepository.delete(entityRefreshToken);
+
+            RefreshToken newEntityRefreshToken = new RefreshToken();
+            newEntityRefreshToken.setTokenHash(newRefreshToken);
+            newEntityRefreshToken.setUser(user);
+            newEntityRefreshToken.setExpiresIn(86400L);
+
+            refreshTokenRepository.save(newEntityRefreshToken);
+
+            log.info("Token refresh edildi: {}", user.getEmail());
+
+            return AuthResponseDTO.builder()
+                    .token(newToken)
+                    .refreshToken(newRefreshToken)
+                    .tokenType("Bearer")
+                    .expiresIn(86400L)
+                    .user(converter.mapToUserInfo(user))
+                    .build();
+        } catch (Exception e) {
+            log.error("Token refresh zamanı xəta: {}", e.getMessage());
+            throw new RuntimeException("Token refresh edilə bilmədi: " + e.getMessage());
+        }
     }
 }

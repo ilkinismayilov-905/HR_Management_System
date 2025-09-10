@@ -8,4 +8,5 @@ import com.example.HR.dto.user.UserResponseDTO;
 public interface AuthService {
     public AuthResponseDTO login(LoginRequestDTO request);
     public UserResponseDTO register(RegisterDTO request);
+    public AuthResponseDTO refreshToken(String refreshToken);
 }

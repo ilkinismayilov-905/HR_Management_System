@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -131,9 +132,16 @@ public class TaskController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable TaskStatus status){
+    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable String status){
         try {
-            List<TaskResponseDTO> task = taskService.getByStatus(status);
+            TaskStatus enumStatus;
+            try {
+                enumStatus= TaskStatus.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
+            }
+
+            List<TaskResponseDTO> task = taskService.getByStatus(enumStatus);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);

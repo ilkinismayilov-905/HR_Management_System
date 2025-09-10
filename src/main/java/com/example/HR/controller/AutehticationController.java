@@ -2,6 +2,7 @@ package com.example.HR.controller;
 
 import com.example.HR.dto.auth.AuthResponseDTO;
 import com.example.HR.dto.auth.LoginRequestDTO;
+import com.example.HR.dto.auth.RefreshTokenRequestDTO;
 import com.example.HR.dto.auth.RegisterDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.AuthService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +42,23 @@ public class AutehticationController {
     public ResponseEntity<String> logout() {
         // JWT stateless olduğu üçün sadəcə client-də token silinir
         return ResponseEntity.ok("Logged out successfully");
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponseDTO> refreshToken(@Valid @RequestBody RefreshTokenRequestDTO requestDTO){
+
+        try {
+            log.info("Refresh token request received");
+            AuthResponseDTO responseDTO = authService.refreshToken(requestDTO.getRefreshToken());
+            log.info("Refresh token successful");
+
+            return ResponseEntity.ok(responseDTO);
+
+        }catch (Exception e) {
+            log.error("Refresh token failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(AuthResponseDTO.builder()
+                            .build());
+        }
     }
 }

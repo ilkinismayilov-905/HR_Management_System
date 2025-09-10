@@ -5,6 +5,7 @@ import com.example.HR.dto.ticket.TicketCommentDTO;
 import com.example.HR.dto.ticket.TicketRequestDTO;
 import com.example.HR.dto.ticket.TicketResponseDTO;
 import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.enums.TaskStatus;
 import com.example.HR.enums.TicketStatus;
 import com.example.HR.service.TicketService;
 import com.example.HR.service.implement.FileStorageService;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -201,11 +203,17 @@ public class TicketController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{status}")
-    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable TicketStatus status){
+    public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable String status){
         log.info("Rest request to get ticket by status");
 
         try {
-            List<TicketResponseDTO> dto = ticketService.getByStatus(status);
+            TicketStatus enumStatus;
+                try {
+                    enumStatus= TicketStatus.valueOf(status.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
+                }
+            List<TicketResponseDTO> dto = ticketService.getByStatus(enumStatus);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success:",true);

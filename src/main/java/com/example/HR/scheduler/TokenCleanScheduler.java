@@ -17,6 +17,6 @@ public class TokenCleanScheduler {
     public void cleanupExpiredTokens(){
         LocalDateTime now = LocalDateTime.now();
         passwordResetTokenRepository.deleteAllByExpiryDateBefore(now);
-        System.out.println("Expired tokenlar təmizləndi: " + now);
+        System.out.println("Expired tokens are cleaned: " + now);
     }
 }

@@ -31,13 +31,11 @@ public class Task {
     private String taskName;
     private LocalDate timeLine;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
 
     // Helper method - assigned employees əldə etmək üçün
-    @JsonIgnore
     public Set<Employee> getAssignedEmployees() {
-        // Bu metod lazy loading trigger edir - CONVERTER-də İSTİFADƏ ETMƏYİN!
         if (taskAssignments == null) {
             return Collections.emptySet(); // Return an empty set instead of throwing an error
         }

@@ -9,6 +9,7 @@ import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
+import com.example.HR.enums.TicketStatus;
 import com.example.HR.service.EmployeeService;
 //import com.example.HR.service.implement.FileUploadService;
 import com.example.HR.service.implement.EmployeeImagesService;
@@ -26,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -118,8 +120,15 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByStatus/{status}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByStatus(@PathVariable Status status) throws MalformedURLException {
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByStatus(status);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByStatus(@PathVariable String status) throws MalformedURLException {
+
+        Status enumStatus;
+        try {
+            enumStatus= Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
+        }
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByStatus(enumStatus);
 
 //        log.info("Employee list returned by status: {}", status);
 
@@ -151,8 +160,15 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByJob/{jobTitle}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJobTitle(@PathVariable JobTitle jobTitle) throws MalformedURLException {
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByJobPosition(jobTitle);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJobTitle(@PathVariable String jobTitle) throws MalformedURLException {
+
+        JobTitle enumJobTitle;
+        try {
+            enumJobTitle= JobTitle.valueOf(jobTitle.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid JobTitle: " + jobTitle);
+        }
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByJobPosition(enumJobTitle);
 
 //        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
@@ -168,8 +184,16 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmploymentType/{employmentType}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByEmploymentType(@PathVariable EmploymentType employmentType) throws MalformedURLException {
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByEmploymentType(employmentType);
+    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByEmploymentType(@PathVariable String employmentType) throws MalformedURLException {
+
+        EmploymentType enumStatus;
+        try {
+            enumStatus= EmploymentType.valueOf(employmentType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid EmploymentType: " + employmentType);
+        }
+
+        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByEmploymentType(enumStatus);
 
 //        log.info("Employee list returned by employment type: {}", employmentType);
 

@@ -9,17 +9,16 @@ import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.task.TaskComment;
 import com.example.HR.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.LazyInitializationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class TaskConverter {
 
     private final EmployeeConverter converter;
@@ -39,6 +38,7 @@ public class TaskConverter {
                         .map(TaskAssignment::getEmployee)
                         .map(this::mapEmployeeToDto)
                         .filter(Objects::nonNull)
+                        .sorted(Comparator.comparing(e -> e.getId()))
                         .collect(Collectors.toList()))
 
                 // Attachments üçün - əgər lazy-dirsə, null check əlavə edin
@@ -46,7 +46,7 @@ public class TaskConverter {
 
                 // Comments üçün - əgər lazy-dirsə, null check əlavə edin
                 .comments(mapComments(entity))
-
+                .status(entity.getStatus())
                 .build();
     }
 
@@ -174,6 +174,7 @@ public class TaskConverter {
         if(dto.getTeamMembers() != null && !dto.getTeamMembers().isEmpty()){
             Set<TaskAssignment>assignments = dto.getTeamMembers().stream()
                     .map(employeeId -> {
+
                         Employee employee = repository.findById(employeeId)
                                 .orElseThrow(() -> new RuntimeException("Employee not found: " + employeeId));
 
@@ -181,10 +182,17 @@ public class TaskConverter {
                         taskAssignment.setEmployee(employee);
                         taskAssignment.setTask(entity);
 
+                        log.info("assignments size = {}", entity.getTaskAssignments().size());
+                        entity.getTaskAssignments().forEach(a ->
+                                log.info("assignment -> id: {}, employeeId: {}, employeeName: {}",
+                                        a.getId(), a.getEmployee() == null ? null : a.getEmployee().getId(),
+                                        a.getEmployee() == null ? null : a.getEmployee().getFullname()));
+
                         return taskAssignment;
                     })
                     .collect(Collectors.toSet());
-            entity.setTaskAssignments(assignments);
+            entity.getTaskAssignments().clear();
+            entity.getTaskAssignments().addAll(assignments);
         }
     }
 }
