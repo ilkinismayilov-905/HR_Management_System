@@ -64,7 +64,7 @@ public class TaskConverter {
         }
     }
 
-    private List<TaskCommentDTO> mapComments(Task entity) {
+    public List<TaskCommentDTO> mapComments(Task entity) {
         try {
             return entity.getComments() != null
                     ? entity.getComments().stream()
@@ -72,7 +72,7 @@ public class TaskConverter {
                     .collect(Collectors.toList())
                     : Collections.emptyList();
         } catch (LazyInitializationException e) {
-            // Lazy loading uğursuz olarsa, boş list qaytarın
+
             return Collections.emptyList();
         }
     }
@@ -117,6 +117,12 @@ public class TaskConverter {
                 .authorName(comment.getAuthorName() != null ? comment.getAuthorName() : null)
                 .authorEmail(comment.getAuthorEmail() != null ? comment.getAuthorEmail() : null)
                 .build();
+    }
+
+    public List<TaskCommentDTO> mapCommentToDTOList(List<TaskComment> comments){
+        return comments.stream()
+                .map(this::mapCommentToDTO)
+                .collect(Collectors.toList());
     }
 
     public Task toEntity (TaskRequestDTO dto){

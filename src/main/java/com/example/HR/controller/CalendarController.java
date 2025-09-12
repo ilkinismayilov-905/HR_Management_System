@@ -80,6 +80,8 @@ public class CalendarController {
     @GetMapping("/getAll")
     public ResponseEntity<Map<String,Object>> getAll(){
 
+        log.info("REST request to get all events");
+
         try {
             List<CalendarResponseDTO> list = service.getAll();
 
@@ -164,7 +166,8 @@ public class CalendarController {
         }
     }
 
-    @Operation(summary = "Get event by date", description = "Retrieve a specific event by its date")
+    @Operation(summary = "Get event by date",
+            description = "Retrieve a specific event by its date")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Event retrieved successfully"),
             @ApiResponse(responseCode = "404", description = "Event not found"),
@@ -197,6 +200,16 @@ public class CalendarController {
 
     }
 
+    @Operation(
+            summary = "Get events between two dates",
+            description = "Retrieve all events that occurred between the provided start and end dates"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Events retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid date format or parameters"),
+            @ApiResponse(responseCode = "404", description = "No events found for the given date range"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/between")
     public ResponseEntity<Map<String,Object>> getBetweenDates(@RequestParam("start") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate start,
                                                               @RequestParam("end") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate end){
@@ -221,9 +234,20 @@ public class CalendarController {
         }
     }
 
+
+    @Operation(
+            summary = "Get upcoming events",
+            description = "Retrieve all upcoming events from the current date onwards"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Upcoming events retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "No upcoming events found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/upcoming")
     public ResponseEntity<Map<String,Object>> getUpcomingEvents(){
 
+        log.info("REST request to get upcoming events");
         try {
 
             List<CalendarResponseDTO> upcomingEvents = service.getUpcomingEvents();

@@ -90,6 +90,12 @@ public class TicketConverter {
                 .build();
     }
 
+    public List<TicketCommentDTO> mapCommentToDTOList(List<TicketComment> list){
+        return list.stream()
+                .map(this::mapCommentToDTO)
+                .collect(Collectors.toList());
+    }
+
     private TicketAttachmentDTO mapAttachmentToDTO(TicketAttachment attachment) {
         return TicketAttachmentDTO.builder()
                 .id(attachment.getId())

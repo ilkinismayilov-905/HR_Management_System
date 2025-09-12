@@ -70,13 +70,7 @@ public class TaskServiceImpl implements TaskService {
         List<Task> task = taskRepository.findAll();
         log.info("tasks fetched ");
 
-        if(task.isEmpty()){
-            throw new NotFoundException("task list is empty:");
-        }
-
-        List<TaskResponseDTO> list = converter.toResponseDtoList(task);
-
-        return list;
+        return converter.toResponseDtoList(task);
     }
 
     @Override
@@ -202,6 +196,16 @@ public class TaskServiceImpl implements TaskService {
         }
 
 
+    }
+
+    @Override
+    public List<TaskCommentDTO> getAllComments() {
+        log.info("Get all TaskComments");
+
+        List<TaskComment> commentDTOS = commentRepository.findAll();
+        log.info("Comments fetched");
+
+        return converter.mapCommentToDTOList(commentDTOS);
     }
 
     private User getCurrentUser() {

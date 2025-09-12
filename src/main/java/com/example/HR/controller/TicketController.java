@@ -1,5 +1,6 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.task.TaskCommentDTO;
 import com.example.HR.dto.ticket.TicketAttachmentDTO;
 import com.example.HR.dto.ticket.TicketCommentDTO;
 import com.example.HR.dto.ticket.TicketRequestDTO;
@@ -266,6 +267,15 @@ public class TicketController {
         }
     }
 
+    @Operation(
+            summary = "Add a new ticket attachment",
+            description = "Creates a new attachment with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Ticket attachment created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/{ticketId}/attachments")
     public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable String ticketId,
                                                           @RequestParam("file") MultipartFile file) {
@@ -286,6 +296,15 @@ public class TicketController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "Download ticket attachments",
+            description = "Downloads all ticket attachments from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket attachments downloaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket attachments found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/attachments/download/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName){
         Resource resource = fileStorageService.loadFileAsResource(fileName);
@@ -297,6 +316,15 @@ public class TicketController {
                 .body(resource);
     }
 
+    @Operation(
+            summary = "Get ticket attachments",
+            description = "Retrieves all ticket attachments from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ticket attachments retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No ticket attachments found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/attachments/view/{fileName}")
     public ResponseEntity<Resource> viewFile(@PathVariable String fileName){
         Resource resource = fileStorageService.loadFileAsResource(fileName);
@@ -306,6 +334,15 @@ public class TicketController {
                 .body(resource);
     }
 
+    @Operation(
+            summary = "Add a new comment",
+            description = "Creates a new comment with the provided content")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Comment created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/{ticketId}/comments")
     public ResponseEntity<TicketCommentDTO> addComment(@PathVariable String ticketId,
                                                        @RequestBody Map<String, String> commentData) {
@@ -316,5 +353,36 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.CREATED).body(comment);
     }
 
+    @Operation(
+            summary = "Get all comments",
+            description = "Retrieves all comments from system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Comment retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/comments")
+    public ResponseEntity<Map<String,Object>> getAllComments(){
+        log.info("REST request to get all comments");
+
+        try {
+            List<TicketCommentDTO> list = ticketService.getAllComments();
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",list);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }
+    }
 
 }

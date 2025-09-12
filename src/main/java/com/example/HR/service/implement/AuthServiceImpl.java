@@ -158,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
                     .token(newToken)
                     .refreshToken(newRefreshToken)
                     .tokenType("Bearer")
-                    .expiresIn(86400L)
+                    .expiresIn(604800L)
                     .user(converter.mapToUserInfo(user))
                     .build();
         } catch (Exception e) {

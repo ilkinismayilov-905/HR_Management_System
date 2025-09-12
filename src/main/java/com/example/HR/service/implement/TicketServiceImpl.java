@@ -167,6 +167,16 @@ public class TicketServiceImpl implements TicketService {
         return converter.mapCommentToDTO(comment);
     }
 
+    @Override
+    public List<TicketCommentDTO> getAllComments() {
+        log.info("Getting all comments..");
+
+        List<TicketComment> list = commentRepository.findAll();
+        log.info("Ticket comment fetched successfully");
+
+        return converter.mapCommentToDTOList(list);
+    }
+
     private User getCurrentUser() {
         return (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

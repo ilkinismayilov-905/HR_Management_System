@@ -19,4 +19,5 @@ public interface TicketService {
     void deleteById(Long id);
     TicketAttachment uploadAttachment(String ticketId, MultipartFile file);
     TicketCommentDTO addComment(String ticketId, String content);
+    List<TicketCommentDTO> getAllComments();
 }

@@ -19,4 +19,5 @@ public interface TaskService {
     TaskAttachment uploadAttachment(Long ticketId, MultipartFile file);
     TaskCommentDTO addComment(Long taskId, String content);
     void assignEmployeesToTask(Long taskId, List<Long> employeeIds);
+    List<TaskCommentDTO> getAllComments();
 }
