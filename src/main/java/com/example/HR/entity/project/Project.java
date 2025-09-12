@@ -1,11 +1,8 @@
-package com.example.HR.entity.task;
+package com.example.HR.entity.project;
 
 import com.example.HR.entity.employee.Employee;
-import com.example.HR.entity.ticket.TicketAttachment;
-import com.example.HR.entity.ticket.TicketComment;
-import com.example.HR.enums.TaskPriority;
-import com.example.HR.enums.TaskStatus;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.HR.enums.ProjectPriority;
+import com.example.HR.enums.ProjectStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,36 +14,36 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "task")
+@Table(name = "project")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-public class Task {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String taskName;
+    private String projectName;
     private LocalDate timeLine;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<TaskAssignment> taskAssignments = new HashSet<>();
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ProjectAssignment> projectAssignments = new HashSet<>();
 
     public Set<Employee> getAssignedEmployees() {
-        if (taskAssignments == null) {
+        if (projectAssignments == null) {
             return Collections.emptySet(); // Return an empty set instead of throwing an error
         }
-        return taskAssignments.stream()
-                .map(TaskAssignment::getEmployee)
+        return projectAssignments.stream()
+                .map(ProjectAssignment::getEmployee)
                 .collect(Collectors.toSet());
     }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
+        Project task = (Project) o;
         return id != null && Objects.equals(id, task.id);
     }
 
@@ -56,20 +53,19 @@ public class Task {
     }
 
     @Enumerated(value = EnumType.STRING)
-    private TaskStatus status;
+    private ProjectStatus status;
 
     @Enumerated(value = EnumType.STRING)
-    private TaskPriority priority;
+    private ProjectPriority priority;
 
     @Column(nullable = false,name = "description",length = 100)
     private String description;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<TaskAttachment> attachments = new ArrayList<>();
+    private List<ProjectAttachment> attachments = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<TaskComment> comments = new ArrayList<>();
-
+    private List<ProjectComment> comments = new ArrayList<>();
 }
