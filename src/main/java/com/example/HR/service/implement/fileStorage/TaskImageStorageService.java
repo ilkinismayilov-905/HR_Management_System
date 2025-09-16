@@ -1,14 +1,10 @@
-package com.example.HR.service.implement;
+package com.example.HR.service.implement.fileStorage;
 
-
-import com.example.HR.config.EmployeeImagesStorageProperties;
-import com.example.HR.entity.employee.Employee;
-import com.example.HR.entity.employee.EmployeeAttachment;
-import com.example.HR.entity.ticket.Ticket;
-import com.example.HR.entity.ticket.TicketAttachment;
+import com.example.HR.config.TaskFileStorageProperties;
+import com.example.HR.entity.task.Task;
+import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.exception.FileStorageException;
-import com.example.HR.repository.EmployeeAttachmentRepository;
-import com.example.HR.repository.ticket.TicketAttachmentRepository;
+import com.example.HR.repository.task.TaskAttachmentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +26,9 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EmployeeImagesService {
-
-    private final EmployeeImagesStorageProperties imagesStorageProperties;
-    private final EmployeeAttachmentRepository attachmentRepository;
+public class TaskImageStorageService {
+    private final TaskFileStorageProperties imagesStorageProperties;
+    private final TaskAttachmentRepository attachmentRepository;
 
     private Path fileStorageLocation;
 
@@ -49,7 +44,7 @@ public class EmployeeImagesService {
         }
     }
 
-    public EmployeeAttachment storeFile(MultipartFile file, Employee employee){
+    public TaskAttachment storeFile(MultipartFile file, Task task){
         validateFile(file);
 
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -64,13 +59,13 @@ public class EmployeeImagesService {
             Path targetLocation = this.fileStorageLocation.resolve(originalFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            EmployeeAttachment attachment = EmployeeAttachment.builder()
+            TaskAttachment attachment = TaskAttachment.builder()
                     .fileName(fileName)
                     .originalFileName(originalFileName)
                     .filePath(targetLocation.toString())
                     .contentType(file.getContentType())
                     .fileSize(file.getSize())
-                    .employee(employee)
+                    .task(task)
                     .build();
 
             return attachmentRepository.save(attachment);

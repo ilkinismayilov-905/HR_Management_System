@@ -10,17 +10,17 @@ import com.example.HR.entity.project.Project;
 import com.example.HR.entity.project.ProjectAssignment;
 import com.example.HR.entity.project.ProjectAttachment;
 import com.example.HR.entity.project.ProjectComment;
-import com.example.HR.entity.task.Task;
-import com.example.HR.entity.task.TaskAssignment;
-import com.example.HR.entity.task.TaskComment;
 import com.example.HR.enums.ProjectStatus;
 import com.example.HR.exception.NotFoundException;
+import com.example.HR.exception.ResourceNotFoundException;
 import com.example.HR.repository.EmployeeRepository;
 import com.example.HR.repository.project.ProjectAssignmentRepository;
 import com.example.HR.repository.project.ProjectAttachmentRepository;
 import com.example.HR.repository.project.ProjectCommentRepository;
 import com.example.HR.repository.project.ProjectRepository;
 import com.example.HR.service.ProjectService;
+import com.example.HR.service.implement.fileStorage.ProjectFileStorageService;
+import com.example.HR.service.implement.fileStorage.TaskImageStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.spi.ToolProvider;
+
 
 @Service
 @Slf4j
@@ -45,7 +45,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final EmployeeRepository employeeRepository;
     private final ProjectConverter converter;
-    private final TaskImageStorageService storageService;
+    private final ProjectFileStorageService storageService;
 
     @Override
     public ProjectResponseDTO create(ProjectRequestDTO projectRequestDTO) {
@@ -63,36 +63,36 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectResponseDTO> getAll() {
-        log.info("Fetching all tasks");
+        log.info("Fetching all projects");
 
         List<Project> task = projectRepository.findAll();
-        log.info("tasks fetched ");
+        log.info("projects fetched ");
 
         return converter.toResponseDtoList(task);
     }
 
     @Override
     public ProjectResponseDTO getById(Long id) {
-        log.info("Get task by given id: {}", id);
+        log.info("Get project by given id: {}", id);
         Project task = projectRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+                .orElseThrow(() -> new NotFoundException("Project not found by id:" + id));
 
-        log.info("Task fetched successfully from database.");
+        log.info("Project fetched successfully from database.");
 
         return converter.toResponseDto(task);
     }
 
     @Override
     public ProjectResponseDTO update(Long id, ProjectRequestDTO dto) {
-        log.info("Updating task: {}", id);
+        log.info("Updating project: {}", id);
         Project task = projectRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+                .orElseThrow(() -> new NotFoundException("Project not found by id:" + id));
 
         converter.update(dto,task);
-        log.info("Task updated: {}", task.getProjectName());
+        log.info("Project updated: {}", task.getProjectName());
 
         Project updatedTask = projectRepository.save(task);
-        log.info("Task saved");
+        log.info("Project saved");
 
         return converter.toResponseDto(updatedTask);
     }
@@ -101,29 +101,35 @@ public class ProjectServiceImpl implements ProjectService {
     public List<ProjectResponseDTO> getByStatus(ProjectStatus status) {
         List<Project> task = projectRepository.findByStatus(status);
 
-        log.info("Tasks fetched by status");
+        log.info("Projects fetched by status");
         return converter.toResponseDtoList(task);
     }
 
     @Override
     public void deleteById(Long id) {
-        log.info("Deleting task by id: {}", id);
+        log.info("Deleting project by id: {}", id);
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Task not found by id:" + id));
+                .orElseThrow(() -> new NotFoundException("Project not found by id:" + id));
 
         projectRepository.deleteById(id);
-        log.info("Task deleted.");
+        log.info("Project deleted.");
     }
 
     @Override
-    public ProjectAttachment uploadAttachment(Long ticketId, MultipartFile file) {
-        return null;
+    public ProjectAttachment uploadAttachment(Long projectId, MultipartFile file) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + projectId));
+
+        ProjectAttachment attachment = storageService.storeFile(file,project);
+        log.info("Uploaded attachment {} for project {}", file.getOriginalFilename(), projectId);
+
+        return attachment;
     }
 
     @Override
     public ProjectCommentDTO addComment(Long taskId, String content) {
         Project projectComment = projectRepository.findById(taskId)
-                .orElseThrow(() -> new NotFoundException("Task not found by id: " + taskId));
+                .orElseThrow(() -> new NotFoundException("Project not found by id: " + taskId));
 
         User currentUser = getCurrentUser();
 
@@ -137,7 +143,7 @@ public class ProjectServiceImpl implements ProjectService {
         log.info("Comment added");
 
         comment = commentRepository.save(comment);
-        log.info("Added comment to task: {}", taskId);
+        log.info("Added comment to project: {}", taskId);
 
         return converter.mapCommentToDTO(comment);
     }
@@ -145,7 +151,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void assignEmployeesToTask(Long taskId, List<Long> employeeIds) {
         Project task = projectRepository.findById(taskId)
-                .orElseThrow(() -> new NotFoundException("Task not found by id: " + taskId));
+                .orElseThrow(() -> new NotFoundException("Project not found by id: " + taskId));
         for(Long employeeId : employeeIds){
             Employee employee = employeeRepository.findById(employeeId)
                     .orElseThrow(() -> new NotFoundException("Employee not found by id: " + employeeId));
@@ -165,7 +171,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectCommentDTO> getAllComments() {
-        log.info("Get all TaskComments");
+        log.info("Get all ProjectComments");
 
         List<ProjectComment> commentDTOS = commentRepository.findAll();
         log.info("Comments fetched");

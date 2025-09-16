@@ -1,12 +1,20 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.project.ProjectAttachmentDTO;
+import com.example.HR.dto.project.ProjectCommentDTO;
+import com.example.HR.dto.project.ProjectRequestDTO;
+import com.example.HR.dto.project.ProjectResponseDTO;
 import com.example.HR.dto.task.TaskAttachmentDTO;
 import com.example.HR.dto.task.TaskCommentDTO;
 import com.example.HR.dto.task.TaskRequestDTO;
 import com.example.HR.dto.task.TaskResponseDTO;
+import com.example.HR.entity.project.ProjectAttachment;
 import com.example.HR.entity.task.TaskAttachment;
+import com.example.HR.enums.ProjectStatus;
 import com.example.HR.enums.TaskStatus;
+import com.example.HR.service.ProjectService;
 import com.example.HR.service.TaskService;
+import com.example.HR.service.implement.fileStorage.ProjectFileStorageService;
 import com.example.HR.service.implement.fileStorage.TaskImageStorageService;
 import com.example.HR.validation.Create;
 import com.example.HR.validation.Update;
@@ -30,35 +38,35 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/task")
+@RequestMapping("/project")
 @CrossOrigin(origins = "*")
 @Slf4j
 @RequiredArgsConstructor
-public class TaskController {
+public class ProjectController {
 
-    private final TaskService taskService;
-    private final TaskImageStorageService fileStorageService;
+    private final ProjectService projectService;
+    private final ProjectFileStorageService fileStorageService;
 
     @Operation(
-            summary = "Add a new task",
-            description = "Creates a new task with the provided details")
+            summary = "Add a new project",
+            description = "Creates a new project with the provided details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Task created successfully"),
+            @ApiResponse(responseCode = "201", description = "Project created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "404", description = "Resource not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<Map<String,Object>> createTask(@Validated(Create.class) @RequestBody TaskRequestDTO dto){
+    public ResponseEntity<Map<String,Object>> createTask(@Validated(Create.class) @RequestBody ProjectRequestDTO dto){
 
-        log.info("REST request to create task");
+        log.info("REST request to create project");
         try {
 
-            TaskResponseDTO task = taskService.create(dto);
+            ProjectResponseDTO project = projectService.create(dto);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
-            response.put("data",task);
+            response.put("data",project);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
@@ -73,37 +81,37 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Get all tasks",
-            description = "Retrieves all tasks from the system")
+            summary = "Get all projects",
+            description = "Retrieves all projects from the system")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Projects retrieved successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No tasks found"),
+            @ApiResponse(responseCode = "404", description = "No projects found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/get")
-    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
+    public ResponseEntity<List<ProjectResponseDTO>> getAllTasks() {
 
         log.info("REST request to get all tasks");
-        List<TaskResponseDTO> tasks = taskService.getAll();
+        List<ProjectResponseDTO> tasks = projectService.getAll();
         return ResponseEntity.ok(tasks);
     }
 
     @Operation(
-            summary = "Get task by ID",
-            description = "Retrieves task by ID from the system")
+            summary = "Get project by ID",
+            description = "Retrieves project by ID from the system")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Project retrieved successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No task found"),
+            @ApiResponse(responseCode = "404", description = "No project found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
     public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id){
 
-        log.info("REST request to get task by ID");
+        log.info("REST request to get project by ID");
         try {
-            TaskResponseDTO task = taskService.getById(id);
+            ProjectResponseDTO task = projectService.getById(id);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -121,54 +129,21 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Delete task by ID",
-            description = "Deletes task by its unique identifier")
+            summary = "Delete project by ID",
+            description = "Deletes project by its unique identifier")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task was deleted successfully"),
+            @ApiResponse(responseCode = "200", description = "Project was deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No task found"),
+            @ApiResponse(responseCode = "404", description = "No project found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String,Object>> deleteById(@PathVariable Long id){
 
-        log.info("REST request to delete task by ID");
+        log.info("REST request to delete project by ID");
         try {
-            TaskResponseDTO task = taskService.getById(id);
-            taskService.deleteById(id);
-
-            Map<String,Object> response = new HashMap<>();
-            response.put("success",true);
-            response.put("data",task);
-
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-
-            Map<String,Object> response = new HashMap<>();
-            response.put("success",false);
-            response.put("message",e.getMessage());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
-    }
-
- @Operation(
-            summary = "Update task",
-            description = "Update an existing task by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data"),
-            @ApiResponse(responseCode = "404", description = "Task not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
-    @PutMapping("/update/{taskId}")
-    public ResponseEntity<Map<String,Object>> updateTask(@Validated(Update.class)
-                                                             @PathVariable Long taskId,
-                                                         @RequestBody TaskRequestDTO dto){
-
-     log.info("REST request to update task by ID");
-        try {
-            TaskResponseDTO task = taskService.update(taskId,dto);
+            ProjectResponseDTO task = projectService.getById(id);
+            projectService.deleteById(id);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -186,27 +161,60 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Get task by status",
-            description = "Retrieves task by status from the system")
+            summary = "Update project",
+            description = "Update an existing project by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Project updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/update/{projectId}")
+    public ResponseEntity<Map<String,Object>> updateTask(@Validated(Update.class)
+                                                         @PathVariable Long projectId,
+                                                         @RequestBody ProjectRequestDTO dto){
+
+        log.info("REST request to update project by ID");
+        try {
+            ProjectResponseDTO task = projectService.update(projectId,dto);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",task);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @Operation(
+            summary = "Get project by status",
+            description = "Retrieves project by status from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Project retrieved successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No Task found"),
+            @ApiResponse(responseCode = "404", description = "No project found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/status/{status}")
     public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable String status){
 
-        log.info("REST request to get task by status");
+        log.info("REST request to get project by status");
         try {
-            TaskStatus enumStatus;
+            ProjectStatus enumStatus;
             try {
-                enumStatus= TaskStatus.valueOf(status.toUpperCase());
+                enumStatus= ProjectStatus.valueOf(status.toUpperCase());
             } catch (IllegalArgumentException e) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
             }
 
-            List<TaskResponseDTO> task = taskService.getByStatus(enumStatus);
+            List<ProjectResponseDTO> task = projectService.getByStatus(enumStatus);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -231,14 +239,14 @@ public class TaskController {
             @ApiResponse(responseCode = "404", description = "Resource not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/{taskId}/comments")
-    public ResponseEntity<Map<String,Object>> addComment(@PathVariable Long taskId,
-                                                     @RequestBody Map<String, String> commentData) {
+    @PostMapping("/{projectId}/comments")
+    public ResponseEntity<Map<String,Object>> addComment(@PathVariable Long projectId,
+                                                         @RequestBody Map<String, String> commentData) {
 
         log.info("REST request to add comment");
         try{
-            TaskCommentDTO comment = taskService.addComment(
-                    taskId,
+            ProjectCommentDTO comment = projectService.addComment(
+                    projectId,
                     commentData.get("content")
             );
 
@@ -270,7 +278,7 @@ public class TaskController {
         log.info("REST request to get all comments");
 
         try {
-            List<TaskCommentDTO> list = taskService.getAllComments();
+            List<ProjectCommentDTO> list = projectService.getAllComments();
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -290,27 +298,27 @@ public class TaskController {
 
 
     @Operation(
-            summary = "Add a new task attachment",
+            summary = "Add a new project attachment",
             description = "Creates a new attachment with the provided details")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Task attachment created successfully"),
+            @ApiResponse(responseCode = "201", description = "Project attachment created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "404", description = "Resource not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/{taskId}/attachments")
-    public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable Long taskId,
+    @PostMapping("/{projectId}/attachments")
+    public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable Long projectId,
                                                           @RequestParam("file") MultipartFile file) {
 
         log.info("REST request to add new attachment");
         try{
 
-            TaskAttachment attachment = taskService.uploadAttachment(taskId, file);
+            ProjectAttachment attachment = projectService.uploadAttachment(projectId, file);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "File uploaded successfully");
-            response.put("attachment", TaskAttachmentDTO.builder()
+            response.put("attachment", ProjectAttachmentDTO.builder()
                     .id(attachment.getId())
                     .fileName(attachment.getFileName())
                     .originalFileName(attachment.getOriginalFileName())
@@ -331,12 +339,12 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Download task attachments",
+            summary = "Download project attachments",
             description = "Downloads all task attachments from the system")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task attachments downloaded successfully"),
+            @ApiResponse(responseCode = "200", description = "Project attachments downloaded successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No task attachments found"),
+            @ApiResponse(responseCode = "404", description = "No project attachments found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/attachments/download/{fileName}")
@@ -354,12 +362,12 @@ public class TaskController {
 
 
     @Operation(
-            summary = "Get task attachments",
-            description = "Retrieves all task attachments from the system")
+            summary = "Get project attachments",
+            description = "Retrieves all project attachments from the system")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Task attachments retrieved successfully"),
+            @ApiResponse(responseCode = "200", description = "Project attachments retrieved successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
-            @ApiResponse(responseCode = "404", description = "No task attachments found"),
+            @ApiResponse(responseCode = "404", description = "No project attachments found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/attachments/view/{fileName}")
@@ -371,6 +379,5 @@ public class TaskController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-
 
 }

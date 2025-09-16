@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
         RefreshToken entityRefreshToken = new RefreshToken();
         entityRefreshToken.setTokenHash(refreshToken);
         entityRefreshToken.setUser(user1);
-        entityRefreshToken.setExpiresIn(86400L);
+        entityRefreshToken.setExpiresIn(604800L);
 
         if(exRefreshToken != null){
             refreshTokenRepository.delete(exRefreshToken);

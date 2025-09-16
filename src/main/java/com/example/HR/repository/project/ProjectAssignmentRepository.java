@@ -15,5 +15,5 @@ public interface ProjectAssignmentRepository extends JpaRepository<ProjectAssign
 
     Optional<ProjectAssignment> findByProjectIdAndEmployeeId(Long projectId, Long employeeId);
 
-    List<TaskAssignment> findByTaskId(Long taskId);
+    List<ProjectAssignment> findByProjectId(Long taskId);
 }

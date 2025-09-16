@@ -16,6 +16,7 @@ import com.example.HR.repository.ticket.TicketCommentRepository;
 import com.example.HR.repository.ticket.TicketRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.TicketService;
+import com.example.HR.service.implement.fileStorage.FileStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

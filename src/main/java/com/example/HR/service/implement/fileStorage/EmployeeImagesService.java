@@ -1,10 +1,11 @@
-package com.example.HR.service.implement;
+package com.example.HR.service.implement.fileStorage;
 
-import com.example.HR.config.TaskFileStorageProperties;
-import com.example.HR.entity.task.Task;
-import com.example.HR.entity.task.TaskAttachment;
+
+import com.example.HR.config.EmployeeImagesStorageProperties;
+import com.example.HR.entity.employee.Employee;
+import com.example.HR.entity.employee.EmployeeAttachment;
 import com.example.HR.exception.FileStorageException;
-import com.example.HR.repository.task.TaskAttachmentRepository;
+import com.example.HR.repository.EmployeeAttachmentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TaskImageStorageService {
-    private final TaskFileStorageProperties imagesStorageProperties;
-    private final TaskAttachmentRepository attachmentRepository;
+public class EmployeeImagesService {
+
+    private final EmployeeImagesStorageProperties imagesStorageProperties;
+    private final EmployeeAttachmentRepository attachmentRepository;
 
     private Path fileStorageLocation;
 
@@ -44,7 +46,7 @@ public class TaskImageStorageService {
         }
     }
 
-    public TaskAttachment storeFile(MultipartFile file, Task task){
+    public EmployeeAttachment storeFile(MultipartFile file, Employee employee){
         validateFile(file);
 
         String originalFileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -59,13 +61,13 @@ public class TaskImageStorageService {
             Path targetLocation = this.fileStorageLocation.resolve(originalFileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
-            TaskAttachment attachment = TaskAttachment.builder()
+            EmployeeAttachment attachment = EmployeeAttachment.builder()
                     .fileName(fileName)
                     .originalFileName(originalFileName)
                     .filePath(targetLocation.toString())
                     .contentType(file.getContentType())
                     .fileSize(file.getSize())
-                    .task(task)
+                    .employee(employee)
                     .build();
 
             return attachmentRepository.save(attachment);

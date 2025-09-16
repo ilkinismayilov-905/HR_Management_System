@@ -16,7 +16,7 @@ public interface ProjectService {
     ProjectResponseDTO update(Long id,ProjectRequestDTO dto);
     List<ProjectResponseDTO> getByStatus(ProjectStatus status);
     void deleteById(Long id);
-   ProjectAttachment uploadAttachment(Long ticketId, MultipartFile file);
+   ProjectAttachment uploadAttachment(Long projectId, MultipartFile file);
     ProjectCommentDTO addComment(Long taskId, String content);
     void assignEmployeesToTask(Long taskId, List<Long> employeeIds);
     List<ProjectCommentDTO> getAllComments();

@@ -1,4 +1,4 @@
-package com.example.HR.service.implement;
+package com.example.HR.service.implement.fileStorage;
 
 import com.example.HR.config.FileStorageProperties;
 import com.example.HR.entity.ticket.Ticket;
@@ -12,7 +12,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

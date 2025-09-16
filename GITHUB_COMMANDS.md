@@ -1,12 +1,12 @@
  # GITHUB COMMANDS
 
  ## Merge to Main :
-1. git checkout main
-2. git pull origin main
-3. git add .
-4. git commit --no-edit
-5. git merge "your_branch"
-6. git push origin main
+git checkout main
+git pull origin main
+git add .
+git commit --no-edit
+git merge "your_branch"
+git push origin main
 
  ## Fetch From Main(before coding):
 git checkout main

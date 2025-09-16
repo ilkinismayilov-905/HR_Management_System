@@ -10,10 +10,7 @@ import com.example.HR.entity.task.Task;
 import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.task.TaskComment;
-import com.example.HR.entity.ticket.Ticket;
-import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.enums.TaskStatus;
-import com.example.HR.enums.TicketStatus;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.exception.ResourceNotFoundException;
 import com.example.HR.repository.EmployeeRepository;
@@ -22,6 +19,7 @@ import com.example.HR.repository.task.TaskAttachmentRepository;
 import com.example.HR.repository.task.TaskCommentRepository;
 import com.example.HR.repository.task.TaskRepository;
 import com.example.HR.service.TaskService;
+import com.example.HR.service.implement.fileStorage.TaskImageStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -125,7 +123,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found with ID: " + taskId));
 
         TaskAttachment attachment = storageService.storeFile(file,task);
-        log.info("Uploaded attachment {} for ticket {}", file.getOriginalFilename(), taskId);
+        log.info("Uploaded attachment {} for task {}", file.getOriginalFilename(), taskId);
 
         return attachment;
     }
