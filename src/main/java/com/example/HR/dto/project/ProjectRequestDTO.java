@@ -4,6 +4,7 @@ import com.example.HR.enums.ProjectPriority;
 import com.example.HR.enums.ProjectStatus;
 
 import com.example.HR.validation.Create;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,7 @@ public class ProjectRequestDTO {
 
     // Create zamanı mütləqdir, Update zamanı optional
     @NotNull(groups = Create.class, message = "Timeline is required")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate timeLine;
 
     @NotBlank(groups = Create.class, message = "Task name is required")

@@ -2,6 +2,7 @@ package com.example.HR.dto.project;
 
 import com.example.HR.enums.ProjectPriority;
 import com.example.HR.enums.ProjectStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class ProjectResponseDTO {
     private String taskName;
     private ProjectPriority priority;
     private ProjectStatus status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate timeLine;
     private List<ProjectAttachmentDTO> attachments;
     private List<ProjectEmployeeResponseDTO> people;
