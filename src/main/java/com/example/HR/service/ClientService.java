@@ -16,6 +16,5 @@ public interface ClientService {
     public ClientResponseDTO getById(Long id);
     public List<ClientResponseDTO> getAll();
     public List<ClientResponseDTO> getByStatus(ClientStatus status);
-    public Optional<ClientResponseDTO> getByFullname(String fullname);
     void deleteById(Long id);
 }
