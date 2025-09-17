@@ -5,7 +5,7 @@ import com.example.HR.config.EmployeeImagesStorageProperties;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.employee.EmployeeAttachment;
 import com.example.HR.exception.FileStorageException;
-import com.example.HR.repository.EmployeeAttachmentRepository;
+import com.example.HR.repository.employee.EmployeeAttachmentRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

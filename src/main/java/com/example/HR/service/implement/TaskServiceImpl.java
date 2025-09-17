@@ -13,7 +13,7 @@ import com.example.HR.entity.task.TaskComment;
 import com.example.HR.enums.TaskStatus;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.exception.ResourceNotFoundException;
-import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.employee.EmployeeRepository;
 import com.example.HR.repository.task.TaskAssignmentRepository;
 import com.example.HR.repository.task.TaskAttachmentRepository;
 import com.example.HR.repository.task.TaskCommentRepository;

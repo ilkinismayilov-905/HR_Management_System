@@ -1,13 +1,12 @@
 package com.example.HR.converter;
 
-import com.example.HR.dto.employee.EmployeeResponseDTO;
 import com.example.HR.dto.task.*;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.task.Task;
 import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.entity.task.TaskAttachment;
 import com.example.HR.entity.task.TaskComment;
-import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.LazyInitializationException;

@@ -1,18 +1,17 @@
 package com.example.HR.entity.client;
 
+import com.example.HR.enums.ClientStatus;
 import com.example.HR.validation.Create;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "clients")
@@ -20,12 +19,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @RequiredArgsConstructor
+@Builder
 public class Client {
 
     @Id
     @GeneratedValue
     private Long id;
-
 
     @Column(unique = true)
     private String clientId;
@@ -48,4 +47,10 @@ public class Client {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private List<String> companyMembers;
+
+    @Enumerated(EnumType.STRING)
+    private ClientStatus status;
 }

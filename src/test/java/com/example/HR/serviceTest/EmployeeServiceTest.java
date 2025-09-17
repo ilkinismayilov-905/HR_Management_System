@@ -8,7 +8,7 @@
 //import com.example.HR.enums.*;
 //import com.example.HR.exception.NotFoundException;
 //import com.example.HR.exception.ValidException;
-//import com.example.HR.repository.EmployeeRepository;
+//import com.example.HR.repository.employee.EmployeeRepository;
 //import com.example.HR.repository.UserRepository;
 //import com.example.HR.service.implement.EmployeeServiceImpl;
 //

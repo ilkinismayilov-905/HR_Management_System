@@ -11,7 +11,7 @@ import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.exception.*;
-import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.employee.EmployeeRepository;
 import com.example.HR.repository.UserRepository;
 import com.example.HR.service.EmployeeService;
 import com.example.HR.service.implement.fileStorage.EmployeeImagesService;

@@ -7,7 +7,7 @@ import com.example.HR.entity.project.Project;
 import com.example.HR.entity.project.ProjectAssignment;
 import com.example.HR.entity.project.ProjectAttachment;
 import com.example.HR.entity.project.ProjectComment;
-import com.example.HR.repository.EmployeeRepository;
+import com.example.HR.repository.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.LazyInitializationException;
