@@ -1,5 +1,6 @@
 package com.example.HR.converter;
 
+import com.example.HR.dto.client.ClientInformationDTO;
 import com.example.HR.dto.client.ClientRequestDTO;
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.entity.client.Client;
@@ -83,6 +84,27 @@ public class ClientConverter {
     public List<ClientResponseDTO> mapCompanyMemberList(List<Client> list){
         return list.stream()
                 .map(this::mapCompanyMember)
+                .collect(Collectors.toList());
+    }
+
+
+    public ClientInformationDTO mapToInfoDTO(Client client){
+        if(client == null) return null;
+
+        return ClientInformationDTO.builder()
+                .id(client.getId())
+                .clientId(client.getClientId())
+                .jobTitle(client.getJobTitle())
+                .startDate(client.getCreatedTime().toLocalDate())
+                .companyName(client.getCompanyName())
+                .status(client.getStatus())
+                .build();
+    }
+
+    public List<ClientInformationDTO> mapToInfoDTOList(List<Client> list){
+
+        return list.stream()
+                .map(this::mapToInfoDTO)
                 .collect(Collectors.toList());
     }
 

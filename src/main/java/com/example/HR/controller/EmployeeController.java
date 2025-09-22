@@ -86,7 +86,7 @@ public class EmployeeController {
     @GetMapping("/getAll")
     public ResponseEntity<List<EmployeeResponseDTO>> viewAllEmployees() throws MalformedURLException {
         List<EmployeeResponseDTO> employeeResponseDTOList = employeeService.findAll();
-//        log.info("All Employee list returned");
+        log.info("All Employee list returned");
 
         return ResponseEntity.ok(employeeResponseDTOList);
     }
@@ -126,7 +126,7 @@ public class EmployeeController {
         }
         List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByStatus(enumStatus);
 
-//        log.info("Employee list returned by status: {}", status);
+        log.info("Employee list returned by status: {}", status);
 
         return ResponseEntity.ok(employeeRequestDTOList);
     }
@@ -143,7 +143,7 @@ public class EmployeeController {
     public ResponseEntity<Optional<EmployeeResponseDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
         Optional<EmployeeResponseDTO> employeeDTOList = employeeService.getByFullname(fullname);
 
-//        log.info("Employee list returned by fullname: {}" ,fullname);
+        log.info("Employee list returned by fullname: {}" ,fullname);
         return ResponseEntity.ok(employeeDTOList);
     }
 
@@ -166,7 +166,7 @@ public class EmployeeController {
         }
         List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByJobPosition(enumJobTitle);
 
-//        log.info("Employee list returned by jobTitle: {}", jobTitle);
+        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
         return ResponseEntity.ok(employeeRequestDTOList);
     }
@@ -191,7 +191,7 @@ public class EmployeeController {
 
         List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByEmploymentType(enumStatus);
 
-//        log.info("Employee list returned by employment type: {}", employmentType);
+        log.info("Employee list returned by employment type: {}", employmentType);
 
         return ResponseEntity.ok(employeeRequestDTOList);
     }
@@ -208,7 +208,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
         List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByDate(localDate);
 
-//        log.info("Employee list returned by joinDate: {}", localDate);
+        log.info("Employee list returned by joinDate: {}", localDate);
 
         return ResponseEntity.ok(employeeRequestDTOList);
     }
@@ -245,26 +245,54 @@ public class EmployeeController {
     }
 
 
+    @Operation(
+            summary = "Add a new employee attachment",
+            description = "Creates a new attachment with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Employee attachment created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/{employeeId}/attachments")
     public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable String employeeId,
                                                           @RequestParam("file") MultipartFile file) {
         EmployeeAttachment attachment = employeeService.uploadAttachment(employeeId, file);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "File uploaded successfully");
-        response.put("attachment", EmployeeAttachmentDTO.builder()
-                .id(attachment.getId())
-                .fileName(attachment.getFileName())
-                .originalFileName(attachment.getOriginalFileName())
-                .contentType(attachment.getContentType())
-                .fileSize(attachment.getFileSize())
-                .uploadedDate(attachment.getUploadedDate())
-                .build());
+        try {
 
-        return ResponseEntity.ok(response);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "File uploaded successfully");
+            response.put("attachment", EmployeeAttachmentDTO.builder()
+                    .id(attachment.getId())
+                    .fileName(attachment.getFileName())
+                    .originalFileName(attachment.getOriginalFileName())
+                    .contentType(attachment.getContentType())
+                    .fileSize(attachment.getFileSize())
+                    .uploadedDate(attachment.getUploadedDate())
+                    .build());
+
+            return ResponseEntity.ok(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
+    @Operation(
+            summary = "Download employee attachments",
+            description = "Downloads all task attachments from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee attachments downloaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No employee attachments found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/attachments/download/{fileName}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName){
         Resource resource = imagesService.loadFileAsResource(fileName);
@@ -276,6 +304,15 @@ public class EmployeeController {
                 .body(resource);
     }
 
+    @Operation(
+            summary = "Get employee attachments",
+            description = "Retrieves all employee attachments from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Employee attachments retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No employee attachments found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/attachments/view/{fileName}")
     public ResponseEntity<Resource> viewFile(@PathVariable String fileName){
         Resource resource = imagesService.loadFileAsResource(fileName);

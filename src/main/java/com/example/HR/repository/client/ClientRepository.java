@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ClientRepository extends JpaRepository<Client,Long> {
-//    Client findByClientName(String clientName);
+    Optional<Client> findByClientId(String clientId);
     List<Client> findByCompanyName(String companyName);
     List<Client> findByStatus(ClientStatus status);
 }

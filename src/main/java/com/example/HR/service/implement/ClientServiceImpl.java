@@ -1,17 +1,22 @@
 package com.example.HR.service.implement;
 
 import com.example.HR.converter.ClientConverter;
+import com.example.HR.dto.client.ClientInformationDTO;
 import com.example.HR.dto.client.ClientRequestDTO;
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.entity.client.Client;
+import com.example.HR.entity.client.ClientAttachment;
 import com.example.HR.enums.ClientStatus;
 import com.example.HR.exception.NotFoundException;
+import com.example.HR.exception.ResourceNotFoundException;
 import com.example.HR.repository.client.ClientRepository;
 import com.example.HR.service.ClientService;
+import com.example.HR.service.implement.fileStorage.ClientImagesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +31,7 @@ public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository repository;
     private final ClientConverter converter;
+    private final ClientImagesService storageService;
 
     @Override
     public ClientResponseDTO save(ClientRequestDTO dto) {
@@ -39,7 +45,7 @@ public class ClientServiceImpl implements ClientService {
         client.setCreatedTime(LocalDateTime.now());
 
         Client savedClient = repository.save(client);
-        savedClient.setClientId(String.format("#TC-%03d", savedClient.getId()));
+        savedClient.setClientId(String.format("Cli-%03d", savedClient.getId()));
         savedClient.setStatus(ClientStatus.ACTIVE);
 
         return converter.toResponseDTO(savedClient);
@@ -100,5 +106,25 @@ public class ClientServiceImpl implements ClientService {
                 .orElseThrow(() -> new NotFoundException("Client no found by ID: " + id));
 
         repository.deleteById(id);
+    }
+
+    @Override
+    public ClientAttachment uploadAttachment(String clientId, MultipartFile file) {
+        Client client = repository.findByClientId(clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found with ID: " + clientId));
+
+        ClientAttachment attachment = storageService.storeFile(file,client);
+        log.info("Uploaded attachment {} for task {}", file.getOriginalFilename(), clientId);
+
+        return attachment;
+    }
+
+    @Override
+    public ClientInformationDTO getClientInfo(String clientId) {
+        Client client = repository.findByClientId(clientId)
+                .orElseThrow(() -> new NotFoundException("Client not found by clientId: " + clientId));
+        ClientInformationDTO convertedClient = converter.mapToInfoDTO(client);
+
+        return convertedClient;
     }
 }

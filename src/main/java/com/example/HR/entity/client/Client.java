@@ -2,6 +2,7 @@ package com.example.HR.entity.client;
 
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.enums.ClientStatus;
+import com.example.HR.enums.JobTitle;
 import com.example.HR.validation.Create;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +54,10 @@ public class Client {
 
     @Column(name = "company_members", columnDefinition = "TEXT")
     private String companyMembersJson;
+
+    @Column(nullable = false)
+    @Transient
+    private JobTitle jobTitle;
 
     @Transient
     private List<String> companyMembers;
