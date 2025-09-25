@@ -1,4 +1,4 @@
-package com.example.HR.dto.project;
+package com.example.HR.dto.client;
 
 import com.example.HR.enums.ProjectPriority;
 import com.example.HR.enums.ProjectStatus;
@@ -9,19 +9,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class ProjectResponseDTO {
+public class ClientProjectsDTO {
     private Long id;
     private String projectName;
     private ProjectPriority priority;
     private ProjectStatus status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate timeLine;
-    private List<ProjectAttachmentDTO> attachments;
-    private List<ProjectEmployeeResponseDTO> people;
 }

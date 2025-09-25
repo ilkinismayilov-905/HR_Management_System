@@ -1,6 +1,7 @@
 package com.example.HR.entity.client;
 
 import com.example.HR.dto.client.ClientResponseDTO;
+import com.example.HR.entity.project.Project;
 import com.example.HR.enums.ClientStatus;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.validation.Create;
@@ -61,6 +62,10 @@ public class Client {
 
     @Transient
     private List<String> companyMembers;
+
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Project> projects = new ArrayList<>();
 
     public void setCompanyMembers(List<String> companyMembers){
         this.companyMembers = companyMembers;

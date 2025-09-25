@@ -1,5 +1,6 @@
 package com.example.HR.dto.project;
 
+import com.example.HR.entity.client.Client;
 import com.example.HR.enums.ProjectPriority;
 import com.example.HR.enums.ProjectStatus;
 
@@ -46,4 +47,7 @@ public class ProjectRequestDTO {
 
     @NotBlank(groups = Create.class, message = "Description is required")
     private String description;
+
+    @NotBlank(groups = Create.class, message = "Client name is required")
+    private String clientName;
 }

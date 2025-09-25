@@ -5,6 +5,7 @@ import com.example.HR.dto.project.ProjectCommentDTO;
 import com.example.HR.dto.project.ProjectRequestDTO;
 import com.example.HR.dto.project.ProjectResponseDTO;
 import com.example.HR.entity.User;
+import com.example.HR.entity.client.Client;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.project.Project;
 import com.example.HR.entity.project.ProjectAssignment;
@@ -13,6 +14,7 @@ import com.example.HR.entity.project.ProjectComment;
 import com.example.HR.enums.ProjectStatus;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.exception.ResourceNotFoundException;
+import com.example.HR.repository.client.ClientRepository;
 import com.example.HR.repository.employee.EmployeeRepository;
 import com.example.HR.repository.project.ProjectAssignmentRepository;
 import com.example.HR.repository.project.ProjectAttachmentRepository;
@@ -45,16 +47,21 @@ public class ProjectServiceImpl implements ProjectService {
     private final EmployeeRepository employeeRepository;
     private final ProjectConverter converter;
     private final ProjectFileStorageService storageService;
+    private final ClientRepository clientRepository;
 
     @Override
     public ProjectResponseDTO create(ProjectRequestDTO projectRequestDTO) {
         Project convertedTask = converter.toEntity(projectRequestDTO);
         Project savedTask = projectRepository.save(convertedTask);
 
+        Client clientName = clientRepository.findByClientName(projectRequestDTO.getClientName())
+                .orElseThrow(() -> new NotFoundException("Client not found: " + projectRequestDTO.getClientName()));
+
         if(projectRequestDTO.getTeamMembers() != null && !projectRequestDTO.getTeamMembers().isEmpty()){
             assignEmployeesToTask(savedTask.getId(), projectRequestDTO.getTeamMembers());
         }
 
+        savedTask.setClient(clientName);
         projectRepository.save(savedTask);
 
         return converter.toResponseDto(savedTask);

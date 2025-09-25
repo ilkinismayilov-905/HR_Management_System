@@ -1,5 +1,6 @@
 package com.example.HR.entity.project;
 
+import com.example.HR.entity.client.Client;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.ProjectPriority;
 import com.example.HR.enums.ProjectStatus;
@@ -68,4 +69,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<ProjectComment> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "client_id",nullable = true)
+    private Client client;
 }
+

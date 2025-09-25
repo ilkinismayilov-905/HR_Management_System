@@ -1,9 +1,11 @@
 package com.example.HR.converter;
 
 import com.example.HR.dto.client.ClientInformationDTO;
+import com.example.HR.dto.client.ClientProjectsDTO;
 import com.example.HR.dto.client.ClientRequestDTO;
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.entity.client.Client;
+import com.example.HR.entity.project.Project;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -105,6 +107,21 @@ public class ClientConverter {
 
         return list.stream()
                 .map(this::mapToInfoDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ClientProjectsDTO mapProjectToDTO(Project project){
+        return ClientProjectsDTO.builder()
+                .projectName(project.getProjectName())
+                .timeLine(project.getTimeLine())
+                .priority(project.getPriority())
+                .status(project.getStatus())
+                .build();
+    }
+
+    public List<ClientProjectsDTO> projectsDTOList(List<Project> list){
+        return list.stream()
+                .map(this::mapProjectToDTO)
                 .collect(Collectors.toList());
     }
 

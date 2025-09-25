@@ -11,5 +11,6 @@ import java.util.List;
 public interface ProjectRepository extends JpaRepository<Project,Long> {
     List<Project> findByProjectAssignmentsEmployeeId(Long employeeId);
     List<Project> findByStatus(ProjectStatus status);
+    List<Project> findByClient_ClientName(String clientName);
 
 }

@@ -2,6 +2,7 @@ package com.example.HR.service;
 
 
 import com.example.HR.dto.client.ClientInformationDTO;
+import com.example.HR.dto.client.ClientProjectsDTO;
 import com.example.HR.dto.client.ClientRequestDTO;
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
@@ -23,4 +24,5 @@ public interface ClientService {
     void deleteById(Long id);
     public ClientAttachment uploadAttachment(String clientId, MultipartFile file);
     public ClientInformationDTO getClientInfo(String clientId);
+    List<ClientProjectsDTO> getCurrentProjects(String username);
 }

@@ -29,7 +29,7 @@ public class ProjectConverter {
 
         return ProjectResponseDTO.builder()
                 .id(entity.getId())
-                .taskName(entity.getProjectName())
+                .projectName(entity.getProjectName())
                 .priority(entity.getPriority())
                 .timeLine(entity.getTimeLine())
 
@@ -45,7 +45,7 @@ public class ProjectConverter {
                 .attachments(mapAttachments(entity))
 
                 // Comments üçün - əgər lazy-dirsə, null check əlavə edin
-                .comments(mapComments(entity))
+//                .comments(mapComments(entity))
                 .status(entity.getStatus())
                 .build();
     }

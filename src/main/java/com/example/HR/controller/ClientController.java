@@ -1,6 +1,7 @@
 package com.example.HR.controller;
 
 import com.example.HR.dto.client.ClientInformationDTO;
+import com.example.HR.dto.client.ClientProjectsDTO;
 import com.example.HR.dto.client.ClientRequestDTO;
 import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.dto.employee.EmployeeAttachmentDTO;
@@ -313,6 +314,26 @@ public class ClientController {
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",clientInfo);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
+    @GetMapping("/projects/{username}")
+    public ResponseEntity<Map<String ,Object>> getProjects(@PathVariable String username){
+
+        try {
+            List<ClientProjectsDTO> list = service.getCurrentProjects(username);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",list);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e) {
