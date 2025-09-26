@@ -53,7 +53,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
-    public ResponseEntity<?> createEmployee(@RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
+    public ResponseEntity<Map<String,Object>> createEmployee(@RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
         log.info("=== Employee Creation Request ===");
         log.info("Creating new employee: {}", employeeRequestDTO.getFullname());
         log.info("Email received: '{}'", employeeRequestDTO.getEmail());
@@ -69,9 +69,22 @@ public class EmployeeController {
         log.info("About received: '{}'", employeeRequestDTO.getAbout());
         log.info("JoinDate received: '{}'", employeeRequestDTO.getJoinDate());
         log.info("=================================");
-        
-        EmployeeRequestDTO employee = employeeService.save(employeeRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        try {
+            EmployeeResponseDTO employee = employeeService.save(employeeRequestDTO);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
 
@@ -84,11 +97,25 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getAll")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewAllEmployees() throws MalformedURLException {
-        List<EmployeeResponseDTO> employeeResponseDTOList = employeeService.findAll();
-        log.info("All Employee list returned");
+    public ResponseEntity<Map<String,Object>> viewAllEmployees() throws MalformedURLException {
+        log.info("REST requets to get all employees");
 
-        return ResponseEntity.ok(employeeResponseDTOList);
+        try {
+            List<EmployeeResponseDTO> employee = employeeService.findAll();
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
 
@@ -101,10 +128,24 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable Long id) {
-        return employeeService.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Map<String,Object>> getEmployeeById(@PathVariable Long id) {
+        log.info("REST request to get employee by ID: {}", id);
+
+        try {
+            EmployeeResponseDTO employee = employeeService.getById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @Operation(summary = "Get employees by status",
@@ -116,19 +157,32 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByStatus/{status}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByStatus(@PathVariable String status) throws MalformedURLException {
+    public ResponseEntity<Map<String,Object>> viewEmployeesByStatus(@PathVariable String status) throws MalformedURLException {
 
-        Status enumStatus;
         try {
-            enumStatus= Status.valueOf(status.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
+            Status enumStatus;
+            try {
+                enumStatus= Status.valueOf(status.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid Status: " + status);
+            }
+            List<EmployeeResponseDTO> employee = employeeService.getByStatus(enumStatus);
+
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByStatus(enumStatus);
 
-        log.info("Employee list returned by status: {}", status);
 
-        return ResponseEntity.ok(employeeRequestDTOList);
     }
 
     @Operation(summary = "Get employees by fullname",
@@ -140,11 +194,24 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByFullname/{fullname}")
-    public ResponseEntity<Optional<EmployeeResponseDTO>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
-        Optional<EmployeeResponseDTO> employeeDTOList = employeeService.getByFullname(fullname);
+    public ResponseEntity<Map<String,Object>> viewEmployeesByFullname(@PathVariable String fullname) throws MalformedURLException {
+        log.info("REST request to get employee by fullName: {}", fullname);
 
-        log.info("Employee list returned by fullname: {}" ,fullname);
-        return ResponseEntity.ok(employeeDTOList);
+        try {
+            EmployeeResponseDTO employee = employeeService.getByFullname(fullname);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @Operation(summary = "Get employees by jobTitle",
@@ -156,19 +223,33 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByJob/{jobTitle}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJobTitle(@PathVariable String jobTitle) throws MalformedURLException {
+    public ResponseEntity<Map<String,Object>> viewEmployeesByJobTitle(@PathVariable String jobTitle) throws MalformedURLException {
+        log.info("REST request to get employee by jobTitle: {}", jobTitle);
 
-        JobTitle enumJobTitle;
         try {
-            enumJobTitle= JobTitle.valueOf(jobTitle.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid JobTitle: " + jobTitle);
+            JobTitle enumJobTitle;
+            try {
+                enumJobTitle= JobTitle.valueOf(jobTitle.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid JobTitle: " + jobTitle);
+            }
+            List<EmployeeResponseDTO> employee = employeeService.getByJobPosition(enumJobTitle);
+
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByJobPosition(enumJobTitle);
 
-        log.info("Employee list returned by jobTitle: {}", jobTitle);
 
-        return ResponseEntity.ok(employeeRequestDTOList);
     }
 
     @Operation(summary = "Get employees by employment type",
@@ -180,20 +261,32 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmploymentType/{employmentType}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByEmploymentType(@PathVariable String employmentType) throws MalformedURLException {
+    public ResponseEntity<Map<String,Object>> viewEmployeesByEmploymentType(@PathVariable String employmentType) throws MalformedURLException {
 
-        EmploymentType enumStatus;
         try {
-            enumStatus= EmploymentType.valueOf(employmentType.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid EmploymentType: " + employmentType);
+            EmploymentType enumStatus;
+            try {
+                enumStatus= EmploymentType.valueOf(employmentType.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Invalid EmploymentType: " + employmentType);
+            }
+
+            List<EmployeeResponseDTO> employee = employeeService.getByEmploymentType(enumStatus);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByEmploymentType(enumStatus);
 
-        log.info("Employee list returned by employment type: {}", employmentType);
-
-        return ResponseEntity.ok(employeeRequestDTOList);
     }
 
     @Operation(summary = "Get employees by joinDate",
@@ -205,12 +298,25 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByDate/{localDate}")
-    public ResponseEntity<List<EmployeeResponseDTO>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
-        List<EmployeeResponseDTO> employeeRequestDTOList = employeeService.getByDate(localDate);
+    public ResponseEntity<Map<String,Object>> viewEmployeesByJoinDate(@PathVariable LocalDate localDate) throws MalformedURLException {
 
-        log.info("Employee list returned by joinDate: {}", localDate);
+        try {
 
-        return ResponseEntity.ok(employeeRequestDTOList);
+            List<EmployeeResponseDTO> employee = employeeService.getByDate(localDate);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
     //UPDATE EMPLOYEE
@@ -225,9 +331,24 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeRequestDTO> updateEmployee(@PathVariable Long id, @RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
-        employeeService.update(id, employeeRequestDTO);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Map<String,Object>> updateEmployee(@PathVariable Long id, @RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
+        try {
+
+            List<EmployeeResponseDTO> employee = employeeService.getByDate(localDate);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
     @Operation(summary = "Delete employee",

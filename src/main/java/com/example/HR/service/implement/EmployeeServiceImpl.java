@@ -37,33 +37,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeConverter employeeConverter = new EmployeeConverter();
     private final EmployeeImagesService imagesService;
 
-//    @Autowired
-//    public EmployeeServiceImpl(EmployeeRepository employeeRepository, UserRepository userRepository) {
-//        this.employeeRepository = employeeRepository;
-//        this.userRepository = userRepository;
-//    }
-
     @Override
     public void deleteById(Long id) {
         if (employeeRepository.existsById(id)) {
-//            log.info("Deleted");
+            log.info("Employee deleted by ID: {}",id );
             employeeRepository.deleteById(id);
         }else {
-//            log.warn("There is no Employee with this ID");
+            log.warn("There is no Employee with this ID");
             throw new NoIDException("There is no Employee with this ID");
         }
 
     }
 
     @Override
-    public EmployeeRequestDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException {
-
-
-        log.info("Employee saved: {}" ,employeeRequestDTO.getFullname());
+    public  EmployeeResponseDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException {
+        log.info("Saving new Employee..");
 
         // Find existing User by username, email, and password
         User existingUser = userRepository.findByFullname(employeeRequestDTO.getFullname())
                 .orElseThrow(() -> new NotFoundException("User not found with username: " + employeeRequestDTO.getFullname()));
+        log.info("User found by fullName: {}", employeeRequestDTO.getFullname());
 
         // Verify that the found user has matching email and password
         if (!existingUser.getEmail().equals(employeeRequestDTO.getEmail())) {
@@ -74,13 +67,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ValidException("Password mismatch for user: " + employeeRequestDTO.getFullname());
         }
 
-        Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser);
+        Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser.getFullname());
         if (existingEmployee.isPresent()) {
             throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
         }
 
         // Create Employee object using converter
         Employee employee = employeeConverter.dtoToEntity(employeeRequestDTO);
+        log.info("Employee converted");
 
         // Set the existing User object for all three relationships
         employee.setFullname(existingUser);
@@ -90,36 +84,35 @@ public class EmployeeServiceImpl implements EmployeeService {
         // Save the employee
         Employee savedEmployee = employeeRepository.save(employee);
         savedEmployee.setEmployeeId(String.format("#TC-%03d", savedEmployee.getId()));
+        log.info("Employee saved: {}" ,employeeRequestDTO.getFullname());
 
         // Return the saved employee as DTO
-        return employeeConverter.entityToDto(savedEmployee);
+        return employeeConverter.entityToResponseDTO(savedEmployee);
 
     }
 
     @Override
-    public Optional<EmployeeResponseDTO> getById(Long id) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
+    public EmployeeResponseDTO getById(Long id) {
+        Employee optionalEmployee = employeeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Employee not found by id: " + id));
+        log.info("Employee found by ID: {}", id);
 
-        if (optionalEmployee.isPresent()) {
-//            log.info("Employee was found with id: {}" + id);
-            return optionalEmployee
-                    .map(employeeConverter::entityToResponseDTO);
-        }else {
-//            log.warn("There is no Employee with this ID");
-            throw new NoIDException("There is no Employee with this ID");
-        }
+        return employeeConverter.entityToResponseDTO(optionalEmployee);
     }
 
     @Override
-    public EmployeeRequestDTO update(Long id, EmployeeRequestDTO updatedDto) {
+    public EmployeeResponseDTO update(Long id, EmployeeRequestDTO updatedDto) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found by id: " + id));
+        log.info("Employee found by ID: {}", id);
 
         // Use EmployeeConverter to update entity from DTO
         employeeConverter.updateEntityFromDto(updatedDto, employee);
+        log.info("Employee updated");
 
         Employee savedEmployee = employeeRepository.save(employee);
-        return employeeConverter.entityToDto(savedEmployee);
+        log.info("Employee saved");
+        return employeeConverter.entityToResponseDTO(savedEmployee);
     }
 
     @Override
@@ -133,23 +126,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeResponseDTO> getByStatus(Status status) {
 
         List<Employee> employeeStatus =employeeRepository.getEmployeeByStatus(status);
-
-        if (employeeStatus == null || employeeStatus.isEmpty()) {
-//            log.warn("No employees found with status: {}", status);
-            throw new EmployeeNotFoundException("Employee list is empty for status: " + status);
-        }
-
+        log.info("Employees found by status: {}", status);
         return employeeConverter.entityListToResponseDTOList(employeeStatus);
     }
 
     @Override
     public List<EmployeeResponseDTO> getByJobPosition(JobTitle jobTitle) {
         List<Employee> employeeJob = employeeRepository.getEmployeeByJobTitle(jobTitle);
-
-        if(employeeJob == null || employeeJob.isEmpty()){
-//            log.warn("No employees found with job: {}", jobTitle);
-            throw new EmployeeNotFoundException("Employee list is empty for job: " + jobTitle);
-        }
+        log.info("Employees found by JobTitle: {}", jobTitle);
 
         return employeeConverter.entityListToResponseDTOList(employeeJob);
     }
@@ -157,66 +141,50 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeResponseDTO> getByEmploymentType(EmploymentType employmentType) {
         List<Employee> employee = employeeRepository.getEmployeeByEmploymentType(employmentType);
-
-        if(employee == null || employee.isEmpty()){
-//            log.warn("No employees found for type: {}", employmentType);
-            throw new EmployeeNotFoundException("No employees found for type: " + employmentType);
-        }
+        log.info("Employees found by EmploymentType: {}", employmentType);
 
         return employeeConverter.entityListToResponseDTOList(employee);
     }
 
     @Override
-    public Optional<EmployeeResponseDTO> getByFullname(String fullname) {
+    public EmployeeResponseDTO getByFullname(String fullname) {
 
-        Optional<User> userOptional = userRepository.findByFullname(fullname);
+        User userOptional = userRepository.findByFullname(fullname)
+                .orElseThrow(() -> new NotFoundException("User not found by fullname: " + fullname));
+        log.info("User found by fullName: {}", fullname);
 
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("User not found with fullname: " + fullname);
-        }
+        Employee employee = employeeRepository.findByFullname(userOptional.getFullname())
+                .orElseThrow(() -> new NotFoundException("Employee not found by fullname"));
+        log.info("Employee found by fullName: {}", fullname);
 
-
-        Optional<Employee> employee = employeeRepository.findByFullname(userOptional.get());
-//        if(employee.isPresent()){
-//            Employee employee1 = employee.get();
-//            return Optional.of(employeeConverter.entityToDto(employee1));
-//        }
-
-        if(employee.isEmpty()){
-            throw new NotFoundException("There is no Employee by fullname: " + fullname);
-        }
-        else {
-            return Optional.of(employeeConverter.entityToResponseDTO(employee.get()));
-        }
+            return employeeConverter.entityToResponseDTO(employee);
     }
 
     @Override
     public List<EmployeeResponseDTO> getByDate(LocalDate localDate) {
         List<Employee> employeeList = employeeRepository.getEmployeeByJoinDate(localDate);
-
-        if(employeeList == null || employeeList.isEmpty()){
-//            log.warn("No employees found with date: {}", localDate);
-            throw new EmployeeNotFoundException("No employees found for date: " + localDate);
-        }
+        log.info("User found by LocalDate: {}", localDate);
         return employeeConverter.entityListToResponseDTOList(employeeList);
     }
 
     @Override
-    public Optional<EmployeeInformationDTO> getByEmployeeID(String employeeID){
+    public EmployeeInformationDTO getByEmployeeID(String employeeID){
         Employee employeeOpt = employeeRepository.findByEmployeeId(employeeID)
                 .orElseThrow(() -> new NotFoundException("Employee not found by EmployeeID: {}" +employeeID));
+        log.info("Employee found by employeeID: {}", employeeID);
 
-        return Optional.ofNullable(employeeConverter.entityToEmployeeInfo(employeeOpt));
+        return employeeConverter.entityToEmployeeInfo(employeeOpt);
 
     }
 
     @Override
-    public EmployeeAttachment uploadAttachment(String ticketId, MultipartFile file) {
-        Employee employee = employeeRepository.findByEmployeeId(ticketId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with ID: " + ticketId));
+    public EmployeeAttachment uploadAttachment(String employeeID, MultipartFile file) {
+        Employee employee = employeeRepository.findByEmployeeId(employeeID)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with ID: " + employeeID));
+        log.info("Employee found by employeeID: {}", employeeID);
 
         EmployeeAttachment attachment = imagesService.storeFile(file,employee);
-        log.info("Uploaded attachment {} for ticket {}", file.getOriginalFilename(), ticketId);
+        log.info("Uploaded attachment {} for ticket {}", file.getOriginalFilename(), employeeID);
 
         return attachment;
     }

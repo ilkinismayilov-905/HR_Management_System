@@ -112,6 +112,7 @@ public class ClientConverter {
 
     public ClientProjectsDTO mapProjectToDTO(Project project){
         return ClientProjectsDTO.builder()
+                .id(project.getId())
                 .projectName(project.getProjectName())
                 .timeLine(project.getTimeLine())
                 .priority(project.getPriority())

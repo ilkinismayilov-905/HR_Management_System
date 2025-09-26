@@ -20,14 +20,14 @@ public interface EmployeeService{
     public List<EmployeeResponseDTO> getByStatus(Status status);
     public List<EmployeeResponseDTO> getByJobPosition(JobTitle jobTitle);
     public List<EmployeeResponseDTO> getByEmploymentType(EmploymentType employmentType);
-    public Optional<EmployeeResponseDTO> getByFullname(String fullName);
+    public EmployeeResponseDTO getByFullname(String fullName);
     public List<EmployeeResponseDTO> getByDate(LocalDate localDate);
     public List<EmployeeResponseDTO> findAll();
-    Optional<EmployeeInformationDTO> getByEmployeeID(String employeeID);
-    public EmployeeRequestDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException;
-    public EmployeeRequestDTO update(Long id, EmployeeRequestDTO updatedDto);
-    public Optional<EmployeeResponseDTO> getById(Long id);
-    EmployeeAttachment uploadAttachment(String ticketId, MultipartFile file);
+    public EmployeeInformationDTO getByEmployeeID(String employeeID);
+    public EmployeeResponseDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException;
+    public EmployeeResponseDTO update(Long id, EmployeeRequestDTO updatedDto);
+    public EmployeeResponseDTO getById(Long id);
+    EmployeeAttachment uploadAttachment(String employeeID, MultipartFile file);
     public void deleteById(Long id);
 
 

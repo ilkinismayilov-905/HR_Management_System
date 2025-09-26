@@ -50,6 +50,8 @@ public class ClientController {
     })
     @PostMapping("/add")
     public ResponseEntity<Map<String,Object>> addClient(@Validated(Create.class) @RequestBody ClientRequestDTO dto){
+       log.info("REST request to add new client: {}",dto.getFullname());
+
         try {
             ClientResponseDTO client = service.save(dto);
 
@@ -79,6 +81,8 @@ public class ClientController {
     })
     @GetMapping("/getAll")
     public ResponseEntity<Map<String,Object>> getAll(){
+        log.info("REST request to show all clients");
+
         try {
             List<ClientResponseDTO> list = service.getAll();
 
@@ -109,6 +113,8 @@ public class ClientController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id){
+        log.info("REST request to get client by ID: {}", id);
+
         try {
             ClientResponseDTO client = service.getById(id);
 
@@ -138,6 +144,8 @@ public class ClientController {
     })
     @GetMapping("/status/{status}")
     public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable String status){
+        log.info("REST request to get client by ststus: {}", status);
+
         try {
             ClientStatus enumStatus;
             try {
@@ -175,6 +183,8 @@ public class ClientController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Map<String,Object>> update(@Validated(Update.class) @RequestBody ClientRequestDTO dto,
                                                      @PathVariable Long id){
+        log.info("REST request to update client by ID: {}", id);
+
         try {
             ClientResponseDTO client = service.update(id, dto);
 
@@ -204,6 +214,8 @@ public class ClientController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String,Object>> deleteById(@PathVariable Long id){
+        log.info("REST request to delete client by ID: {}", id);
+
         try {
             ClientResponseDTO client = service.getById(id);
 
@@ -236,10 +248,11 @@ public class ClientController {
     @PostMapping("/{clientId}/attachments")
     public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable String clientId,
                                                           @RequestParam("file") MultipartFile file) {
-        ClientAttachment attachment = service.uploadAttachment(clientId, file);
+        log.info("REST request to upload attachment to client by ID: {}", clientId);
 
         try {
 
+            ClientAttachment attachment = service.uploadAttachment(clientId, file);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -304,6 +317,15 @@ public class ClientController {
                 .body(resource);
     }
 
+    @Operation(
+            summary = "Get client information",
+            description = "Retrieves all client information from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Client information retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No client information found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/clientInfo/{clientId}")
     public ResponseEntity<Map<String,Object>> getClientInfo(@PathVariable String clientId){
         log.info("Rest request to get clienInfo");
@@ -325,8 +347,18 @@ public class ClientController {
         }
     }
 
+    @Operation(
+            summary = "Get client's projects",
+            description = "Retrieves client's all projects from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Client projects retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No client projects found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/projects/{username}")
     public ResponseEntity<Map<String ,Object>> getProjects(@PathVariable String username){
+        log.info("REST request to get client's projects");
 
         try {
             List<ClientProjectsDTO> list = service.getCurrentProjects(username);
