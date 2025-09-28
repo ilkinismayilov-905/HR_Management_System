@@ -1,5 +1,6 @@
 package com.example.HR.controller;
 
+import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.dto.employee.EmployeeAttachmentDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
@@ -334,7 +335,7 @@ public class EmployeeController {
     public ResponseEntity<Map<String,Object>> updateEmployee(@PathVariable Long id, @RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
         try {
 
-            List<EmployeeResponseDTO> employee = employeeService.getByDate(localDate);
+            EmployeeResponseDTO employee = employeeService.update(id,employeeRequestDTO);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -360,9 +361,28 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String,Object>> deleteEmployee(@PathVariable Long id) {
+        log.info("REST request to delete client by ID: {}", id);
+
+        try {
+            EmployeeResponseDTO employee = employeeService.getById(id);
+
+            employeeService.deleteById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",employee);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e) {
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
 
