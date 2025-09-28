@@ -1,5 +1,6 @@
 package com.example.HR.entity.employee;
 
+import com.example.HR.entity.payroll.EmployeeSalary;
 import com.example.HR.entity.task.Task;
 import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.entity.User;
@@ -51,7 +52,7 @@ public class Employee {
     @Column(columnDefinition = "TEXT")
     private String about;
 
-    @Column(unique = true)
+    @Column(unique = true,name = "employee_id")
     private String employeeId;
 
     @OneToOne(optional = false)
@@ -76,6 +77,9 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<EmployeeSalary> salaries;
 
 
     public Set<Task> getAssignedTasks() {
