@@ -6,6 +6,7 @@ import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.payroll.EmployeeSalary;
 import com.example.HR.entity.payroll.PayrollItem;
+import com.example.HR.enums.PayrollCategory;
 import com.example.HR.enums.SalaryStatus;
 import com.example.HR.repository.employee.EmployeeRepository;
 import com.example.HR.repository.payroll.EmployeeSalaryRepository;
@@ -92,8 +93,7 @@ public class PayrollServiceImpl implements PayrollService {
         salary.setProfTax(calculateProfTax(grossSalary));
         salary.setLeaveDeduction(salaryDTO.getLeaveDeduction());
         salary.setLabourWelfare(salaryDTO.getLabourWelfare());
-
-        // Calculate total deductions
+        
         BigDecimal totalDeductions = salary.getTds()
                 .add(salary.getProfTax())
                 .add(salary.getLeaveDeduction())
@@ -114,5 +114,97 @@ public class PayrollServiceImpl implements PayrollService {
         List<PayrollItem> items = payrollItemRepository.findByIsActiveTrue();
         return converter.toDTOList(items);
 
+    }
+
+    @Override
+    public EmployeeSalary getEmployeeSalaryByEmployeeId(Long employeeId) {
+        return employeeSalaryRepository.findByEmployeeIdAndStatus(employeeId, SalaryStatus.ACTIVE)
+                .orElseThrow(() -> new EntityNotFoundException("Active salary not found for employee ID: " + employeeId));
+    }
+
+    @Override
+    public List<EmployeeSalary> getEmployeeSalaryHistory(Long employeeId) {
+        return employeeSalaryRepository.findByEmployeeId(employeeId);
+    }
+
+    @Override
+    public EmployeeSalary updateEmployeeSalary(Long salaryId, EmployeeSalaryDTO salaryDTO) {
+        EmployeeSalary salary = employeeSalaryRepository.findById(salaryId)
+                .orElseThrow(() -> new EntityNotFoundException("Salary not found"));
+
+        salary.setBasicSalary(salaryDTO.getBasicSalary());
+        salary.setConveyance(salaryDTO.getConveyance());
+        salary.setHra(calculateHRA(salaryDTO.getBasicSalary()));
+        salary.setAllowance(salaryDTO.getAllowance());
+        salary.setMedicalAllowance(salaryDTO.getMedicalAllowance());
+
+        // Recalculate gross salary
+        BigDecimal grossSalary = salary.getBasicSalary()
+                .add(salary.getConveyance())
+                .add(salary.getHra())
+                .add(salary.getAllowance())
+                .add(salary.getMedicalAllowance());
+        salary.setGrossSalary(grossSalary);
+
+        // Update deductions
+        salary.setTds(calculateTDS(grossSalary.multiply(BigDecimal.valueOf(12))));
+        salary.setProfTax(calculateProfTax(grossSalary));
+        salary.setLeaveDeduction(salaryDTO.getLeaveDeduction());
+        salary.setLabourWelfare(salaryDTO.getLabourWelfare());
+
+        // Recalculate total deductions
+        BigDecimal totalDeductions = salary.getTds()
+                .add(salary.getProfTax())
+                .add(salary.getLeaveDeduction())
+                .add(salary.getLabourWelfare());
+        salary.setTotalDeductions(totalDeductions);
+
+        // Recalculate final net salary
+        salary.setFinalNetSalary(grossSalary.subtract(totalDeductions));
+
+        return employeeSalaryRepository.save(salary);
+    }
+
+    @Override
+    public void deleteEmployeeSalary(Long salaryId) {
+        EmployeeSalary salary = employeeSalaryRepository.findById(salaryId)
+                .orElseThrow(() -> new EntityNotFoundException("Salary not found"));
+        salary.setStatus(SalaryStatus.INACTIVE);
+        employeeSalaryRepository.save(salary);
+    }
+
+    @Override
+    public PayrollItem createPayrollItem(PayrollItem item) {
+        item.setIsActive(true);
+        item.setAdditionDate(LocalDate.now());
+        return payrollItemRepository.save(item);
+    }
+
+    @Override
+    public PayrollItem updatePayrollItem(Long itemId, PayrollItem updatedItem) {
+        PayrollItem item = payrollItemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Payroll item not found"));
+
+        item.setName(updatedItem.getName());
+        item.setCategory(updatedItem.getCategory());
+        item.setType(updatedItem.getType());
+        item.setAmount(updatedItem.getAmount());
+        item.setPercentage(updatedItem.getPercentage());
+
+        return payrollItemRepository.save(item);
+    }
+
+    @Override
+    public void deletePayrollItem(Long itemId) {
+        PayrollItem item = payrollItemRepository.findById(itemId)
+                .orElseThrow(() -> new EntityNotFoundException("Payroll item not found"));
+        item.setIsActive(false);
+        payrollItemRepository.save(item);
+    }
+
+    @Override
+    public List<PayrollItemDTO> getPayrollItemsByCategory(PayrollCategory category) {
+        List<PayrollItem> items = payrollItemRepository.findByCategory(category);
+        return converter.toDTOList(items);
     }
 }

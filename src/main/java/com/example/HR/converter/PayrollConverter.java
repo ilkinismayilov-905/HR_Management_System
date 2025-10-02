@@ -4,6 +4,7 @@ import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.payroll.PayrollItem;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,4 +25,5 @@ public class PayrollConverter {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
 }

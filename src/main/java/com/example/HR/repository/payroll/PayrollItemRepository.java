@@ -11,4 +11,5 @@ import java.util.List;
 public interface PayrollItemRepository  extends JpaRepository<PayrollItem, Long> {
     List<PayrollItem> findByIsActiveTrue();
     List<PayrollItem> findByCategory(PayrollCategory category);
+
 }
