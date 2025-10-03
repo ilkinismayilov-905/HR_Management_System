@@ -1,7 +1,8 @@
 package com.example.HR.service.implement;
 
 import com.example.HR.converter.PayrollConverter;
-import com.example.HR.dto.payroll.EmployeeSalaryDTO;
+import com.example.HR.dto.payroll.EmployeeSalaryRequestDTO;
+import com.example.HR.dto.payroll.EmployeeSalaryResponseDTO;
 import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.payroll.EmployeeSalary;
@@ -19,9 +20,9 @@ import org.springframework.security.core.Transient;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transient
@@ -42,7 +43,8 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     public BigDecimal calculateHRA(BigDecimal basicSalary) {
-        return basicSalary.multiply(BigDecimal.valueOf(0.15));
+        return basicSalary.multiply(BigDecimal.valueOf(0.15))
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
@@ -69,31 +71,38 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public EmployeeSalary createEmployeeSalary(EmployeeSalaryDTO salaryDTO) {
-        Employee employee = employeeRepository.findById(salaryDTO.getEmployeeId())
+    public EmployeeSalaryResponseDTO createEmployeeSalary(EmployeeSalaryRequestDTO requestDTO) {
+        Employee employee = employeeRepository.findById(requestDTO.getEmployeeId())
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
 
-        EmployeeSalary salary = EmployeeSalary.builder()
-                .employee(employee)
-                .netSalary(salaryDTO.getNetSalary())
-                .basicSalary(salaryDTO.getBasicSalary())
-                .conveyance(salaryDTO.getConveyance())
-                .hra(calculateHRA(salaryDTO.getBasicSalary()))
-                .allowance(salaryDTO.getAllowance())
-                .medicalAllowance(salaryDTO.getMedicalAllowance())
-                .build();
 
+        EmployeeSalary salary = new EmployeeSalary();
+        salary.setEmployee(employee);
+
+        // Set earnings
+        salary.setBasicSalary(requestDTO.getBasicSalary());
+        salary.setConveyance(requestDTO.getConveyance());
+        salary.setHra(calculateHRA(requestDTO.getBasicSalary()));
+        salary.setAllowance(requestDTO.getAllowance());
+        salary.setMedicalAllowance(requestDTO.getMedicalAllowance());
+
+        // Calculate gross salary
         BigDecimal grossSalary = salary.getBasicSalary()
                 .add(salary.getConveyance())
                 .add(salary.getHra())
                 .add(salary.getAllowance())
                 .add(salary.getMedicalAllowance());
         salary.setGrossSalary(grossSalary);
-        salary.setTds(calculateTDS(grossSalary.multiply(BigDecimal.valueOf(12))));
+
+        // Set deductions
+        BigDecimal annualIncome = grossSalary.multiply(BigDecimal.valueOf(12))
+                .setScale(2, RoundingMode.HALF_UP);
+        salary.setTds(calculateTDS(annualIncome).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP));
         salary.setProfTax(calculateProfTax(grossSalary));
-        salary.setLeaveDeduction(salaryDTO.getLeaveDeduction());
-        salary.setLabourWelfare(salaryDTO.getLabourWelfare());
-        
+        salary.setLeaveDeduction(requestDTO.getLeaveDeduction());
+        salary.setLabourWelfare(requestDTO.getLabourWelfare());
+
+        // Calculate total deductions
         BigDecimal totalDeductions = salary.getTds()
                 .add(salary.getProfTax())
                 .add(salary.getLeaveDeduction())
@@ -105,8 +114,9 @@ public class PayrollServiceImpl implements PayrollService {
         salary.setEffectiveDate(LocalDate.now());
         salary.setStatus(SalaryStatus.ACTIVE);
 
-        return employeeSalaryRepository.save(salary);
+        EmployeeSalary savedSalary = employeeSalaryRepository.save(salary);
 
+        return converter.convertToResponseDTO(savedSalary);
     }
 
     @Override
@@ -117,26 +127,35 @@ public class PayrollServiceImpl implements PayrollService {
     }
 
     @Override
-    public EmployeeSalary getEmployeeSalaryByEmployeeId(Long employeeId) {
-        return employeeSalaryRepository.findByEmployeeIdAndStatus(employeeId, SalaryStatus.ACTIVE)
+    public EmployeeSalaryResponseDTO getEmployeeSalaryByEmployeeId(Long employeeId) {
+        EmployeeSalary salary = employeeSalaryRepository.findByEmployeeIdAndStatus(employeeId, SalaryStatus.ACTIVE)
                 .orElseThrow(() -> new EntityNotFoundException("Active salary not found for employee ID: " + employeeId));
+        return converter.convertToResponseDTO(salary);
     }
 
     @Override
-    public List<EmployeeSalary> getEmployeeSalaryHistory(Long employeeId) {
-        return employeeSalaryRepository.findByEmployeeId(employeeId);
+    public List<EmployeeSalaryResponseDTO> getEmployeeSalaryHistory(Long employeeId) {
+        List<EmployeeSalary> salaries = employeeSalaryRepository.findByEmployeeId(employeeId);
+        return converter.convertToResponseDTOList(salaries);
     }
 
     @Override
-    public EmployeeSalary updateEmployeeSalary(Long salaryId, EmployeeSalaryDTO salaryDTO) {
+    public EmployeeSalaryResponseDTO updateEmployeeSalary(Long salaryId, EmployeeSalaryRequestDTO requestDTO) {
+        if(requestDTO == null) return null;
+
         EmployeeSalary salary = employeeSalaryRepository.findById(salaryId)
                 .orElseThrow(() -> new EntityNotFoundException("Salary not found"));
 
-        salary.setBasicSalary(salaryDTO.getBasicSalary());
-        salary.setConveyance(salaryDTO.getConveyance());
-        salary.setHra(calculateHRA(salaryDTO.getBasicSalary()));
-        salary.setAllowance(salaryDTO.getAllowance());
-        salary.setMedicalAllowance(salaryDTO.getMedicalAllowance());
+        // Update earnings
+        if(requestDTO.getBasicSalary() != null ) salary.setBasicSalary(requestDTO.getBasicSalary());
+        if(requestDTO.getConveyance() != null ) salary.setConveyance(requestDTO.getConveyance());
+        if(requestDTO.getBasicSalary() != null){
+            salary.setHra(calculateHRA(requestDTO.getBasicSalary()));}
+        else {
+            salary.setHra(calculateHRA(salary.getBasicSalary()));
+        }
+        if(requestDTO.getAllowance() != null) salary.setAllowance(requestDTO.getAllowance());
+        if(requestDTO.getMedicalAllowance() != null) salary.setMedicalAllowance(requestDTO.getMedicalAllowance());
 
         // Recalculate gross salary
         BigDecimal grossSalary = salary.getBasicSalary()
@@ -147,10 +166,12 @@ public class PayrollServiceImpl implements PayrollService {
         salary.setGrossSalary(grossSalary);
 
         // Update deductions
-        salary.setTds(calculateTDS(grossSalary.multiply(BigDecimal.valueOf(12))));
+        BigDecimal annualIncome = grossSalary.multiply(BigDecimal.valueOf(12))
+                .setScale(2, RoundingMode.HALF_UP);
+        salary.setTds(calculateTDS(annualIncome).divide(BigDecimal.valueOf(12), 2, RoundingMode.HALF_UP));
         salary.setProfTax(calculateProfTax(grossSalary));
-        salary.setLeaveDeduction(salaryDTO.getLeaveDeduction());
-        salary.setLabourWelfare(salaryDTO.getLabourWelfare());
+        if(requestDTO.getLeaveDeduction() != null) salary.setLeaveDeduction(requestDTO.getLeaveDeduction());
+        if(requestDTO.getLabourWelfare() != null) salary.setLabourWelfare(requestDTO.getLabourWelfare());
 
         // Recalculate total deductions
         BigDecimal totalDeductions = salary.getTds()
@@ -162,7 +183,8 @@ public class PayrollServiceImpl implements PayrollService {
         // Recalculate final net salary
         salary.setFinalNetSalary(grossSalary.subtract(totalDeductions));
 
-        return employeeSalaryRepository.save(salary);
+        EmployeeSalary updatedSalary = employeeSalaryRepository.save(salary);
+        return converter.convertToResponseDTO(updatedSalary);
     }
 
     @Override

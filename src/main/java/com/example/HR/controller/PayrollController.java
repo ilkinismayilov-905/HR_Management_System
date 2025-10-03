@@ -1,11 +1,12 @@
 package com.example.HR.controller;
 
-import com.example.HR.dto.payroll.EmployeeSalaryDTO;
+import com.example.HR.dto.payroll.EmployeeSalaryRequestDTO;
+import com.example.HR.dto.payroll.EmployeeSalaryResponseDTO;
 import com.example.HR.dto.payroll.PayrollItemDTO;
-import com.example.HR.entity.payroll.EmployeeSalary;
 import com.example.HR.entity.payroll.PayrollItem;
 import com.example.HR.enums.PayrollCategory;
 import com.example.HR.service.PayrollService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -47,10 +48,10 @@ public class PayrollController {
     }
 
     @PostMapping("/employee-salary")
-    public ResponseEntity<Map<String,Object>> createEmployeeSalary(@RequestBody EmployeeSalaryDTO salaryDTO) {
+    public ResponseEntity<Map<String,Object>> createEmployeeSalary( @Valid @RequestBody EmployeeSalaryRequestDTO requestDTO) {
         log.info("REST request to get create new employee salary");
         try {
-            EmployeeSalary salary = service.createEmployeeSalary(salaryDTO);
+            EmployeeSalaryResponseDTO salary = service.createEmployeeSalary(requestDTO);
 
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
@@ -72,7 +73,7 @@ public class PayrollController {
     public ResponseEntity<Map<String,Object>> getEmployeeSalary(@PathVariable Long employeeId) {
 
         try {
-            EmployeeSalary salary = service.getEmployeeSalaryByEmployeeId(employeeId);
+            EmployeeSalaryResponseDTO  salary = service.getEmployeeSalaryByEmployeeId(employeeId);
             Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",salary);
@@ -91,17 +92,17 @@ public class PayrollController {
     }
 
     @GetMapping("/employee-salary/{employeeId}/history")
-    public ResponseEntity<List<EmployeeSalary>> getEmployeeSalaryHistory(@PathVariable Long employeeId) {
-        List<EmployeeSalary> salaries = service.getEmployeeSalaryHistory(employeeId);
+    public ResponseEntity<List<EmployeeSalaryResponseDTO>> getEmployeeSalaryHistory(@PathVariable Long employeeId) {
+        List<EmployeeSalaryResponseDTO> salaries = service.getEmployeeSalaryHistory(employeeId);
         return ResponseEntity.ok(salaries);
     }
 
     // Update employee salary
     @PutMapping("/employee-salary/{salaryId}")
-    public ResponseEntity<EmployeeSalary> updateEmployeeSalary(
+    public ResponseEntity<EmployeeSalaryResponseDTO > updateEmployeeSalary(
             @PathVariable Long salaryId,
-            @RequestBody EmployeeSalaryDTO salaryDTO) {
-        EmployeeSalary updatedSalary = service.updateEmployeeSalary(salaryId, salaryDTO);
+            @Valid @RequestBody EmployeeSalaryRequestDTO requestDTO) {
+        EmployeeSalaryResponseDTO  updatedSalary = service.updateEmployeeSalary(salaryId, requestDTO);
         return ResponseEntity.ok(updatedSalary);
     }
 

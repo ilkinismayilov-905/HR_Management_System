@@ -1,5 +1,6 @@
 package com.example.HR.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,33 +20,34 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     // Validation error handler
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        log.error("Validation error: {}", ex.getMessage());
-        
-        Map<String, Object> errorDetails = new LinkedHashMap<>();
-        errorDetails.put("timestamp", LocalDateTime.now());
-        errorDetails.put("status", HttpStatus.BAD_REQUEST.value());
-        errorDetails.put("error", "Validation Error");
-        errorDetails.put("path", request.getRequestURI());
-        
-        Map<String, String> fieldErrors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            fieldErrors.put(fieldName, errorMessage);
-            log.error("Field: {}, Error: {}", fieldName, errorMessage);
-        });
-        errorDetails.put("fieldErrors", fieldErrors);
-        
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
+//        log.error("Validation error: {}", ex.getMessage());
+//
+//        Map<String, Object> errorDetails = new LinkedHashMap<>();
+//        errorDetails.put("timestamp", LocalDateTime.now());
+//        errorDetails.put("status", HttpStatus.BAD_REQUEST.value());
+//        errorDetails.put("error", "Validation Error");
+//        errorDetails.put("path", request.getRequestURI());
+//
+//        Map<String, String> fieldErrors = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            fieldErrors.put(fieldName, errorMessage);
+//            log.error("Field: {}, Error: {}", fieldName, errorMessage);
+//        });
+//        errorDetails.put("fieldErrors", fieldErrors);
+//
+//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+//    }
 
     // Constraint violation handler
     @ExceptionHandler(ConstraintViolationException.class)
@@ -164,11 +166,11 @@ public class GlobalExceptionHandler {
         return createErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE, "File size exceeds maximum allowed limit");
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        log.error("Unexpected error occurred", ex);
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+//        log.error("Unexpected error occurred", ex);
+//        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+//    }
 
     private ResponseEntity<Map<String, Object>> createErrorResponse(HttpStatus status, String message) {
         Map<String, Object> errorResponse = new HashMap<>();
@@ -177,6 +179,40 @@ public class GlobalExceptionHandler {
         errorResponse.put("error", status.getReasonPhrase());
         errorResponse.put("message", message);
         return new ResponseEntity<>(errorResponse, status);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation failed: " + message,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "An error occurred: " + ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

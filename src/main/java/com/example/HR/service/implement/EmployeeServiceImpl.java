@@ -67,7 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ValidException("Password mismatch for user: " + employeeRequestDTO.getFullname());
         }
 
-        Optional<Employee> existingEmployee = employeeRepository.findByFullname(existingUser.getFullname());
+        Optional<Employee> existingEmployee = employeeRepository.findByFullnameFullname(existingUser.getFullname());
         if (existingEmployee.isPresent()) {
             throw new ValidException("Employee already exists for user: " + employeeRequestDTO.getFullname());
         }
@@ -153,7 +153,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new NotFoundException("User not found by fullname: " + fullname));
         log.info("User found by fullName: {}", fullname);
 
-        Employee employee = employeeRepository.findByFullname(userOptional.getFullname())
+        Employee employee = employeeRepository.findByFullnameFullname(userOptional.getFullname())
                 .orElseThrow(() -> new NotFoundException("Employee not found by fullname"));
         log.info("Employee found by fullName: {}", fullname);
 

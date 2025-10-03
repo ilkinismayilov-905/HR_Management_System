@@ -16,7 +16,7 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     public List<Employee> getEmployeeByJobTitle(JobTitle jobTitle);
     public List<Employee> getEmployeeByEmploymentType(EmploymentType employmentType);
     public List<Employee> getEmployeeByJoinDate(LocalDate localDate);
-    public Optional<Employee> findByFullname(String fullname);
+    public Optional<Employee> findByFullnameFullname(String fullname);
     public Employee findByEmail(User email);
     public Employee findByPassword(User password);
     public Optional<Employee> findByEmployeeId(String employeeId);

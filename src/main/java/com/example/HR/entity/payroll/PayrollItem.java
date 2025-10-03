@@ -23,7 +23,7 @@ public class PayrollItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "name")
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -32,13 +32,13 @@ public class PayrollItem {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private PayrollType type;
+    private PayrollType type; // FIXED, PERCENTAGE, HOURLY
 
     @Column(name = "amount")
     private BigDecimal amount;
 
     @Column(name = "percentage")
-    private BigDecimal percentage;
+    private Double percentage;
 
     @Column(name = "is_active")
     private Boolean isActive = true;

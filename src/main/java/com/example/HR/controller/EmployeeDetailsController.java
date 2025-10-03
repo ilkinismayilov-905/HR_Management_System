@@ -45,8 +45,8 @@ public class EmployeeDetailsController {
 
 
     @GetMapping("/employeeInfo/{employeeID}")
-    public ResponseEntity<Optional<EmployeeInformationDTO>> viewEmployeesByJoinDate(@PathVariable String employeeID) throws MalformedURLException {
-        Optional<EmployeeInformationDTO> employee = employeeService.getByEmployeeID(employeeID);
+    public ResponseEntity<EmployeeInformationDTO> viewEmployeesByJoinDate(@PathVariable String employeeID) throws MalformedURLException {
+        EmployeeInformationDTO employee = employeeService.getByEmployeeID(employeeID);
 
 
         return ResponseEntity.ok(employee);

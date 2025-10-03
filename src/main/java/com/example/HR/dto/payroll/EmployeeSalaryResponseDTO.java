@@ -1,20 +1,20 @@
 package com.example.HR.dto.payroll;
 
+import jakarta.annotation.security.DenyAll;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class EmployeeSalaryDTO {
+@Data
+public class EmployeeSalaryResponseDTO {
+    private Long id;
     private Long employeeId;
     private String employeeName;
-    private BigDecimal netSalary;
 
     // Earnings
     private BigDecimal basicSalary;
@@ -22,14 +22,21 @@ public class EmployeeSalaryDTO {
     private BigDecimal hra;
     private BigDecimal allowance;
     private BigDecimal medicalAllowance;
+    private BigDecimal overtimeAmount;
+    private BigDecimal bonus;
 
     // Deductions
     private BigDecimal tds;
     private BigDecimal leaveDeduction;
     private BigDecimal profTax;
     private BigDecimal labourWelfare;
+    private BigDecimal providentFund;
 
+    // Calculated fields
     private BigDecimal grossSalary;
     private BigDecimal totalDeductions;
     private BigDecimal finalNetSalary;
+
+    private LocalDate effectiveDate;
+    private String status;
 }
