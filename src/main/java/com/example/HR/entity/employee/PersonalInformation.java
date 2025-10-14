@@ -1,6 +1,6 @@
 package com.example.HR.entity.employee;
 
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

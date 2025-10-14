@@ -1,6 +1,6 @@
 //package com.example.HR.controllerTest;
 //
-//import com.example.HR.entity.User;
+//import com.example.HR.entity.user.User;
 //import com.example.HR.entity.employee.Employee;
 //import com.example.HR.enums.Departament;
 //import com.example.HR.enums.EmploymentType;
@@ -8,7 +8,7 @@
 //import com.example.HR.enums.Status;
 //import com.example.HR.enums.UserRoles;
 //import com.example.HR.repository.employee.EmployeeRepository;
-//import com.example.HR.repository.UserRepository;
+//import com.example.HR.repository.User.UserRepository;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

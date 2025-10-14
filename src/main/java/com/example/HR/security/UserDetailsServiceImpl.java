@@ -1,7 +1,7 @@
 //package com.example.HR.security;
 //
-//import com.example.HR.entity.User;
-//import com.example.HR.repository.UserRepository;
+//import com.example.HR.entity.user.User;
+//import com.example.HR.repository.User.UserRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,6 @@
 //package com.example.HR.repository;
 //
-//import com.example.HR.entity.User;
+//import com.example.HR.entity.user.User;
 //import com.example.HR.enums.UserRoles;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 //package com.example.HR.security;
 //
-//import com.example.HR.entity.User;
+//import com.example.HR.entity.user.User;
 //import org.springframework.security.core.GrantedAuthority;
 //import org.springframework.security.core.authority.SimpleGrantedAuthority;
 //import org.springframework.security.core.userdetails.UserDetails;

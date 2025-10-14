@@ -2,10 +2,10 @@
 //
 //import com.example.HR.converter.UserConverter;
 //import com.example.HR.dto.user.UserRequestDTO;
-//import com.example.HR.entity.User;
+//import com.example.HR.entity.user.User;
 //import com.example.HR.enums.UserRoles;
 //import com.example.HR.exception.NotFoundException;
-//import com.example.HR.repository.UserRepository;
+//import com.example.HR.repository.User.UserRepository;
 //import com.example.HR.service.implement.UserServiceImpl;
 //import org.assertj.core.api.Assertions;
 //import org.junit.jupiter.api.BeforeEach;

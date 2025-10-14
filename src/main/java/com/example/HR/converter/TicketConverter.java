@@ -5,7 +5,7 @@ import com.example.HR.dto.ticket.TicketCommentDTO;
 import com.example.HR.dto.ticket.TicketRequestDTO;
 import com.example.HR.dto.ticket.TicketResponseDTO;
 import com.example.HR.entity.ticket.Ticket;
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.entity.ticket.TicketAttachment;
 import com.example.HR.entity.ticket.TicketComment;
 import org.springframework.stereotype.Component;

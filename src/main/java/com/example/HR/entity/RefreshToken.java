@@ -1,5 +1,6 @@
 package com.example.HR.entity;
 
+import com.example.HR.entity.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

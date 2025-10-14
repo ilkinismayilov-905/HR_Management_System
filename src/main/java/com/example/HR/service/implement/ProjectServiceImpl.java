@@ -4,7 +4,7 @@ import com.example.HR.converter.ProjectConverter;
 import com.example.HR.dto.project.ProjectCommentDTO;
 import com.example.HR.dto.project.ProjectRequestDTO;
 import com.example.HR.dto.project.ProjectResponseDTO;
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.entity.client.Client;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.project.Project;

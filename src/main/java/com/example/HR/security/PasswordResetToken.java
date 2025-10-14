@@ -1,10 +1,9 @@
 package com.example.HR.security;
 
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity(name = "passwordResetToken")

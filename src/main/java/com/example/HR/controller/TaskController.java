@@ -72,6 +72,7 @@ public class TaskController {
 
     }
 
+
     @Operation(
             summary = "Get all tasks",
             description = "Retrieves all tasks from the system")

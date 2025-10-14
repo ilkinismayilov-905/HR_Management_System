@@ -1,9 +1,9 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.PasswordResetTokenRepository;
-import com.example.HR.repository.UserRepository;
+import com.example.HR.repository.user.UserRepository;
 import com.example.HR.security.PasswordResetToken;
 import com.example.HR.service.PasswordResetTokenService;
 import com.example.HR.util.EmailUtil;
@@ -11,13 +11,10 @@ import com.example.HR.util.OtpUtil;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

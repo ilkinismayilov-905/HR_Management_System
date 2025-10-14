@@ -23,17 +23,22 @@ public class EmployeeSalaryRequestDTO {
     private BigDecimal basicSalary;
 
     @DecimalMin(value = "0.0", message = "Conveyance must be positive")
+    @NotNull(groups = Create.class)
     private BigDecimal conveyance;
 
     @DecimalMin(value = "0.0", message = "Allowance must be positive")
+    @NotNull(groups = Create.class)
     private BigDecimal allowance ;
 
     @DecimalMin(value = "0.0", message = "Medical allowance must be positive")
+    @NotNull(groups = Create.class)
     private BigDecimal medicalAllowance ;
 
     @DecimalMin(value = "0.0", message = "Leave deduction cannot be negative")
+    @NotNull(groups = Create.class)
     private BigDecimal leaveDeduction;
 
     @DecimalMin(value = "0.0", message = "Labour welfare cannot be negative")
+    @NotNull(groups = Create.class)
     private BigDecimal labourWelfare ;
 }

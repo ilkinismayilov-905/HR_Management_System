@@ -1,6 +1,5 @@
 package com.example.HR.controller;
 
-import com.example.HR.dto.client.ClientResponseDTO;
 import com.example.HR.dto.employee.EmployeeAttachmentDTO;
 import com.example.HR.dto.employee.EmployeeRequestDTO;
 import com.example.HR.dto.employee.EmployeeResponseDTO;
@@ -9,7 +8,6 @@ import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
 import com.example.HR.service.EmployeeService;
-//import com.example.HR.service.implement.FileUploadService;
 import com.example.HR.service.implement.fileStorage.EmployeeImagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,7 +30,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")

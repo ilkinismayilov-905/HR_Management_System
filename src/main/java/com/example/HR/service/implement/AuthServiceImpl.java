@@ -6,24 +6,20 @@ import com.example.HR.dto.auth.LoginRequestDTO;
 import com.example.HR.dto.auth.RegisterDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.entity.RefreshToken;
-import com.example.HR.entity.User;
-import com.example.HR.enums.UserRoles;
+import com.example.HR.entity.user.User;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.RefreshTokenRepository;
-import com.example.HR.repository.UserRepository;
+import com.example.HR.repository.user.UserRepository;
 import com.example.HR.security.JwtUtil;
 import com.example.HR.service.AuthService;
-import com.example.HR.service.RefreshTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;

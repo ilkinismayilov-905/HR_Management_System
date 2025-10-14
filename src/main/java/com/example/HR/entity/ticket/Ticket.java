@@ -1,6 +1,6 @@
 package com.example.HR.entity.ticket;
 
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.enums.TicketPriority;
 import com.example.HR.enums.TicketStatus;
 import jakarta.persistence.*;

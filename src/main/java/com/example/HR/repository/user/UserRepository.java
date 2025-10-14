@@ -1,11 +1,9 @@
-package com.example.HR.repository;
+package com.example.HR.repository.user;
 
-import com.example.HR.entity.User;
-import com.example.HR.enums.UserRoles;
+import com.example.HR.entity.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

@@ -3,7 +3,7 @@ package com.example.HR.entity.employee;
 import com.example.HR.entity.payroll.EmployeeSalary;
 import com.example.HR.entity.task.Task;
 import com.example.HR.entity.task.TaskAssignment;
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;

@@ -1,13 +1,8 @@
 package com.example.HR.dto.ticket;
 
-import com.example.HR.entity.User;
 import com.example.HR.enums.TicketPriority;
 import com.example.HR.enums.TicketStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

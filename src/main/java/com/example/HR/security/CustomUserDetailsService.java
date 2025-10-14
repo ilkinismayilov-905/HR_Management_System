@@ -1,8 +1,8 @@
 package com.example.HR.security;
 
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.exception.NotFoundException;
-import com.example.HR.repository.UserRepository;
+import com.example.HR.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

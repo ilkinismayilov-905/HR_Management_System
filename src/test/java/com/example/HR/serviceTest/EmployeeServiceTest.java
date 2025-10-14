@@ -3,13 +3,13 @@
 //import com.example.HR.converter.Convert;
 //import com.example.HR.converter.EmployeeConverter;
 //import com.example.HR.dto.employee.EmployeeRequestDTO;
-//import com.example.HR.entity.User;
+//import com.example.HR.entity.user.User;
 //import com.example.HR.entity.employee.Employee;
 //import com.example.HR.enums.*;
 //import com.example.HR.exception.NotFoundException;
 //import com.example.HR.exception.ValidException;
 //import com.example.HR.repository.employee.EmployeeRepository;
-//import com.example.HR.repository.UserRepository;
+//import com.example.HR.repository.User.UserRepository;
 //import com.example.HR.service.implement.EmployeeServiceImpl;
 //
 //import org.junit.jupiter.api.Test;

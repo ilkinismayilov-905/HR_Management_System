@@ -1,4 +1,4 @@
-package com.example.HR.entity;
+package com.example.HR.entity.user;
 
 import com.example.HR.enums.UserRoles;
 import jakarta.persistence.*;

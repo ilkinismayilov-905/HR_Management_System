@@ -1,0 +1,57 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+
+# Build
+target
+build
+*.jar
+*.war
+*.ear
+
+# Maven
+.m2
+*.log
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.docker
+.dockerignore
+
+# Node (əgər frontend varsa)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Test
+.pytest_cache
+.coverage
+
+# Other
+uploads/
+employeeImages/
+taskImage/
+projectImage/
+clientImage/
+*.md
+README.md

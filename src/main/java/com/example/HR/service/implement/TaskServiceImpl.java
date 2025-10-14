@@ -4,7 +4,7 @@ import com.example.HR.converter.TaskConverter;
 import com.example.HR.dto.task.TaskCommentDTO;
 import com.example.HR.dto.task.TaskRequestDTO;
 import com.example.HR.dto.task.TaskResponseDTO;
-import com.example.HR.entity.User;
+import com.example.HR.entity.user.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.task.Task;
 import com.example.HR.entity.task.TaskAssignment;
