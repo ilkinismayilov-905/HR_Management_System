@@ -370,7 +370,7 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }catch (Exception e) {
             Map<String,Object> response = new HashMap<>();
-            response.put("success",false);
+            response.put("s",false);
             response.put("message",e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
