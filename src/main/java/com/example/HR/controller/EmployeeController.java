@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,6 +52,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/add")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String,Object>> createEmployee(@RequestBody @Valid EmployeeRequestDTO employeeRequestDTO) throws IOException {
         log.info("=== Employee Creation Request ===");
         log.info("Creating new employee: {}", employeeRequestDTO.getFullname());
@@ -95,6 +97,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getAll")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<Map<String,Object>> viewAllEmployees() throws MalformedURLException {
         log.info("REST requets to get all employees");
 
@@ -155,6 +158,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByStatus/{status}")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<Map<String,Object>> viewEmployeesByStatus(@PathVariable String status) throws MalformedURLException {
 
         try {
