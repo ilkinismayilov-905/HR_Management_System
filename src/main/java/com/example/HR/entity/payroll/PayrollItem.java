@@ -1,7 +1,7 @@
 package com.example.HR.entity.payroll;
 
-import com.example.HR.enums.PayrollCategory;
-import com.example.HR.enums.PayrollType;
+import com.example.HR.enums.payroll.PayrollCategory;
+import com.example.HR.enums.payroll.PayrollType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

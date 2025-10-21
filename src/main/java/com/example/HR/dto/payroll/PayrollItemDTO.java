@@ -1,6 +1,6 @@
 package com.example.HR.dto.payroll;
 
-import com.example.HR.enums.PayrollCategory;
+import com.example.HR.enums.payroll.PayrollCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

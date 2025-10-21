@@ -7,7 +7,7 @@ import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.entity.payroll.EmployeeSalary;
 import com.example.HR.entity.payroll.PayrollItem;
-import com.example.HR.enums.PayrollCategory;
+import com.example.HR.enums.payroll.PayrollCategory;
 import com.example.HR.enums.SalaryStatus;
 import com.example.HR.repository.employee.EmployeeRepository;
 import com.example.HR.repository.payroll.EmployeeSalaryRepository;

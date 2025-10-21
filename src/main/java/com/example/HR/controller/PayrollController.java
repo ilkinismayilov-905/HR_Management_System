@@ -4,7 +4,7 @@ import com.example.HR.dto.payroll.EmployeeSalaryRequestDTO;
 import com.example.HR.dto.payroll.EmployeeSalaryResponseDTO;
 import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.payroll.PayrollItem;
-import com.example.HR.enums.PayrollCategory;
+import com.example.HR.enums.payroll.PayrollCategory;
 import com.example.HR.service.PayrollService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

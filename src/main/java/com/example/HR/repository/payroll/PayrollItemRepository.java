@@ -1,7 +1,7 @@
 package com.example.HR.repository.payroll;
 
 import com.example.HR.entity.payroll.PayrollItem;
-import com.example.HR.enums.PayrollCategory;
+import com.example.HR.enums.payroll.PayrollCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
