@@ -51,9 +51,6 @@ public class Addition {
     @Column(name = "assignee_type", nullable = false)
     private AssigneeType assigneeType;
 
-    @Column(name = "employee_id")
-    private Long employeeId;
-
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 

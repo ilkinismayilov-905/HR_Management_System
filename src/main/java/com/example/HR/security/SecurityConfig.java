@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -49,8 +50,67 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/employee/**").permitAll()
+                        .requestMatchers(
+                                "/auth/register",
+                                "/auth/login",
+                                "/auth/refresh-token"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/auth/get",
+                                "/auth/logout"
+                        ).hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/additions/**",
+                                "/api/calendar/**",
+                                "/api/client/**",
+                                "/api/emailChat/**",
+                                "/api/employee/**",
+                                "/api/employeeDetails/**",
+                                "/api/payroll/**",
+                                "/api/project/**",
+                                "/api/ticket/**",
+                                "/api/task/**",
+                                "/api/user/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/api/additions/**",
+                                "/api/calendar/**",
+                                "/api/client/**",
+                                "/api/emailChat/**",
+                                "/api/employee/**",
+                                "/api/employeeDetails/**",
+                                "/api/payroll/**",
+                                "/api/project/**",
+                                "/api/ticket/**",
+                                "/api/task/**",
+                                "/api/user/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/additions/**",
+                                "/api/calendar/**",
+                                "/api/client/**",
+                                "/api/emailChat/**",
+                                "/api/employee/**",
+                                "/api/employeeDetails/**",
+                                "/api/payroll/**",
+                                "/api/project/**",
+                                "/api/ticket/**",
+                                "/api/task/**",
+                                "/api/user/**"
+                        ).hasAnyRole("ADMIN","USER")
+                        .requestMatchers(HttpMethod.PUT,
+                                "/api/additions/**",
+                                "/api/calendar/**",
+                                "/api/client/**",
+                                "/api/emailChat/**",
+                                "/api/employee/**",
+                                "/api/employeeDetails/**",
+                                "/api/payroll/**",
+                                "/api/project/**",
+                                "/api/ticket/**",
+                                "/api/task/**",
+                                "/api/user/**"
+                        ).hasAnyRole("ADMIN","USER")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()

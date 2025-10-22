@@ -17,7 +17,4 @@ public class AdditionResponseDTO {
     private BigDecimal amount;
     private LocalDate additionDate;
     private BigDecimal salary;
-    private boolean unitCalculation;
-    private AssigneeType assigneeType;
-    private Long employeeId;
 }
