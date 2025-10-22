@@ -42,14 +42,7 @@ public class AdditoinServiceImpl implements AdditionService {
 
     @Override
     public AdditionResponseDTO createAddition(AdditionRequestDTO dto) {
-        Addition addition = Addition.builder()
-                .name(dto.getName())
-                .category(dto.getCategory())
-                .amount(dto.getAmount())
-                .additionDate(LocalDate.now())
-                .unitCalculation(dto.isUnitCalculation())
-                .assigneeType(dto.getAssigneeType())
-                .build();
+        Addition addition = converter.toEntityAddition(dto);
         Addition saved = additionRepository.save(addition);
         return converter.toResponseAddition((saved));
     }
@@ -58,7 +51,7 @@ public class AdditoinServiceImpl implements AdditionService {
     public AdditionResponseDTO updateAddition(Long id, AdditionRequestDTO dto) {
         Addition existing = additionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Addition not found: " + id));
-        converter.update(existing, dto);
+        converter.updateAddition(existing, dto);
         Addition saved = additionRepository.save(existing);
         return converter.toResponseAddition(saved);
     }

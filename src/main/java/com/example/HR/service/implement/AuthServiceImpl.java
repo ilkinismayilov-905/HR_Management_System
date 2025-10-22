@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +85,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullname(request.getFullname());
-        user.setRoles(request.getRoles());
+        user.setRoles(Collections.singletonList(request.getRoles()));
         user.setActive(true);
 
         User savedUser = userRepository.save(user);

@@ -4,6 +4,7 @@ import com.example.HR.dto.auth.UserInfoDTO;
 import com.example.HR.dto.user.UserRequestDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.entity.user.User;
+import com.example.HR.enums.UserRoles;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +81,10 @@ public class UserConverter extends Convert<UserRequestDTO, User> {
         userInfo.setId(user.getId());
         userInfo.setEmail(user.getEmail());
         userInfo.setFullname(user.getFullname());
-        userInfo.setRole(user.getRoles().name());
+        List<String> roleNames = user.getRoles().stream()
+                .map(UserRoles::name)
+                .collect(Collectors.toList());
+        userInfo.setRole(roleNames);
         userInfo.setActive(user.isEnabled());
         return userInfo;
     }

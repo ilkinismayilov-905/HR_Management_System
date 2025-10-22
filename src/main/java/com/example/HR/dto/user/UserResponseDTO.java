@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -16,7 +18,7 @@ public class UserResponseDTO {
    private Boolean active;
 
    @Enumerated(value = EnumType.STRING)
-    private UserRoles roles;
+    private List<UserRoles> roles;
 
 
 }

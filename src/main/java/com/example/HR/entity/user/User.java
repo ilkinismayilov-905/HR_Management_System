@@ -13,7 +13,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity(name = "users")
 @Table(uniqueConstraints = {
@@ -52,12 +54,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean active = true;
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private UserRoles roles;
+    private List<UserRoles> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + roles.name()));
+        if (roles == null) return Collections.emptyList();
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .collect(Collectors.toList());
     }
 
     @Override

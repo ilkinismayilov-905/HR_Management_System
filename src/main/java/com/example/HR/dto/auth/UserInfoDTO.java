@@ -5,11 +5,13 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class UserInfoDTO {
     private Long id;
     private String email;
     private String fullname;
     private Boolean active;
-    private String role;
+    private List<String> role;
 }
