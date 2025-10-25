@@ -29,8 +29,7 @@ public class AdditionRequestDTO {
     private AdditionCategory category;
 
     @NotNull(groups = Create.class)
-    @DecimalMin(value = "0.0", inclusive = false)
-    private BigDecimal amount;
+    private String amount;
 
     // unitCalculation toggle
     private boolean unitCalculation;

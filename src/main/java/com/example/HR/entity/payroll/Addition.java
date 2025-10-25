@@ -35,7 +35,7 @@ public class Addition {
 
 
     @Column(nullable = false, scale = 2, precision = 19)
-    private BigDecimal amount;
+    private String amount;
 
     @CreationTimestamp
     @Column(name = "addition_date", nullable = false)
@@ -54,4 +54,7 @@ public class Addition {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    public String getAmount() {
+        return "$" + amount;
+    }
 }

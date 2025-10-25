@@ -14,7 +14,7 @@ public class AdditionResponseDTO {
     private Long id;
     private String name;
     private AdditionCategory category;
-    private BigDecimal amount;
+    private String amount;
     private LocalDate additionDate;
     private BigDecimal salary;
 }
