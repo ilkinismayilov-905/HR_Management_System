@@ -29,34 +29,110 @@ public class AdditionController {
     private final AdditionService additionService;
 
     @GetMapping
-    public ResponseEntity<List<AdditionResponseDTO>> listAll() {
-        List<AdditionResponseDTO> list = additionService.getAllAdditions();
-        return ResponseEntity.ok(list);
+    public ResponseEntity<Map<String,Object>> listAll() {
+        log.info("REST request to get all list");
+
+        try {
+            List<AdditionResponseDTO> list = additionService.getAllAdditions();
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("list",list);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e){
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdditionResponseDTO> getOne(@PathVariable Long id) {
-        AdditionResponseDTO dto = additionService.getAdditionById(id);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id) {
+        log.info("REST request to get an addition by ID");
+
+        try {
+            AdditionResponseDTO dto = additionService.getAdditionById(id);
+
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("addition",dto);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+
     }
 
     @PostMapping
-    public ResponseEntity<AdditionResponseDTO> create(@RequestBody @Validated AdditionRequestDTO request) {
-        AdditionResponseDTO created = additionService.createAddition(request);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<Map<String,Object>> create(@RequestBody @Validated AdditionRequestDTO request) {
+        log.info("REST request to create addition");
+
+        try {
+            AdditionResponseDTO created = additionService.createAddition(request);
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("addition",created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AdditionResponseDTO> update(@PathVariable Long id,
+    public ResponseEntity<Map<String,Object>> update(@PathVariable Long id,
                                                       @RequestBody @Validated AdditionRequestDTO request) {
-        AdditionResponseDTO updated = additionService.updateAddition(id, request);
-        return ResponseEntity.ok(updated);
+        log.info("REST request to update addition");
+        try {
+            AdditionResponseDTO updated = additionService.updateAddition(id, request);
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("addition",updated);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        }catch (Exception e){
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        additionService.deleteAddition(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String,Object>> delete(@PathVariable Long id) {
+        log.info("REST request to delete addition");
+
+        try {
+            AdditionResponseDTO dto = additionService.getAdditionById(id);
+            additionService.deleteAddition(id);
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",true);
+            response.put("data",dto);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (Exception e){
+            Map<String,Object> response = new HashMap<>();
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
     }
 
     @GetMapping("/{category}")

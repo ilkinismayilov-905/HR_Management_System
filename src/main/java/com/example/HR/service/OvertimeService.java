@@ -1,8 +1,10 @@
 package com.example.HR.service;
 
+import com.example.HR.dto.payroll.AdditionResponseDTO;
 import com.example.HR.dto.payroll.OvertimeRequestDTO;
 import com.example.HR.dto.payroll.OvertimeResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface OvertimeService {
@@ -11,4 +13,5 @@ public interface OvertimeService {
     public OvertimeResponseDTO createOvertime(OvertimeRequestDTO overtimeDTO);
     public void deleteOvertime(Long id);
     public OvertimeResponseDTO updateOvertime(Long id, OvertimeRequestDTO overtimeDTO);
+    List<OvertimeResponseDTO> getBetweenDates(LocalDate startDate, LocalDate endDate);
 }

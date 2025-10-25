@@ -54,17 +54,14 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean active = true;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private List<UserRoles> roles;
+    private UserRoles roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roles == null) return Collections.emptyList();
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
-                .collect(Collectors.toList());
+        return List.of(new SimpleGrantedAuthority("ROLE_" + roles.name()));
     }
+
 
     @Override
     public String getUsername() {

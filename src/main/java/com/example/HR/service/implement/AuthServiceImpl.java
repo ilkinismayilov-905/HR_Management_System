@@ -69,6 +69,7 @@ public class AuthServiceImpl implements AuthService {
         return AuthResponseDTO.builder()
                 .token(token)
                 .refreshToken(refreshToken)
+                .tokenType("Bearer")
                 .expiresIn(86400L)
                 .user(converter.mapToUserInfo(user))
                 .build();
@@ -85,7 +86,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFullname(request.getFullname());
-        user.setRoles(Collections.singletonList(request.getRoles()));
+        user.setRoles(request.getRoles());
         user.setActive(true);
 
         User savedUser = userRepository.save(user);

@@ -24,8 +24,8 @@ public class OvertimeController {
     private final OvertimeService overtimeService;
 
     @GetMapping("/getAll")
-    public ResponseEntity<Map<String,Object>> getOvertime() {
-        log.info("REST request to get all payroll items");
+    public ResponseEntity<Map<String,Object>> getAll() {
+        log.info("REST request to get all overtime data");
         try {
             List<OvertimeResponseDTO> items = overtimeService.getAllOvertimes();
 
@@ -47,7 +47,7 @@ public class OvertimeController {
 
     @PostMapping()
     public ResponseEntity<Map<String,Object>> create(@RequestBody OvertimeRequestDTO overtimeDTO) {
-        log.info("REST request to create project");
+        log.info("REST request to create overtime");
         try {
 
             OvertimeResponseDTO project = overtimeService.createOvertime(overtimeDTO);

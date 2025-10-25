@@ -18,7 +18,7 @@ public class UserResponseDTO {
    private Boolean active;
 
    @Enumerated(value = EnumType.STRING)
-    private List<UserRoles> roles;
+    private UserRoles roles;
 
 
 }

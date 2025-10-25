@@ -81,10 +81,7 @@ public class UserConverter extends Convert<UserRequestDTO, User> {
         userInfo.setId(user.getId());
         userInfo.setEmail(user.getEmail());
         userInfo.setFullname(user.getFullname());
-        List<String> roleNames = user.getRoles().stream()
-                .map(UserRoles::name)
-                .collect(Collectors.toList());
-        userInfo.setRole(roleNames);
+        userInfo.setRole(user.getRoles().name());
         userInfo.setActive(user.isEnabled());
         return userInfo;
     }

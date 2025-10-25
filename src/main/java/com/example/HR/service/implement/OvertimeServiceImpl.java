@@ -3,6 +3,7 @@ package com.example.HR.service.implement;
 import com.example.HR.converter.PayrollConverter;
 import com.example.HR.dto.payroll.OvertimeRequestDTO;
 import com.example.HR.dto.payroll.OvertimeResponseDTO;
+import com.example.HR.entity.payroll.Addition;
 import com.example.HR.entity.payroll.Overtime;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.payroll.OvertimeRepository;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -26,6 +28,7 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<OvertimeResponseDTO> getAllOvertimes() {
+        log.info("Getting all overtimes");
         return converter.toResponseOvertimeList(overtimeRepository.findAll());
     }
 
@@ -33,6 +36,7 @@ public class OvertimeServiceImpl implements OvertimeService {
     public OvertimeResponseDTO getOvertimeById(Long id) {
         Overtime overtime = overtimeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Overtime not found with id: " + id));
+        log.info("Getting overtime by id: {}", overtime);
         return converter.toResponseOvertime(overtime);
     }
 
@@ -41,6 +45,7 @@ public class OvertimeServiceImpl implements OvertimeService {
         Overtime overtime = converter.toEntityOvertime(overtimeDTO);
 
         Overtime savedOvertime = overtimeRepository.save(overtime);
+        log.info("Saving overtime by id: {}", savedOvertime.getId());
         return converter.toResponseOvertime(savedOvertime);
     }
 
@@ -50,6 +55,7 @@ public class OvertimeServiceImpl implements OvertimeService {
             throw new NotFoundException("Overtime not found with id: " + id);
         }
         overtimeRepository.deleteById(id);
+        log.info("Deleting overtime by id: {}", id);
     }
 
     @Override
@@ -59,6 +65,20 @@ public class OvertimeServiceImpl implements OvertimeService {
 
         converter.updateOvertime(overtime, overtimeDTO);
         Overtime updatedOvertime = overtimeRepository.save(overtime);
+        log.info("Updating overtime by id: {}", id);
         return converter.toResponseOvertime(updatedOvertime);
+    }
+
+    @Override
+    public List<OvertimeResponseDTO> getBetweenDates(LocalDate startDate, LocalDate endDate) {
+        log.info("View events between dates: {} and {}", startDate, endDate);
+
+        if (startDate == null || endDate == null || endDate.isBefore(startDate)) {
+            throw new IllegalArgumentException("Invalid date range");
+        }
+
+        List<Overtime> events = overtimeRepository.findByCreatedDateBetween(startDate, endDate);
+        log.info("Getting all additions between dates: {} and {}", startDate, endDate);
+        return converter.toResponseOvertimeList(events);
     }
 }

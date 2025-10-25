@@ -13,5 +13,5 @@ public class UserInfoDTO {
     private String email;
     private String fullname;
     private Boolean active;
-    private List<String> role;
+    private String role;
 }

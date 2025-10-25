@@ -28,7 +28,7 @@ public class UserRequestDTO {
 
     @Schema(description = "User roles assigned to the user", example = "ADMIN", allowableValues = {"USER", "ADMIN", "MODERATOR", "GUEST"}, required = true)
     @NotNull(groups = Create.class,message = "Role is required")
-    private List<UserRoles> roles;
+    private UserRoles roles;
 
     @Schema(description = "Email address", example = "johndoe@example.com", required = true)
     @Email(message = "Email should be valid")
@@ -39,7 +39,7 @@ public class UserRequestDTO {
     @NotBlank(groups = Create.class,message = "Confirm password is required")
     private String confirmPassword;
 
-    public UserRequestDTO(String fullname, List<UserRoles> roles, String email) {
+    public UserRequestDTO(String fullname,UserRoles roles, String email) {
         this.fullname = fullname;
         this.roles = roles;
         this.email = email;

@@ -71,7 +71,8 @@ public class SecurityConfig {
                                 "/api/project/**",
                                 "/api/ticket/**",
                                 "/api/task/**",
-                                "/api/user/**"
+                                "/api/user/**",
+                                "/api/overtime/**"
                         ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE,
                                 "/api/additions/**",
@@ -84,7 +85,8 @@ public class SecurityConfig {
                                 "/api/project/**",
                                 "/api/ticket/**",
                                 "/api/task/**",
-                                "/api/user/**"
+                                "/api/user/**",
+                                "/api/overtime/**"
                         ).hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
                                 "/api/additions/**",
@@ -97,7 +99,8 @@ public class SecurityConfig {
                                 "/api/project/**",
                                 "/api/ticket/**",
                                 "/api/task/**",
-                                "/api/user/**"
+                                "/api/user/**",
+                                "/api/overtime/**"
                         ).hasAnyRole("ADMIN","USER")
                         .requestMatchers(HttpMethod.PUT,
                                 "/api/additions/**",
@@ -110,7 +113,8 @@ public class SecurityConfig {
                                 "/api/project/**",
                                 "/api/ticket/**",
                                 "/api/task/**",
-                                "/api/user/**"
+                                "/api/user/**",
+                                "/api/overtime/**"
                         ).hasAnyRole("ADMIN","USER")
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
