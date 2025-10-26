@@ -1,4 +1,4 @@
-package com.example.HR.dto.payroll;
+package com.example.HR.dto.payroll.addictionSalary;
 
 import com.example.HR.validation.Create;
 import jakarta.validation.constraints.DecimalMin;

@@ -1,6 +1,5 @@
-package com.example.HR.dto.payroll;
+package com.example.HR.dto.payroll.addiction;
 import com.example.HR.enums.payroll.AdditionCategory;
-import com.example.HR.enums.payroll.AssigneeType;
 import lombok.*;
 
 import java.math.BigDecimal;

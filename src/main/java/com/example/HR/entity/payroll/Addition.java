@@ -2,6 +2,7 @@ package com.example.HR.entity.payroll;
 
 import com.example.HR.enums.payroll.AdditionCategory;
 import com.example.HR.enums.payroll.AssigneeType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,7 @@ public class Addition {
 
     @CreationTimestamp
     @Column(name = "addition_date", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate additionDate;
 
     @Column(name = "salary", scale = 2, precision = 19)

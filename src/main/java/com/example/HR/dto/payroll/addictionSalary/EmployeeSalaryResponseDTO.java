@@ -1,6 +1,5 @@
-package com.example.HR.dto.payroll;
+package com.example.HR.dto.payroll.addictionSalary;
 
-import jakarta.annotation.security.DenyAll;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

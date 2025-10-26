@@ -1,8 +1,7 @@
 package com.example.HR.service;
 
-import com.example.HR.dto.payroll.AdditionResponseDTO;
-import com.example.HR.dto.payroll.OvertimeRequestDTO;
-import com.example.HR.dto.payroll.OvertimeResponseDTO;
+import com.example.HR.dto.payroll.overtime.OvertimeRequestDTO;
+import com.example.HR.dto.payroll.overtime.OvertimeResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;

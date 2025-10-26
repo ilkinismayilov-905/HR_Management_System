@@ -2,6 +2,7 @@ package com.example.HR.entity.payroll;
 
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.payroll.PayrollStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -71,5 +72,6 @@ public class MonthlyPayroll {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDateTime createdDate;
 }

@@ -1,14 +1,15 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.PayrollConverter;
-import com.example.HR.dto.payroll.OvertimeRequestDTO;
-import com.example.HR.dto.payroll.OvertimeResponseDTO;
-import com.example.HR.entity.payroll.Addition;
+import com.example.HR.converter.payroll.AddictionConverter;
+import com.example.HR.converter.payroll.DeductionConverter;
+import com.example.HR.converter.payroll.OvertimeConverter;
+import com.example.HR.converter.payroll.PayrollConverter;
+import com.example.HR.dto.payroll.overtime.OvertimeRequestDTO;
+import com.example.HR.dto.payroll.overtime.OvertimeResponseDTO;
 import com.example.HR.entity.payroll.Overtime;
 import com.example.HR.exception.NotFoundException;
 import com.example.HR.repository.payroll.OvertimeRepository;
 import com.example.HR.service.OvertimeService;
-import com.example.HR.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,8 @@ import java.util.List;
 public class OvertimeServiceImpl implements OvertimeService {
 
     private final OvertimeRepository overtimeRepository;
-    private final PayrollConverter converter;
+    private final OvertimeConverter converter;
+
 
     @Override
     public List<OvertimeResponseDTO> getAllOvertimes() {

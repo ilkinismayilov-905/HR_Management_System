@@ -1,8 +1,7 @@
 package com.example.HR.service;
 
-import com.example.HR.dto.calendar.CalendarResponseDTO;
-import com.example.HR.dto.payroll.AdditionRequestDTO;
-import com.example.HR.dto.payroll.AdditionResponseDTO;
+import com.example.HR.dto.payroll.addiction.AdditionRequestDTO;
+import com.example.HR.dto.payroll.addiction.AdditionResponseDTO;
 import com.example.HR.enums.payroll.AdditionCategory;
 
 import java.time.LocalDate;

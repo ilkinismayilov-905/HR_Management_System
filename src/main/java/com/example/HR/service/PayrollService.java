@@ -1,8 +1,8 @@
 package com.example.HR.service;
 
 
-import com.example.HR.dto.payroll.EmployeeSalaryRequestDTO;
-import com.example.HR.dto.payroll.EmployeeSalaryResponseDTO;
+import com.example.HR.dto.payroll.addictionSalary.EmployeeSalaryRequestDTO;
+import com.example.HR.dto.payroll.addictionSalary.EmployeeSalaryResponseDTO;
 import com.example.HR.dto.payroll.PayrollItemDTO;
 import com.example.HR.entity.payroll.PayrollItem;
 import com.example.HR.enums.payroll.PayrollCategory;

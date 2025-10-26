@@ -1,4 +1,4 @@
-package com.example.HR.dto.payroll;
+package com.example.HR.dto.payroll.overtime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.http.parser.Upgrade;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @AllArgsConstructor

@@ -1,10 +1,9 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.PayrollConverter;
-import com.example.HR.dto.calendar.CalendarResponseDTO;
-import com.example.HR.dto.payroll.AdditionRequestDTO;
-import com.example.HR.dto.payroll.AdditionResponseDTO;
-import com.example.HR.entity.Calendar;
+import com.example.HR.converter.payroll.AddictionConverter;
+import com.example.HR.converter.payroll.PayrollConverter;
+import com.example.HR.dto.payroll.addiction.AdditionRequestDTO;
+import com.example.HR.dto.payroll.addiction.AdditionResponseDTO;
 import com.example.HR.entity.payroll.Addition;
 import com.example.HR.enums.payroll.AdditionCategory;
 import com.example.HR.exception.NotFoundException;
@@ -25,7 +24,7 @@ import java.util.List;
 public class AdditoinServiceImpl implements AdditionService {
 
     private final AdditionRepository additionRepository;
-    private final PayrollConverter converter;
+    private final AddictionConverter converter;
 
     @Override
     @Transactional(readOnly = true)
