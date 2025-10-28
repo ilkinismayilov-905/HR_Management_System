@@ -13,9 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity(name = "users")
 @Table(uniqueConstraints = {
@@ -56,6 +54,10 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRoles roles;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfile profile;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

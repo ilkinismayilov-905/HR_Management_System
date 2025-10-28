@@ -1,4 +1,4 @@
-package com.example.HR.entity.user;
+package com.example.HR.dto.user;
 
 import com.example.HR.enums.City;
 import com.example.HR.enums.Country;
@@ -12,20 +12,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "user_information")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserInformation {
+public class UserProfileDTO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "full_name_id", nullable = false,unique = true)
-    private User fullname;
+    @NotBlank
+    @Column(nullable = false,unique = true)
+    private String fullname;
 
     @Column(nullable = false,unique = true)
     @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number is invalid")

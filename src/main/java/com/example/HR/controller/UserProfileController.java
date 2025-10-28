@@ -1,0 +1,102 @@
+package com.example.HR.controller;
+
+import com.example.HR.dto.employee.EmployeeAttachmentDTO;
+import com.example.HR.dto.user.UserProfileDTO;
+import com.example.HR.dto.user.UserProfileRequest;
+import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.entity.user.UserAttachment;
+import com.example.HR.entity.user.UserProfile;
+import com.example.HR.service.UserProfileService;
+import com.example.HR.service.UserService;
+import com.example.HR.service.implement.fileStorage.UserImagesService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/settings")
+@CrossOrigin(origins = "*")
+@Slf4j
+@AllArgsConstructor
+public class UserProfileController {
+
+    private UserProfileService  userProfileService;
+    private final UserImagesService imageService;
+
+    @PutMapping
+    public ResponseEntity<Map<String,Object>> updateUserProfile(@RequestBody UserProfileRequest request){
+        log.info("Update user profile request {}", request);
+        Map<String,Object> response = new HashMap<>();
+
+        try {
+            UserProfileDTO dto = userProfileService.updateInfo(request);
+            response.put("success",true);
+            response.put("data",dto);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @Operation(
+            summary = "Add a new user attachment",
+            description = "Creates a new attachment with the provided details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User attachment created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/{id}/attachments")
+    public ResponseEntity<Map<String, Object>> uploadFile(@PathVariable Long id,
+                                                          @RequestParam("file") MultipartFile file) {
+        UserAttachment attachment = userProfileService.uploadAttachment(id,file);
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            response.put("success", true);
+            response.put("message", "File uploaded successfully");
+            response.put("attachment", UserAttachment.builder()
+                    .id(attachment.getId())
+                    .fileName(attachment.getFileName())
+                    .originalFileName(attachment.getOriginalFileName())
+                    .contentType(attachment.getContentType())
+                    .fileSize(attachment.getFileSize())
+                    .uploadedDate(attachment.getUploadedDate())
+                    .build());
+
+            return ResponseEntity.ok(response);
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+}

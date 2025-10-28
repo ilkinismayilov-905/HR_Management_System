@@ -40,6 +40,6 @@ public class UserAttachment {
     private LocalDateTime uploadedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id",nullable = false)
-    private Employee employee;
+    @JoinColumn(name = "id",nullable = false)
+    private UserProfile profile;
 }
