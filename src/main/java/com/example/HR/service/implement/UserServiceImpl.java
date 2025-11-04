@@ -1,6 +1,6 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.UserConverter;
+import com.example.HR.converter.user.UserConverter;
 import com.example.HR.dto.user.UserRequestDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.entity.user.User;
@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -120,24 +119,14 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    public UserResponseDTO save(UserResponseDTO dto) throws IOException {
-        return null;
-    }
-
 
     @Override
-    public Optional<UserResponseDTO> getById(Long id) {
+    public UserResponseDTO getById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NoIDException("There is no user found by id: " + id));
 
-        return Optional.ofNullable(converter.entityToResponseDTO(user));
+        return converter.entityToResponseDTO(user);
 
-    }
-
-    @Override
-    public UserResponseDTO update(Long id, UserResponseDTO updatedDto) {
-        return null;
     }
 
     @Override
@@ -158,10 +147,6 @@ public class UserServiceImpl implements UserService {
         return converter.entityToResponseDTO(savedUser);
     }
 
-    @Override
-    public List<UserResponseDTO> getAll() throws MalformedURLException {
-        return List.of();
-    }
 
     @Override
     public List<UserResponseDTO> findAll() {

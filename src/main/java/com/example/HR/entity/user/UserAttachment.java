@@ -1,6 +1,7 @@
 package com.example.HR.entity.user;
 
 import com.example.HR.entity.employee.Employee;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,7 @@ public class UserAttachment {
     private LocalDateTime uploadedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id",nullable = false)
+    @JoinColumn(name = "profile_id", nullable = false)
+    @JsonBackReference
     private UserProfile profile;
 }

@@ -4,6 +4,8 @@ import com.example.HR.entity.user.User;
 import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -20,4 +22,8 @@ public interface EmployeeRepository extends JpaRepository<Employee,Long> {
     public Employee findByEmail(User email);
     public Employee findByPassword(User password);
     public Optional<Employee> findByEmployeeId(String employeeId);
+
+    @Query("SELECT e FROM employee e WHERE e.fullname.fullname IN :fullnames")
+    List<Employee> findAllByFullnameFullnameIn(@Param("fullnames") List<String> fullnames);
+
 }

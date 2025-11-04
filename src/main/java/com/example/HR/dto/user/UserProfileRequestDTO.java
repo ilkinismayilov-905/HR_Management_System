@@ -3,7 +3,7 @@ package com.example.HR.dto.user;
 import com.example.HR.enums.City;
 import com.example.HR.enums.Country;
 import com.example.HR.enums.State;
-import jakarta.persistence.*;
+import com.example.HR.validation.Create;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,38 +16,25 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserProfileRequest {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank
-    @Column(nullable = false,unique = true)
+public class UserProfileRequestDTO {
+    @NotBlank(message = "Fullname cannot be blank",groups = Create.class)
     private String fullname;
 
-    @Column(nullable = false,unique = true)
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email cannot be blank",groups = Create.class   )
+    private String email;
+
     @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number is invalid")
     private String phoneNumber;
 
-    @Column(nullable = false)
-    @Email
-    private String email;
-
     private String address;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private City city;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private State state;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private Country country;
 
-    @Column(nullable = false)
     private String postalCode;
 
 }

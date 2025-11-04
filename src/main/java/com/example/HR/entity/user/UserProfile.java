@@ -4,13 +4,13 @@ import com.example.HR.entity.task.TaskAssignment;
 import com.example.HR.enums.City;
 import com.example.HR.enums.Country;
 import com.example.HR.enums.State;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,18 +28,9 @@ public class UserProfile {
     private Long id;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false,unique = true,referencedColumnName = "id")
+    @JoinColumn(name = "user_id", nullable = false, unique = true, referencedColumnName = "id")
+    @JsonBackReference // ✅ User -> Profile -> User loop-un qarşısı alınır
     private User user;
-
-    private String fullname;
-
-    @Column(nullable = false,unique = true)
-    @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number is invalid")
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    @Email
-    private String email;
 
     private String address;
 
@@ -58,7 +49,12 @@ public class UserProfile {
     @Column(nullable = false)
     private String postalCode;
 
-    @OneToMany(mappedBy = "profile",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<UserAttachment> taskAssignments = new HashSet<>();
+    @Version
+    private Long version;
+
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @ToString.Exclude
+    private Set<UserAttachment> attachments = new HashSet<>();
 
 }

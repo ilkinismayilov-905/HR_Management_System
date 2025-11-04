@@ -8,6 +8,7 @@ import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -55,16 +56,22 @@ public class Employee {
     @Column(unique = true,name = "employee_id")
     private String employeeId;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "full_name_id", nullable = false,unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "full_name_id", nullable = false)
+    @JsonIgnore
+    @ToString.Exclude
     private User fullname;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "password_id", nullable = false,unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "password_id", nullable = false)
+    @JsonIgnore
+    @ToString.Exclude
     private User password;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "email_id", nullable = false,unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_id", nullable = false)
+    @JsonIgnore
+    @ToString.Exclude
     private User email;
 
     @Enumerated(EnumType.STRING)

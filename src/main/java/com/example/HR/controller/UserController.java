@@ -1,6 +1,6 @@
 package com.example.HR.controller;
 
-import com.example.HR.converter.UserConverter;
+import com.example.HR.converter.user.UserConverter;
 import com.example.HR.dto.user.UserRequestDTO;
 import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.PasswordResetTokenService;
@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -108,10 +110,29 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
-        return userService.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Map<String,Object>> getUserById(@PathVariable Long id) {
+       log.info("REST request to get User by id : {}", id);
+       Map<String,Object> response = new HashMap<>();
+
+       try {
+           UserResponseDTO dto = userService.getById(id);
+
+           response.put("user",dto);
+           response.put("success",true);
+
+           return ResponseEntity.status(HttpStatus.OK).body(response);
+       }catch (IllegalArgumentException e){
+           response.put("success", false);
+           response.put("message", e.getMessage());
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+       }
+       catch (Exception e) {
+
+           response.put("success", false);
+           response.put("message", e.getMessage());
+
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+       }
     }
 
     //GET USER  BY EMAIL
@@ -163,12 +184,30 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/update/{id}")
-    public ResponseEntity<Optional<UserResponseDTO>> updateUser(@PathVariable Long id,
+    public ResponseEntity<Map<String,Object>> updateUser(@PathVariable Long id,
                                                          @RequestBody @Validated(Update.class)
                                                          UserRequestDTO userRequestDTO) throws IOException {
-        userService.update(id, userRequestDTO);
+        log.info("REST request to update user : {} ", id);
+        Map<String,Object> response = new HashMap<>();
 
-        return ResponseEntity.ok(userService.getById(id));
+        try {
+            UserResponseDTO update = userService.update(id, userRequestDTO);
+            response.put("success",true);
+            response.put("user",update);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @Operation(summary = "Delete user",

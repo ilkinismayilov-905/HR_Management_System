@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserService extends GeneralService<UserResponseDTO,Long>{
+public interface UserService {
     public Optional<UserResponseDTO> getByFullname(String fullname);
     public Optional<UserResponseDTO> getByPassword(String password);
     public Optional<UserResponseDTO> getByEmail(String email);
@@ -17,5 +17,7 @@ public interface UserService extends GeneralService<UserResponseDTO,Long>{
     public List<UserResponseDTO> findAll();
     public UserResponseDTO update(Long id, UserRequestDTO updatedDto);
     public UserRequestDTO save(UserRequestDTO userRequestDTO) throws IOException;
+    void  deleteById(Long id);
+    UserResponseDTO getById(Long id);
 
 }

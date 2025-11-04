@@ -1,6 +1,6 @@
 package com.example.HR.service.implement;
 
-import com.example.HR.converter.UserConverter;
+import com.example.HR.converter.user.UserConverter;
 import com.example.HR.dto.auth.AuthResponseDTO;
 import com.example.HR.dto.auth.LoginRequestDTO;
 import com.example.HR.dto.auth.RegisterDTO;
@@ -23,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor

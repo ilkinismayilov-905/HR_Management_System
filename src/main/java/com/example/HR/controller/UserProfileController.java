@@ -1,25 +1,25 @@
 package com.example.HR.controller;
 
-import com.example.HR.dto.employee.EmployeeAttachmentDTO;
-import com.example.HR.dto.user.UserProfileDTO;
-import com.example.HR.dto.user.UserProfileRequest;
-import com.example.HR.entity.employee.EmployeeAttachment;
+import com.example.HR.dto.user.UserProfileResponseDTO;
+import com.example.HR.dto.user.UserProfileRequestDTO;
 import com.example.HR.entity.user.UserAttachment;
-import com.example.HR.entity.user.UserProfile;
 import com.example.HR.service.UserProfileService;
-import com.example.HR.service.UserService;
 import com.example.HR.service.implement.fileStorage.UserImagesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,13 +32,15 @@ public class UserProfileController {
     private UserProfileService  userProfileService;
     private final UserImagesService imageService;
 
-    @PutMapping
-    public ResponseEntity<Map<String,Object>> updateUserProfile(@RequestBody UserProfileRequest request){
-        log.info("Update user profile request {}", request);
+    @PutMapping()
+    public ResponseEntity<Map<String,Object>> updateUserProfile(@Valid @RequestBody UserProfileRequestDTO requestDTO,
+                                                                Authentication authentication){
+        log.info("Update user profile request {}", requestDTO.toString());
         Map<String,Object> response = new HashMap<>();
+        String email = authentication.getName();
 
         try {
-            UserProfileDTO dto = userProfileService.updateInfo(request);
+            UserProfileResponseDTO dto = userProfileService.updateProfile(requestDTO,email);
             response.put("success",true);
             response.put("data",dto);
 
@@ -98,5 +100,32 @@ public class UserProfileController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Object>> getAllProfiles() {
+        List<UserProfileResponseDTO> data = userProfileService.findAll();
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+
+            response.put("success", true);
+            response.put("data", data);
+
+            return ResponseEntity.ok(response);
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
     }
 }

@@ -1,6 +1,9 @@
 package com.example.HR.entity.user;
 
+import com.example.HR.entity.employee.Employee;
 import com.example.HR.enums.UserRoles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -49,15 +52,24 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Version
+    private Long version;
+
     @Column(nullable = false)
     private Boolean active = true;
 
     @Enumerated(EnumType.STRING)
     private UserRoles roles;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference // ✅ loop-u idarə edən tərəf
+    @ToString.Exclude
     private UserProfile profile;
 
+    @OneToMany(mappedBy = "fullname", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Employee> employees;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
