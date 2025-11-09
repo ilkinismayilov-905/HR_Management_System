@@ -67,9 +67,9 @@ public class User implements UserDetails {
     private UserProfile profile;
 
     @OneToMany(mappedBy = "fullname", fetch = FetchType.LAZY)
-    @JsonIgnore
-    @ToString.Exclude
+    @JsonManagedReference
     private List<Employee> employees;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

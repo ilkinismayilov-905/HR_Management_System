@@ -11,7 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -82,6 +85,7 @@ public class UserProfileController {
                     .id(attachment.getId())
                     .fileName(attachment.getFileName())
                     .originalFileName(attachment.getOriginalFileName())
+                    .filePath(attachment.getFilePath())
                     .contentType(attachment.getContentType())
                     .fileSize(attachment.getFileSize())
                     .uploadedDate(attachment.getUploadedDate())
@@ -100,6 +104,28 @@ public class UserProfileController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @Operation(
+            summary = "Download task attachments",
+            description = "Downloads all task attachments from the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task attachments downloaded successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request parameters"),
+            @ApiResponse(responseCode = "404", description = "No task attachments found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/attachments/download/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName){
+
+        log.info("REST request to download attachment");
+        Resource resource = imageService.loadFileAsResource(fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" +resource.getFilename() +"\"")
+                .body(resource);
     }
 
     @GetMapping("/all")

@@ -36,26 +36,26 @@ public class UserProfileConverter {
 //                })
 //                .collect(Collectors.toList());
 //    }
+public UserProfileResponseDTO toResponseDTO(User user, UserProfile profile, Employee phoneNumber) {
+    return UserProfileResponseDTO.builder()
+            .userId(user.getId())
+            .fullname(user.getFullname())
+            .email(user.getEmail())
+            .phoneNumber(phoneNumber.getPhoneNumber())
+            .address(profile != null ? profile.getAddress() : null)
+            .city(profile != null ? profile.getCity() : null)
+            .state(profile != null ? profile.getState() : null)
+            .country(profile != null ? profile.getCountry() : null)
+            .postalCode(profile != null ? profile.getPostalCode() : null)
+            .updatedAt(user.getUpdatedAt())
+            .attachments(profile != null && profile.getAttachments() != null
+                    ? profile.getAttachments().stream()
+                    .map(this::mapAttachmentToDTO)
+                    .collect(Collectors.toList())
+                    : Collections.emptyList())
+            .build();
+}
 
-    public UserProfileResponseDTO toResponseDTO(User user, UserProfile profile, Employee employee) {
-        return UserProfileResponseDTO.builder()
-                .userId(user.getId())
-                .fullname(user.getFullname())
-                .email(user.getEmail())
-                .phoneNumber(employee != null ? employee.getPhoneNumber() : null)
-                .address(profile != null ? profile.getAddress() : null)
-                .city(profile != null ? profile.getCity() : null)
-                .state(profile != null ? profile.getState() : null)
-                .country(profile != null ? profile.getCountry() : null)
-                .postalCode(profile != null ? profile.getPostalCode() : null)
-                .updatedAt(user.getUpdatedAt())
-                .attachments(profile != null && profile.getAttachments() != null
-                        ? profile.getAttachments().stream()
-                        .map(this::mapAttachmentToDTO)
-                        .collect(Collectors.toList())
-                        : Collections.emptyList())
-                .build();
-    }
 
         private UserAttachmentDTO mapAttachmentToDTO(UserAttachment attachment) {
         return UserAttachmentDTO.builder()

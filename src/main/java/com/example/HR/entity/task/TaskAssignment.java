@@ -1,6 +1,7 @@
 package com.example.HR.entity.task;
 
 import com.example.HR.entity.employee.Employee;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,8 @@ public class TaskAssignment {
     private Task task;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(name = "employee_id")
+    @JsonBackReference
     private Employee employee;
 
     @CreationTimestamp

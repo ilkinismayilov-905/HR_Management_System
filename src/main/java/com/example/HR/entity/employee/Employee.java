@@ -8,7 +8,9 @@ import com.example.HR.enums.Departament;
 import com.example.HR.enums.EmploymentType;
 import com.example.HR.enums.JobTitle;
 import com.example.HR.enums.Status;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -58,8 +60,7 @@ public class Employee {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "full_name_id", nullable = false)
-    @JsonIgnore
-    @ToString.Exclude
+    @JsonBackReference
     private User fullname;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -80,12 +81,18 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
+    @JsonManagedReference
+    @ToString.Exclude
     private List<EmployeeAttachment> attachments = new ArrayList<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @ToString.Exclude
     private Set<TaskAssignment> taskAssignments = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @ToString.Exclude
     private List<EmployeeSalary> salaries;
 
 

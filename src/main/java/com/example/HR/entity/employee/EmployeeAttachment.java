@@ -1,6 +1,7 @@
 package com.example.HR.entity.employee;
 
 import com.example.HR.entity.ticket.Ticket;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +43,7 @@ public class EmployeeAttachment {
     private LocalDateTime uploadedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id",nullable = false)
+    @JoinColumn(name = "employee_id")
+    @JsonBackReference
     private Employee employee;
 }
