@@ -34,6 +34,7 @@ import java.util.Map;
 @RequestMapping("/client")
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin
 public class ClientController {
 
     private final ClientService service;

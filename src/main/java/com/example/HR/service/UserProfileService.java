@@ -16,4 +16,5 @@ public interface UserProfileService {
     UserProfileResponseDTO getMyProfile(String authenticatedUserEmail);
     List<UserProfileResponseDTO> findAll();
     UserAttachment uploadAttachment(Long id, MultipartFile file);
+    UserProfileResponseDTO findById(Long id,String authenticatedUserEmail);
 }

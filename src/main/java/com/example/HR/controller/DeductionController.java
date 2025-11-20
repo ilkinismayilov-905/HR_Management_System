@@ -25,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/deduction")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class DeductionController {
 
     private final DeductionService deductionService;

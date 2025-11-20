@@ -39,7 +39,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/project")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
 public class ProjectController {

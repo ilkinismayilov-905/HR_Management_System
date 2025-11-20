@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 @RequestMapping("/employee")
 @RequiredArgsConstructor

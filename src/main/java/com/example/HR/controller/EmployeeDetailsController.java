@@ -29,7 +29,7 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequestMapping("/employeeDetails")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class EmployeeDetailsController {
 
     private final EmployeeService employeeService;

@@ -56,6 +56,21 @@ public UserProfileResponseDTO toResponseDTO(User user, UserProfile profile, Empl
             .build();
 }
 
+public UserProfileResponseDTO toResponseGet(UserProfile profile) {
+    return UserProfileResponseDTO.builder()
+            .address(profile != null ? profile.getAddress() : null)
+            .city(profile != null ? profile.getCity() : null)
+            .state(profile != null ? profile.getState() : null)
+            .country(profile != null ? profile.getCountry() : null)
+            .postalCode(profile != null ? profile.getPostalCode() : null)
+            .attachments(profile != null && profile.getAttachments() != null
+                    ? profile.getAttachments().stream()
+                    .map(this::mapAttachmentToDTO)
+                    .collect(Collectors.toList())
+                    : Collections.emptyList())
+            .build();
+}
+
 
         private UserAttachmentDTO mapAttachmentToDTO(UserAttachment attachment) {
         return UserAttachmentDTO.builder()

@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/emailChat")
 @Validated
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequiredArgsConstructor
 public class EmailChatController {
 

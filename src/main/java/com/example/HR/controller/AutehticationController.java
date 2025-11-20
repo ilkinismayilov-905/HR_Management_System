@@ -26,7 +26,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
 public class AutehticationController {

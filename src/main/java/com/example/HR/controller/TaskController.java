@@ -31,7 +31,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/task")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
 public class TaskController {

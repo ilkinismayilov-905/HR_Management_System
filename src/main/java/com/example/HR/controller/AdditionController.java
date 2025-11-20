@@ -25,6 +25,7 @@ import java.util.Map;
 @RequestMapping("/additions")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin
 public class AdditionController {
 
     private final AdditionService additionService;

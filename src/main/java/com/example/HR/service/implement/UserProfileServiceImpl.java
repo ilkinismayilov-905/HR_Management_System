@@ -110,8 +110,10 @@ public class UserProfileServiceImpl implements UserProfileService {
         return users.stream()
                 .map(user -> {
                     UserProfile profile = profileRepository.findByUserId(user.getId()).orElse(null);
-                    Employee employee = employeeRepository.findByFullnameFullname(user.getFullname()).orElse(null);
-                    return converter.toResponseDTO(user, profile, employee);
+                    Employee employee = employeeRepository.findByFullnameFullname(user.getFullname())
+                            .orElseThrow(() -> new EntityNotFoundException("Employee not found for user: " + user.getFullname()));
+
+                    return converter.toResponseDTO(user, profile,employee);
                 })
                 .collect(Collectors.toList());
     }
@@ -127,6 +129,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 
         return attachment;
+    }
+
+    @Override
+    public UserProfileResponseDTO findById(Long id,String authenticatedUserEmail) {
+
+        User user = userRepository.findByEmail(authenticatedUserEmail)
+                .orElseThrow(() -> new NotFoundException("User not found with email: " + authenticatedUserEmail));
+
+        UserProfile profile = profileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("UserProfile not found with ID: " + id ));
+
+       return converter.toResponseGet(profile);
     }
 
 }

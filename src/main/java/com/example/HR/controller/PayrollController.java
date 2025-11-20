@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/payroll")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequiredArgsConstructor
 @Slf4j
 public class PayrollController {

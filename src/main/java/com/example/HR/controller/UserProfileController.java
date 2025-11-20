@@ -27,7 +27,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/settings")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 @AllArgsConstructor
 public class UserProfileController {
@@ -131,11 +131,11 @@ public class UserProfileController {
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getAllProfiles() {
-        List<UserProfileResponseDTO> data = userProfileService.findAll();
+
         Map<String, Object> response = new HashMap<>();
 
         try {
-
+            List<UserProfileResponseDTO> data = userProfileService.findAll();
             response.put("success", true);
             response.put("data", data);
 
@@ -153,5 +153,33 @@ public class UserProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Map<String,Object>> getProfile(@PathVariable Long id,
+                                                         Authentication authentication){
+
+        log.info("REST request to get profile");
+        Map<String,Object> response = new HashMap<>();
+        String email = authentication.getName();
+
+        try {
+            UserProfileResponseDTO data = userProfileService.findById(id,email);
+            response.put("success", true);
+            response.put("data", data);
+
+            return ResponseEntity.ok(response);
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 }
