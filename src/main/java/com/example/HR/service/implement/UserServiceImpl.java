@@ -95,12 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserResponseDTO> getByEmail(String email) {
+    public UserResponseDTO getByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User not found by email: " + email));
 
 
-        return Optional.ofNullable(converter.entityToResponseDTO(user));
+        return converter.entityToResponseDTO(user);
     }
 
 //    @Override

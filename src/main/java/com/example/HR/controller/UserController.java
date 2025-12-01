@@ -146,12 +146,29 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<Optional<UserResponseDTO>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
-        Optional<UserResponseDTO> userDTOList = userService.getByEmail(email);
+    public ResponseEntity<Map<String,Object>> viewUsersByEmail(@PathVariable String email) throws MalformedURLException {
+        log.info("REST request to get User by email : {}", email);
+        Map<String,Object> response = new HashMap<>();
 
-//        log.info("User list returned by email: {}", email);
+        try {
+            UserResponseDTO dto = userService.getByEmail(email);
 
-        return ResponseEntity.ok(userDTOList);
+            response.put("user",dto);
+            response.put("success",true);
+
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 //    //GET USER BY ROLE

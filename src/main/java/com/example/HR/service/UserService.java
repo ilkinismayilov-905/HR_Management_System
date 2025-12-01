@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface UserService {
     public Optional<UserResponseDTO> getByFullname(String fullname);
     public Optional<UserResponseDTO> getByPassword(String password);
-    public Optional<UserResponseDTO> getByEmail(String email);
+    public UserResponseDTO getByEmail(String email);
     public String verifyAccount(String email,String otp);
     public String regenerateOtp(String email);
     public List<UserResponseDTO> findAll();

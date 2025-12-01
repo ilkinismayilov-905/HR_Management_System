@@ -78,6 +78,12 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: hrsystem
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    volumes:
+      - ./uploads:/app/uploads
+      - ./employeeImages:/app/employeeImages
+      - ./taskImage:/app/taskImage
+      - ./projectImage:/app/projectImage
+      - ./clientImage:/app/clientImage
     networks:
       - hr-network
 

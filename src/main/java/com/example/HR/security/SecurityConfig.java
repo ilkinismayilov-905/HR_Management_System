@@ -1,5 +1,7 @@
 package com.example.HR.security;
 
+import com.example.HR.entity.user.User;
+import com.example.HR.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,6 +31,8 @@ public class SecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     /**
      * Main security filter chain.
@@ -45,7 +50,6 @@ public class SecurityConfig {
                         // public / auth / oauth endpoints
                         .requestMatchers(
                                 "/auth/register",
-                                "/auth/login",
                                 "/auth/refresh-token",
                                 "/oauth2/**",
                                 "/login/**",
@@ -56,6 +60,9 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/actuator/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/loginForm").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+
 
                         // keep your existing access rules
                         .requestMatchers("/auth/get", "/auth/logout").hasAnyRole("USER", "ADMIN")
@@ -125,12 +132,57 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
+                .formLogin(form -> form
+                        .loginPage("/auth/loginForm")          // GET
+                        .loginProcessingUrl("/auth/login")
+                        .successHandler((req, res, auth) -> {
+
+                            // 1. Email / username götür (Spring Security-dən)
+                            String email = auth.getName();
+
+                            // 2. DB-dən user obyektini tap
+                            User user = userRepository.findByEmail(email)
+                                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+                            // 3. Spring Security userDetails
+                            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+                            // 4. Tokeni sənin metoduna uyğun yarat
+                            String token = jwtUtil.generateToken(
+                                    userDetails,
+                                    user.getId(),
+                                    user.getFullname()
+                            );
+
+
+                            // Response JSON
+                            res.setContentType("application/json");
+                            res.getWriter().write("""
+                    {
+                      "message": "Login successful",
+                      "token": "%s"
+                    }
+                    """.formatted(token));
+                        })
+                        .failureHandler((req, res, ex) -> {
+                            res.setStatus(401);
+                            res.setContentType("application/json");
+                            res.getWriter().write("""
+                    { "error": "Invalid credentials" }
+                    """);
+                        })
+                        .permitAll()
+                )
+
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // OAuth2 login integration: map user info and use success handler to issue your JWT
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 );
+
+
 
         // keep JWT filter BEFORE UsernamePasswordAuthenticationFilter
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

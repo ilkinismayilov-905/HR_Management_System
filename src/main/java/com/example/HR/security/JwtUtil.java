@@ -45,7 +45,7 @@ public class JwtUtil {
     }
 
 
-    private String createToken(Map<String, Object> claims, String subject, Long expiration) {
+    public String createToken(Map<String, Object> claims, String subject, Long expiration) {
         return Jwts.builder()
                 .claims(claims)
                 .subject(subject)

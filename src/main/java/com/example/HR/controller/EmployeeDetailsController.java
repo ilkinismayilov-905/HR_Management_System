@@ -4,6 +4,7 @@ import com.example.HR.dto.EducationInfoDTO;
 import com.example.HR.dto.EmployeeInformationDTO;
 import com.example.HR.dto.tool.ToolRequestDTO;
 import com.example.HR.dto.tool.ToolResponseDTO;
+import com.example.HR.dto.user.UserResponseDTO;
 import com.example.HR.service.EducationInfoService;
 import com.example.HR.service.EmployeeService;
 import com.example.HR.service.ToolService;
@@ -108,10 +109,28 @@ public class EmployeeDetailsController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PutMapping("/update/{id}")
-    public ResponseEntity<Optional<EducationInfoDTO>> update(@PathVariable Long id, @RequestBody @Validated(Update.class) EducationInfoDTO dto){
-        infoService.update(id, dto);
+    public ResponseEntity<Map<String,Object>> update(@PathVariable Long id, @RequestBody @Validated(Update.class) EducationInfoDTO dto){
+        log.info("REST request to update education info : {} ", id);
+        Map<String,Object> response = new HashMap<>();
 
-        return ResponseEntity.ok(infoService.getById(id));
+        try {
+            EducationInfoDTO update = infoService.update(id, dto);
+            response.put("success",true);
+            response.put("data",update);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+
+        }catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
+
+            response.put("success", false);
+            response.put("message", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
 
     }
 

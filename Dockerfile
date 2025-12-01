@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.9-eclipse-temurin-17 AS builder
+FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
@@ -7,7 +7,8 @@ WORKDIR /app
 COPY pom.xml .
 
 # Download dependencies
-RUN mvn dependency:resolve
+#RUN mvn dependency:resolve
+RUN mvn -B -q dependency:go-offline
 
 # Copy source code
 COPY src ./src
@@ -16,9 +17,11 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Runtime stage
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine
 
 WORKDIR /app
+
+RUN apk add --no-cache wget
 
 # Copy JAR from builder stage
 COPY --from=builder /app/target/HR-*.jar app.jar
