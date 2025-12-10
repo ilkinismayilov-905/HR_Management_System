@@ -20,4 +20,9 @@ public interface TaskService {
     TaskCommentDTO addComment(Long taskId, String content);
     void assignEmployeesToTask(Long taskId, List<Long> employeeIds);
     List<TaskCommentDTO> getAllComments();
+
+    Long countActiveTasks();
+
+
+    Long countCompletedTasks();
 }

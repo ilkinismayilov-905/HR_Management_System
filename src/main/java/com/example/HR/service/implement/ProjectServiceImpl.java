@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -183,6 +184,14 @@ public class ProjectServiceImpl implements ProjectService {
         log.info("Comments fetched");
 
         return converter.mapCommentToDTOList(commentDTOS);
+    }
+
+    @Override
+    public List<ProjectResponseDTO> getByTimeLine(LocalDate timeLine) {
+        log.info("Fetching all projects by timeLine: {}", timeLine);
+        List<Project> projects = projectRepository.findByTimeLine(timeLine);
+        log.info("Projects fetched by timeLine");
+        return converter.toResponseDtoList(projects);
     }
 
     private User getCurrentUser() {

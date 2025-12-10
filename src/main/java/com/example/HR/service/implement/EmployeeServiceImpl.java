@@ -50,6 +50,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Long countEmployees() {
+        return 0L;
+    }
+
+    @Override
     public  EmployeeResponseDTO save(EmployeeRequestDTO employeeRequestDTO) throws IOException {
         log.info("Saving new Employee..");
 

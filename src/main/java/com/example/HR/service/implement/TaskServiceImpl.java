@@ -206,6 +206,16 @@ public class TaskServiceImpl implements TaskService {
         return converter.mapCommentToDTOList(commentDTOS);
     }
 
+    @Override
+    public Long countActiveTasks() {
+        return 0L;
+    }
+
+    @Override
+    public Long countCompletedTasks() {
+        return 0L;
+    }
+
     private User getCurrentUser() {
         return (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

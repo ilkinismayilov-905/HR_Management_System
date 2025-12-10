@@ -29,6 +29,7 @@ public interface EmployeeService{
     public EmployeeResponseDTO getById(Long id);
     EmployeeAttachment uploadAttachment(String employeeID, MultipartFile file);
     public void deleteById(Long id);
+    public Long countEmployees();
 
 
 }

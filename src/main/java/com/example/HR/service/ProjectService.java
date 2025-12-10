@@ -7,6 +7,7 @@ import com.example.HR.entity.project.ProjectAttachment;
 import com.example.HR.enums.ProjectStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ProjectService {
@@ -20,4 +21,5 @@ public interface ProjectService {
     ProjectCommentDTO addComment(Long taskId, String content);
     void assignEmployeesToTask(Long taskId, List<Long> employeeIds);
     List<ProjectCommentDTO> getAllComments();
+    List<ProjectResponseDTO> getByTimeLine(LocalDate timeLine);
 }

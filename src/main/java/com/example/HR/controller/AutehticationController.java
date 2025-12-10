@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,7 @@ import java.util.*;
 public class AutehticationController {
     private final AuthService authService ;
     private final JwtUtil jwtUtil;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
     @GetMapping("/loginForm")
     public String loginPage() {
@@ -173,5 +176,22 @@ public class AutehticationController {
         response.put("expiresIn", Math.max(expiresIn, 0));
 
         return response;
+    }
+
+
+
+    @GetMapping("/providers")
+    public List<String> getOAuth2Providers() {
+
+        List<String> providers = new ArrayList<>();
+
+        if (clientRegistrationRepository instanceof Iterable) {
+            for (ClientRegistration registration :
+                    (Iterable<ClientRegistration>) clientRegistrationRepository) {
+                providers.add(registration.getRegistrationId());
+            }
+        }
+
+        return providers;
     }
 }

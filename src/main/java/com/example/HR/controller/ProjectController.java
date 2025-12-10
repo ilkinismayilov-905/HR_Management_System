@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,23 +61,26 @@ public class ProjectController {
     @PostMapping("/add")
     public ResponseEntity<Map<String,Object>> createTask(@Validated(Create.class) @RequestBody ProjectRequestDTO dto){
 
+        Map<String,Object> response = new HashMap<>();
         log.info("REST request to create project");
         try {
 
             ProjectResponseDTO project = projectService.create(dto);
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",project);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
     }
@@ -90,11 +95,29 @@ public class ProjectController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/get")
-    public ResponseEntity<List<ProjectResponseDTO>> getAllTasks() {
+    public ResponseEntity<Map<String,Object>> getAllTasks() {
 
         log.info("REST request to get all tasks");
-        List<ProjectResponseDTO> tasks = projectService.getAll();
-        return ResponseEntity.ok(tasks);
+        Map<String,Object> response = new HashMap<>();
+
+        try {
+            List<ProjectResponseDTO> tasks = projectService.getAll();
+
+            response.put("success",true);
+            response.put("data",tasks);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @Operation(
@@ -110,21 +133,24 @@ public class ProjectController {
     public ResponseEntity<Map<String,Object>> getById(@PathVariable Long id){
 
         log.info("REST request to get project by ID");
+        Map<String,Object> response = new HashMap<>();
         try {
             ProjectResponseDTO task = projectService.getById(id);
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",task);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }catch (Exception e) {
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
@@ -141,22 +167,25 @@ public class ProjectController {
     public ResponseEntity<Map<String,Object>> deleteById(@PathVariable Long id){
 
         log.info("REST request to delete project by ID");
+        Map<String,Object> response = new HashMap<>();
         try {
             ProjectResponseDTO task = projectService.getById(id);
             projectService.deleteById(id);
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",task);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }catch (Exception e) {
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
@@ -175,21 +204,26 @@ public class ProjectController {
                                                          @RequestBody ProjectRequestDTO dto){
 
         log.info("REST request to update project by ID");
+        Map<String,Object> response = new HashMap<>();
         try {
             ProjectResponseDTO task = projectService.update(projectId,dto);
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",task);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e){
 
-            Map<String,Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        }catch (Exception e) {
+
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
@@ -204,6 +238,7 @@ public class ProjectController {
     })
     @GetMapping("/status/{status}")
     public ResponseEntity<Map<String,Object>> getByStatus(@PathVariable String status){
+        Map<String,Object> response = new HashMap<>();
 
         log.info("REST request to get project by status");
         try {
@@ -216,17 +251,21 @@ public class ProjectController {
 
             List<ProjectResponseDTO> task = projectService.getByStatus(enumStatus);
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",task);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            Map<String,Object> response = new HashMap<>();
+        }
+        catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
@@ -243,6 +282,7 @@ public class ProjectController {
     public ResponseEntity<Map<String,Object>> addComment(@PathVariable Long projectId,
                                                          @RequestBody Map<String, String> commentData) {
 
+        Map<String,Object> response = new HashMap<>();
         log.info("REST request to add comment");
         try{
             ProjectCommentDTO comment = projectService.addComment(
@@ -250,16 +290,20 @@ public class ProjectController {
                     commentData.get("content")
             );
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",comment);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            Map<String,Object> response = new HashMap<>();
+        }
+        catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        catch (Exception e) {
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
     }
@@ -275,23 +319,62 @@ public class ProjectController {
     })
     @GetMapping("/comments")
     public ResponseEntity<Map<String,Object>> getAllComments(){
+        Map<String,Object> response = new HashMap<>();
         log.info("REST request to get all comments");
 
         try {
             List<ProjectCommentDTO> list = projectService.getAllComments();
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",true);
             response.put("data",list);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
         } catch (Exception e) {
 
-            Map<String,Object> response = new HashMap<>();
             response.put("success",false);
             response.put("message",e.getMessage());
 
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+        }
+    }
+
+    @Operation(
+            summary = "Get all projects timeline",
+            description = "Retrieves all projects timeline from system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Projects timeline retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "404", description = "Resource not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/timeLine/{date}")
+    public ResponseEntity<Map<String,Object>> getProjectTimeline(@PathVariable
+                                                                     @DateTimeFormat(pattern = "dd-MM-yyyy")
+                                                                     LocalDate date){
+        Map<String,Object> response = new HashMap<>();
+        try{
+            List<ProjectResponseDTO> list = projectService.getByTimeLine(date);
+
+            response.put("success",true);
+            response.put("data",list);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+
+        } catch (Exception e) {
+
+            response.put("success",false);
+            response.put("message",e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 
         }
     }
@@ -311,11 +394,11 @@ public class ProjectController {
                                                           @RequestParam("file") MultipartFile file) {
 
         log.info("REST request to add new attachment");
+        Map<String, Object> response = new HashMap<>();
         try{
 
             ProjectAttachment attachment = projectService.uploadAttachment(projectId, file);
 
-            Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "File uploaded successfully");
             response.put("attachment", ProjectAttachmentDTO.builder()
@@ -328,12 +411,15 @@ public class ProjectController {
                     .build());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e){
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            Map<String,Object> response = new HashMap<>();
             response.put("success",false);
             response.put("message",e.getMessage());
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
     }
